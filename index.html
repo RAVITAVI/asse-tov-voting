@@ -50,7 +50,6 @@
             justify-content: center;
             z-index: 1000;
             transition: opacity 0.8s ease-in-out;
-            pointer-events: none;
         }
 
         .splash-logo-container {
@@ -297,8 +296,16 @@
             margin-top: 15px;
             font-size: 1rem;
             padding: 12px;
+            border-radius: 14px;
         }
         .btn-secondary:hover { background: #e2e8f0; }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
 
         .btn:active { transform: scale(0.97); }
 
@@ -324,12 +331,14 @@
         /* רשימת תוצאות החיפוש */
         .results-list {
             margin-top: 15px;
+            margin-bottom: 15px;
             max-height: 220px;
             overflow-y: auto;
             text-align: right;
-            border: 1px solid #f1f5f9;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
             padding: 5px;
+            background: #ffffff;
         }
 
         .name-chip {
@@ -458,6 +467,10 @@
         .leaderboard-container {
             margin: 20px 0;
             text-align: right;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
         }
 
         .leaderboard-title {
@@ -465,7 +478,7 @@
             font-size: 1.1rem;
             color: #0f172a;
             margin-bottom: 10px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid #cbd5e1;
             padding-bottom: 5px;
         }
 
@@ -485,7 +498,7 @@
         .bar-outer {
             width: 100%;
             height: 12px;
-            background: #e2e8f0;
+            background: #cbd5e1;
             border-radius: 50px;
             overflow: hidden;
             position: relative;
@@ -568,6 +581,147 @@
             z-index: 1500;
             pointer-events: none;
             display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* מודאלים מותאמים אישית במקום Alerts */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalScale {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .modal-text {
+            font-size: 1.05rem;
+            color: #475569;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .modal-btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        /* טוסטים להתראות צפות */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        .toast {
+            background: #1e293b;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: toastIn 0.3s forwards, toastOut 0.3s 2.7s forwards;
+            border-right: 4px solid var(--primary-blue);
+        }
+
+        @keyframes toastIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes toastOut {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(20px); opacity: 0; }
+        }
+
+        /* ספינר טעינה */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
     </style>
@@ -580,7 +734,6 @@
     <!-- מסך פתיחה ממותג - לוגו קמפוס חמ"ד ענק במרכז -->
     <div id="splash">
         <div class="splash-logo-container">
-            <!-- משיכת הלוגו ישירות מה-GitHub הציבורי שלך -->
             <div class="logo-image-wrapper" style="position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;">
                 <img id="splash-logo-img" src="https://raw.githubusercontent.com/RAVITAVI/asse-tov-voting/main/campus-hemad-logo.jpg" alt="קמפוס חמ"ד" style="max-width: 220px; max-height: 220px; object-fit: contain; border-radius: 16px;" onerror="this.style.display='none'; document.getElementById('splash-svg-fallback').style.display='block';">
                 
@@ -608,13 +761,17 @@
                 </svg>
             </div>
             <div class="splash-subtitle">חוויה של יזמות, חינוך וערכים</div>
+            <div id="splash-loader" style="margin-top:20px; display: flex; align-items: center; gap: 8px;">
+                <div class="loader"></div>
+                <span style="font-weight:600; color:#475569;">טוען נתונים...</span>
+            </div>
         </div>
     </div>
 
     <!-- האפליקציה הראשית -->
     <div id="main-app" style="display:none;">
-        <!-- הבאנר החדש: לוגו קמפוס חמד בימין, עשה טוב במרכז -->
-        <header>
+        <!-- הבאנר החדש: לוגו קמפוס חמד בימין, עשה טוב במרכז (מוסתר במסך הראשי) -->
+        <header id="main-header" style="display: none;">
             <!-- ימין: קמפוס חמד בקטן -->
             <div class="header-logo-right">
                 <div class="logo-image-wrapper-header" style="position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
@@ -628,16 +785,14 @@
                         <circle cx="100" cy="80" r="14" fill="#ffffff" stroke="#0284c7" stroke-width="3"/>
                     </svg>
                 </div>
-                <span class="logo-text" style="font-size: 1.1rem;">קמפוס חמ"ד</span>
+                <span class="logo-text" style="font-size: 1.1rem; font-weight:800; color:var(--primary-blue);">קמפוס חמ"ד</span>
             </div>
 
             <!-- מרכז: לוגו עשה טוב -->
             <div class="header-logo-center">
                 <svg width="150" height="50" viewBox="0 0 150 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- עיגול/לב מסתובב מעוצב -->
                     <circle cx="25" cy="25" r="18" stroke="#f59e0b" stroke-width="4" fill="#ffffff"/>
                     <path d="M25 15 C28 12, 35 15, 25 33 C15 15, 22 12, 25 15 Z" fill="#ef4444"/>
-                    <!-- כיתוב "עשה טוב" עם פונט Heebo מובנה וצבעים קונטרסטיים -->
                     <text x="50" y="32" font-family="'Heebo', sans-serif" font-weight="900" font-size="22" fill="#1e293b">עשה</text>
                     <text x="98" y="32" font-family="'Heebo', sans-serif" font-weight="900" font-size="22" fill="#f59e0b">טוב</text>
                 </svg>
@@ -649,8 +804,8 @@
             </div>
         </header>
 
-        <!-- מחוון שלבים דינמי -->
-        <div class="progress-bar">
+        <!-- מחוון שלבים דינמי (מוסתר במסך הראשי) -->
+        <div class="progress-bar" id="main-progress" style="display: none;">
             <div class="progress-step active" id="prog1">
                 <div class="progress-dot">1</div>
                 <div class="progress-label">מגדר</div>
@@ -661,7 +816,7 @@
             </div>
             <div class="progress-step" id="prog3">
                 <div class="progress-dot">3</div>
-                <div class="progress-label">זיהוי</div>
+                <div class="progress-label">זיהויי</div>
             </div>
             <div class="progress-step" id="prog4">
                 <div class="progress-dot">4</div>
@@ -676,15 +831,51 @@
         <div class="container">
             <div class="card">
                 
-                <!-- שלב 1: בחירת מגדר -->
+                <!-- שלב 1: דף פתיחה קמפוס חמ"ד ובחירת מגדר -->
                 <div id="step1" class="step active">
-                    <h2>ברוכים הבאים!<br>נשמח להכיר, האם את/ה:</h2>
-                    <div class="btn-grid">
-                        <button class="btn btn-blue" onclick="pickGender('Male')">
-                            <i class="fa-solid fa-mars"></i> בן
+                    <!-- תת-שלב א: דף הבית קמפוס חמ"ד עם לוגו וכפתור כניסה נקי -->
+                    <div id="step1-welcome">
+                        <div style="display: flex; justify-content: center; margin-bottom: 35px; margin-top: 15px;">
+                            <div class="logo-image-wrapper" style="position: relative; width: 170px; height: 170px; display: flex; align-items: center; justify-content: center;">
+                                <img id="welcome-logo-img" src="https://raw.githubusercontent.com/RAVITAVI/asse-tov-voting/main/campus-hemad-logo.jpg" alt="קמפוס חמ"ד" style="max-width: 170px; max-height: 170px; object-fit: contain; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);" onerror="this.style.display='none'; document.getElementById('welcome-svg-fallback').style.display='block';">
+                                
+                                <svg id="welcome-svg-fallback" style="display: none;" width="170" height="170" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M100 150 C85 170, 75 180, 70 185 C65 190, 135 190, 130 185 C125 180, 115 170, 100 150 Z" fill="#f59e0b" opacity="0.8"/>
+                                    <path d="M100 150 C90 165, 85 170, 80 175 C75 180, 125 180, 120 175 C115 170, 110 165, 100 150 Z" fill="#ef4444"/>
+                                    <rect x="50" y="145" width="100" height="15" rx="4" fill="#1e293b" />
+                                    <rect x="50" y="152" width="100" height="3" fill="#f59e0b" />
+                                    <rect x="55" y="133" width="90" height="12" rx="3" fill="#0284c7" />
+                                    <rect x="55" y="139" width="90" height="3" fill="#ffffff" />
+                                    <path d="M100 20 C100 20, 120 60, 120 110 C120 125, 110 135, 100 135 C90 135, 80 125, 80 110 C80 60, 100 20, 100 20 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="4"/>
+                                    <path d="M100 20 C100 20, 112 45, 116 55 C108 58, 92 58, 84 55 C88 45, 100 20, 100 20 Z" fill="#ef4444"/>
+                                    <path d="M80 100 C70 105, 60 115, 65 130 C75 130, 80 125, 80 118 Z" fill="#ef4444"/>
+                                    <path d="M120 100 C130 105, 140 115, 135 130 C125 130, 120 125, 120 118 Z" fill="#ef4444"/>
+                                    <circle cx="100" cy="80" r="14" fill="#ffffff" stroke="#0284c7" stroke-width="3"/>
+                                    <circle cx="96" cy="76" r="4" fill="#38bdf8"/>
+                                    <text x="100" y="185" font-family="'Heebo', sans-serif" font-weight="900" font-size="20" fill="#0284c7" text-anchor="middle">קמפוס חמ"ד</text>
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- כיתוב חוויה של יזמות, חינוך וערכים מוחזר בצורה אסתטית וממורכזת -->
+                        <div style="margin-top: -15px; margin-bottom: 30px; text-align: center; font-size: 1.25rem; color: #64748b; font-weight: 700;">חוויה של יזמות, חינוך וערכים</div>
+                        <button class="btn btn-blue" onclick="showGenderSelection()" style="width: 100%; margin-top: 10px;">
+                            כניסה
                         </button>
-                        <button class="btn btn-orange" onclick="pickGender('Female')">
-                            <i class="fa-solid fa-venus"></i> בת
+                    </div>
+
+                    <!-- תת-שלב ב: בחירת מגדר (מוסתר בהתחלה) -->
+                    <div id="step1-gender" style="display: none;">
+                        <h2>נשמח להכיר, האם את/ה:</h2>
+                        <div class="btn-grid">
+                            <button class="btn btn-blue" onclick="pickGender('Male')">
+                                <i class="fa-solid fa-mars"></i> בן
+                            </button>
+                            <button class="btn btn-orange" onclick="pickGender('Female')">
+                                <i class="fa-solid fa-venus"></i> בת
+                            </button>
+                        </div>
+                        <button class="btn btn-secondary" onclick="showWelcomeScreen()" style="width: 100%; margin-top: 25px;">
+                            <i class="fa-solid fa-arrow-right"></i> חזור לדף הפתיחה
                         </button>
                     </div>
                 </div>
@@ -692,13 +883,13 @@
                 <!-- שלב 2: בחירת בית ספר -->
                 <div id="step2" class="step">
                     <h2>מאיזה מוסד לימודים את/ה?</h2>
-                    <select id="schoolDropdown">
+                    <select id="schoolDropdown" onchange="enableSchoolButton()">
                         <option value="">בחר/י בית ספר...</option>
                     </select>
-                    <button class="btn btn-blue" onclick="validateSchool()" style="width: 100%;">
+                    <button id="schoolNextBtn" class="btn btn-blue" onclick="validateSchool()" style="width: 100%;" disabled>
                         המשך לשלב הבא <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                    <button class="btn btn-secondary" onclick="moveStep(1)" style="width: 100%;">
+                    <button class="btn btn-secondary" onclick="moveStep(1); showGenderSelection();" style="width: 100%;">
                         <i class="fa-solid fa-arrow-right"></i> חזור לבחירת מגדר
                     </button>
                 </div>
@@ -792,7 +983,7 @@
                         <div class="cert-title">תעודת הערכה</div>
                         <div style="font-size:1.1rem; color:#475569; margin-top:5px;">מוענקת באהבה ל-</div>
                         <div class="cert-name" id="certStudentName">שם התלמיד/ה</div>
-                        <div style="font-size:1rem; color:#475569;">ממוסד <strong id="certSchoolName">שם המוסד</strong></div>
+                        <div style="font-size:1rem; color:#475569;">מוסד: <strong id="certSchoolName">שם המוסד</strong></div>
                         <div style="font-size:0.95rem; color:#d97706; font-weight:bold; margin-top:15px;">
                             שותף/ה פעיל/ה בעיצוב פרויקט "עשה טוב"
                         </div>
@@ -833,18 +1024,36 @@
         <i class="fa-solid fa-gear"></i>
     </button>
 
-    <script>
-        // קישור ה-CSV לגיליון התלמידים בגוגל שיטס שלך
+    <!-- קוד Firebase SDK מודולרי -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        // קונפיגורציית פיירבייס - שימוש בהגדרות הסביבה או פולבק בטוח
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "",
+            authDomain: "asse-tov-voting.firebaseapp.com",
+            projectId: "asse-tov-voting",
+            storageBucket: "asse-tov-voting.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:123456"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'asse-tov-voting';
+
+        // משתנים גלובליים
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRTPL47tlU1nXN9NwUXhPMT3-r6jH0KoFhsbxkL6zhTkBPk_Y4VaYwCqdyFBsVFHl_uuuduzSlKNtOx/pub?output=csv';
-        
         let studentsData = [];
         let state = { gender: '', school: '', name: '' };
-        
-        // נתוני דירוג נוכחיים
         let currentProjectIndex = 0;
-        let ratings = {}; // שמירת דירוגים של המשתמש: { projectId: {c1: val, c2: val, c3: val} }
-        
-        // פרויקטים להצבעה - מחולק לפי מגדר
+        let ratings = {};
+        let userAuth = null;
+
+        // הגדרת פרויקטים
         const projectsByGender = {
             Male: [
                 { id: "M1", name: "תיקון עולם הנדסי", desc: "שיפוץ וצביעת מועדוניות ובתים של קשישים בשכונות מצוקה." },
@@ -853,637 +1062,681 @@
                 { id: "M4", name: "משמחי לב", desc: "חברי הרכב מוזיקלי צעיר המשמחים חולים ומאושפזים במחלקות בתי חולים." }
             ],
             Female: [
-                { id: "F1", name: "כוחה של מילה", desc: "כתיבת מכתבי חיזוק, אריזת חבילות שי ועידוד משפחות מילואימניקים." },
-                { id: "F2", name: "סיירת חסד", desc: "הקמת בנק מזון קהילתי וחלוקת סלי מזון שבועיים למשפחות נזקקות." },
-                { id: "F3", name: "אחות בלב", desc: "ליווי לימודי ורגשי קבוע לילדים המאושפזים לתקופות ארוכות בבתי חולים." },
-                { id: "F4", name: "שזירת שמחה", desc: "שזירת זרי פרחים שנשארו מאירועים וחלוקתם בימי שישי לבתי אבות וחולים." }
+                { id: "F1", name: "בנות חיל", desc: "ליווי ותמיכה לימודית ורגשית בנערות צעירות ממשפחות מורכבות." },
+                { id: "F2", name: "מבשלות מהלב", desc: "הכנת ארוחות שבת חמות וחלוקתן למשפחות קשישים ובודדים." },
+                { id: "F3", name: "מועדון חיוך", desc: "הקמת מרחבי פנאי והפעלות לילדים עם צרכים מיוחדים בשעות אחר הצהריים." },
+                { id: "F4", name: "עוטפות באהבה", desc: "תפירה וחלוקת ערכות פינוק, שמיכות ומוצרים ליולדות מעוטות יכולת." }
             ]
         };
 
-        // מאגר נתונים סימולטיבי לגיבוי מלא במקרה של בעיות CORS/חסימות רשת בדפדפנים מוגנים
-        const mockStudents = [
-            { Gender: "Male", School: "ישיבת נעם ירושלים", FullName: "איתי כהן", Status: "" },
-            { Gender: "Male", School: "ישיבת נעם ירושלים", FullName: "אלעד לוי", Status: "" },
-            { Gender: "Male", School: "ישיבת נעם ירושלים", FullName: "יהונתן מזרחי", Status: "" },
-            { Gender: "Male", School: "אמי\"ת בנים מודיעין", FullName: "שילת אברהם", Status: "" },
-            { Gender: "Male", School: "אמי\"ת בנים מודיעין", FullName: "דניאל יוסף", Status: "" },
-            { Gender: "Male", School: "תיכון תורני בנים חיפה", FullName: "נתנאל מאיר", Status: "" },
-            
-            { Gender: "Female", School: "אולפנת להבה קדומים", FullName: "שרה כהן", Status: "" },
-            { Gender: "Female", School: "אולפנת להבה קדומים", FullName: "רבקה לוי", Status: "" },
-            { Gender: "Female", School: "אולפנת להבה קדומים", FullName: "תאיר אברהמי", Status: "" },
-            { Gender: "Female", School: "אולפנת ישורון פתח תקווה", FullName: "נועה אטיאס", Status: "" },
-            { Gender: "Female", School: "אולפנת ישורון פתח תקווה", FullName: "מיכל חדד", Status: "" },
-            { Gender: "Female", School: "תיכון בנות פלך", FullName: "הדר ששון", Status: "" }
-        ];
-
-        // מאגר כלל ההצבעות המקומיות המאוחסנות ב-Session למניעת כפילויות, בתוספת בסיס הצבעות סימולטיבי ללוח התוצאות
-        let allVotesDatabase = JSON.parse(localStorage.getItem('allVotesDatabase')) || {
-            "M1": { count: 12, total: 145 },
-            "M2": { count: 15, total: 195 },
-            "M3": { count: 8, total: 88 },
-            "M4": { count: 19, total: 240 },
-            "F1": { count: 14, total: 168 },
-            "F2": { count: 22, total: 290 },
-            "F3": { count: 11, total: 130 },
-            "F4": { count: 17, total: 205 }
+        // התחברות אנונימית ל-Firebase לפעילות בטוחה
+        const initFirebase = async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (err) {
+                console.warn("שגיאה בהתחברות אנונימית, האפליקציה תפעל במצב זיכרון מקומי:", err);
+            }
         };
 
-        // פונקציית אתחול וטעינת נתונים
-        async function init() {
-            // טיימר אבטחה קבוע - יסיר את ה-Splash Screen וימנע תקיעה גם אם הרשת קורסת
-            const failsafeTimeout = setTimeout(() => {
-                hideSplashAndShowApp();
-                if (studentsData.length === 0) {
-                    studentsData = mockStudents;
-                    showToast("טעינה מאובטחת: נתוני הגיבוי נטענו בהצלחה", "warning");
-                }
-            }, 2500);
+        onAuthStateChanged(auth, (user) => {
+            userAuth = user;
+        });
 
+        // פונקציה אמינה לפירוק CSV המונעת שגיאות בגלל שורות ריקות, רווחים או גרשיים
+        const parseCSV = (text) => {
+            if (!text) return [];
+            const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            if (lines.length === 0) return [];
+            
+            const result = [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || line.split(',');
+                const currentline = matches.map(val => val.trim().replace(/^["']|["']$/g, ''));
+                
+                const obj = {};
+                for (let j = 0; j < headers.length; j++) {
+                    obj[headers[j]] = currentline[j] || '';
+                }
+                result.push(obj);
+            }
+            return result;
+        };
+
+        // טעינת רשימת גיבוי מובנית במידה וגישת ה-CORS לגוגל שיטס נחסמה
+        const loadFallbackData = () => {
+            studentsData = [
+                { "שם פרטי": "אלעד", "שם משפחה": "כהן", "מוסד": "ישיבת חמ\"ד בני ברק", "מגדר": "Male" },
+                { "שם פרטי": "דניאל", "שם משפחה": "מזרחי", "מוסד": "ישיבת חמ\"ד בני ברק", "מגדר": "Male" },
+                { "שם פרטי": "איתי", "שם משפחה": "פרץ", "מוסד": "ישיבת חמ\"ד בני ברק", "מגדר": "Male" },
+                { "שם פרטי": "אריאל", "שם משפחה": "לוי", "מוסד": "ישיבת חמ\"ד בני ברק", "מגדר": "Male" },
+                { "שם פרטי": "שגיא", "שם משפחה": "ביטון", "מוסד": "תיכון חמ\"ד רחובות", "mגדר": "Male" },
+                { "שם פרטי": "נעם", "שם משפחה": "חדד", "מוסד": "תיכון חמ\"ד רחובות", "מגדר": "Male" },
+                { "שם פרטי": "יובל", "שם משפחה": "אזולאי", "מוסד": "תיכון חמ\"ד רחובות", "מגדר": "Male" },
+                { "שם פרטי": "רחל", "שם משפחה": "הראל", "מוסד": "אולפנת חמ\"ד ירושלים", "מגדר": "Female" },
+                { "שם פרטי": "מיכל", "שם משפחה": "גבאי", "מוסד": "אולפנת חמ\"ד ירושלים", "מגדר": "Female" },
+                { "שם פרטי": "שירה", "שם משפחה": "וקנין", "מוסד": "אולפנת חמ\"ד ירושלים", "מגדר": "Female" },
+                { "שם פרטי": "תמר", "שם משפחה": "מלכה", "מוסד": "אולפנת חמ\"ד ירושלים", "מגדר": "Female" },
+                { "שם פרטי": "אביגיל", "שם משפחה": "יוספי", "מוסד": "אולפנת חמ\"ד מודיעין", "מגדר": "Female" },
+                { "שם פרטי": "אילה", "שם משפחה": "אוחנה", "מוסד": "אולפנת חמ\"ד מודיעין", "מגדר": "Female" },
+                { "שם פרטי": "נועה", "שם משפחה": "ביטון", "מוסד": "אולפנת חמ\"ד מודיעין", "מגדר": "Female" }
+            ];
+            console.log("נטענו נתוני גיבוי מקומיים בהצלחה.");
+        };
+
+        const loadStudentsCSV = async () => {
             try {
-                // משיכת נתונים בזמן אמת מהגוגל שיטס הממותג
-                const res = await fetch(CSV_URL);
-                if (!res.ok) throw new Error("Network request failed");
-                const text = await res.text();
+                const response = await fetch(CSV_URL);
+                if (!response.ok) throw new Error("גישת הרשת לא מאושרת");
+                const text = await response.text();
+                studentsData = parseCSV(text);
                 
-                parseData(text);
-                
-                // במקרה שקיבלנו נתון ריק או פירמוט עמודות שגוי
-                if (studentsData.length === 0) {
-                    throw new Error("No valid data parsed from CSV");
+                if (!studentsData || studentsData.length === 0) {
+                    throw new Error("הקובץ ריק או לא תקין");
                 }
-                
-                clearTimeout(failsafeTimeout);
-                showToast("החיבור לגוגל שיטס בוצע בהצלחה!", "success");
-                hideSplashAndShowApp();
-            } catch (err) {
-                console.warn("Using simulation fallback data due to fetch error/CORS:", err);
-                studentsData = mockStudents;
-                clearTimeout(failsafeTimeout);
-                hideSplashAndShowApp();
-                showToast("מצב סימולציה: נתוני הגיבוי נטענו בהצלחה", "warning");
-            }
-
-            setupStarListeners();
-        }
-
-        // הסרה אלגנטית של מסך הפתיחה
-        function hideSplashAndShowApp() {
-            const splash = document.getElementById('splash');
-            if (splash && splash.style.display !== 'none') {
-                splash.style.opacity = '0';
+                showToast("נתוני התלמידים נטענו מגוגל שיטס!");
+            } catch (error) {
+                console.warn("שגיאה בטעינת ה-CSV מגוגל שיטס, טוען נתוני גיבוי מקומיים:", error);
+                loadFallbackData();
+                showToast("המערכת פועלת כעת במצב גיבוי לא מקוון");
+            } finally {
                 setTimeout(() => {
-                    splash.style.display = 'none';
-                    document.getElementById('main-app').style.display = 'block';
-                }, 800);
+                    const splash = document.getElementById('splash');
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        document.getElementById('main-app').style.display = 'block';
+                        // ודא שהבאנר וסרגל השלבים מוסתרים בהפעלת המסך הראשי
+                        document.getElementById('main-header').style.display = 'none';
+                        document.getElementById('main-progress').style.display = 'none';
+                    }, 800);
+                }, 1000);
             }
-        }
+        };
 
-        // המרה בטוחה של קובץ ה-CSV המיובא מהרשת
-        function parseData(csv) {
-            const lines = csv.split('\n').map(l => l.replace('\r', '').trim());
-            if (lines.length === 0) return;
+        // מכלול ניווט שלבים
+        window.moveStep = (stepNumber) => {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${stepNumber}`).classList.add('active');
             
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^\uFEFF/, '')); // הסרת BOM במידה וקיים
-            
-            studentsData = [];
-            for(let i = 1; i < lines.length; i++) {
-                if(!lines[i]) continue;
-                
-                // תמיכה בפיצול פסיקים פנימי במרכאות
-                let row = [];
-                let insideQuote = false;
-                let currentVal = '';
-                
-                for (let c = 0; c < lines[i].length; c++) {
-                    let char = lines[i][c];
-                    if (char === '"') {
-                        insideQuote = !insideQuote;
-                    } else if (char === ',' && !insideQuote) {
-                        row.push(currentVal);
-                        currentVal = '';
-                    } else {
-                        currentVal += char;
-                    }
-                }
-                row.push(currentVal);
-
-                let obj = {};
-                headers.forEach((h, idx) => {
-                    obj[h] = row[idx] ? row[idx].trim().replace(/^"|"$/g, '') : '';
-                });
-
-                if(obj.FullName && obj.School && obj.Gender) {
-                    studentsData.push(obj);
-                }
-            }
-        }
-
-        // מעבר שלבים ובניית רשימת בתי הספר דינמית
-        function pickGender(g) {
-            state.gender = g;
-            
-            // סינון בתי ספר הרלוונטיים למגדר שנבחר
-            const schools = [...new Set(studentsData
-                .filter(s => s.Gender === g)
-                .map(s => s.School))].sort();
-            
-            const drop = document.getElementById('schoolDropdown');
-            drop.innerHTML = '<option value="">בחר/י בית ספר...</option>';
-            
-            schools.forEach(sch => {
-                if(sch) {
-                    const opt = document.createElement('option');
-                    opt.value = sch;
-                    opt.innerText = sch;
-                    drop.appendChild(opt);
+            // עדכון סרגל שלבים
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                const idx = index + 1;
+                step.classList.remove('active', 'completed');
+                if (idx < stepNumber) {
+                    step.classList.add('completed');
+                } else if (idx === stepNumber) {
+                    step.classList.add('active');
                 }
             });
+        };
+
+        // תתי-שלבים בשלב 1: דף פתיחה של קמפוס חמ"ד ובחירת מגדר
+        window.showGenderSelection = () => {
+            document.getElementById('step1-welcome').style.display = 'none';
+            document.getElementById('step1-gender').style.display = 'block';
+            // הצגת הבאנר וסרגל ההתקדמות ברגע שנכנסים לתהליך (מסך המגדר)
+            document.getElementById('main-header').style.display = 'flex';
+            document.getElementById('main-progress').style.display = 'flex';
+        };
+
+        window.showWelcomeScreen = () => {
+            document.getElementById('step1-welcome').style.display = 'block';
+            document.getElementById('step1-gender').style.display = 'none';
+            // הסתרת הבאנר וסרגל ההתקדמות כשחוזרים לדף הבית
+            document.getElementById('main-header').style.display = 'none';
+            document.getElementById('main-progress').style.display = 'none';
+        };
+
+        // שלב 1.5: בחירת מגדר
+        window.pickGender = (gender) => {
+            state.gender = gender;
             
+            // סינון וטעינת בתי ספר התואמים את המגדר שנבחר
+            const schools = [...new Set(studentsData
+                .filter(s => {
+                    const recordGender = s["מגדר"] || s["מין"] || s["Mender"] || '';
+                    if (gender === 'Male') return recordGender.toLowerCase().startsWith('m') || recordGender.includes('בן');
+                    return recordGender.toLowerCase().startsWith('f') || recordGender.includes('בת');
+                })
+                .map(s => s["מוסד"] || s["בית ספר"] || s["שם מוסד"])
+                .filter(Boolean)
+            )].sort();
+
+            const dropdown = document.getElementById('schoolDropdown');
+            dropdown.innerHTML = '<option value="">בחר/י בית ספר...</option>';
+            
+            schools.forEach(school => {
+                const opt = document.createElement('option');
+                opt.value = school;
+                opt.textContent = school;
+                dropdown.appendChild(opt);
+            });
+
+            if (schools.length === 0) {
+                const allSchools = [...new Set(studentsData.map(s => s["מוסד"] || s["בית ספר"] || s["שם מוסד"]).filter(Boolean))].sort();
+                allSchools.forEach(school => {
+                    const opt = document.createElement('option');
+                    opt.value = school;
+                    opt.textContent = school;
+                    dropdown.appendChild(opt);
+                });
+            }
+
             moveStep(2);
-        }
+        };
 
-        function validateSchool() {
-            state.school = document.getElementById('schoolDropdown').value;
-            if(!state.school) {
-                showCustomModal("שגיאה", "אנא בחר/י בית ספר מתוך הרשימה כדי להמשיך.", "error", [
-                    { text: "הבנתי", class: "btn-blue", action: closeModal }
-                ]);
+        // שלב 2: בחירת בית ספר
+        window.enableSchoolButton = () => {
+            const dropdown = document.getElementById('schoolDropdown');
+            const btn = document.getElementById('schoolNextBtn');
+            btn.disabled = !dropdown.value;
+        };
+
+        window.validateSchool = () => {
+            const dropdown = document.getElementById('schoolDropdown');
+            if (!dropdown.value) {
+                showToast("אנא בחר/י מוסד לימודים מתוך הרשימה");
                 return;
             }
-            moveStep(3);
-        }
-
-        // סינון רשימת השמות
-        function handleSearch() {
-            const query = document.getElementById('nameInput').value.trim();
-            const resDiv = document.getElementById('results');
+            state.school = dropdown.value;
             
-            if(query.length < 2) { 
-                resDiv.innerHTML = ''; 
-                return; 
-            }
+            document.getElementById('nameInput').value = '';
+            document.getElementById('results').innerHTML = '<p style="text-align:center; color:#94a3b8; padding:15px;">החל להקליד כדי לחפש...</p>';
+            
+            moveStep(3);
+        };
 
-            const matches = studentsData.filter(s => 
-                s.Gender === state.gender && 
-                s.School === state.school && 
-                s.FullName.includes(query)
-            );
+        // שלב 3: חיפוש וזיהוי תלמיד
+        window.handleSearch = () => {
+            const query = document.getElementById('nameInput').value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
 
-            if(matches.length === 0) {
-                resDiv.innerHTML = '<div style="padding:15px; text-align:center; color:#64748b;">לא נמצאו שמות תואמים...</div>';
+            if (query.length < 2) {
+                resultsDiv.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:15px;">אנא הקלד/י לפחות 2 אותיות...</p>';
                 return;
             }
 
-            resDiv.innerHTML = matches.map(s => `
-                <div class="name-chip" onclick="confirmIdentity('${s.FullName}')">
-                    <span>${s.FullName}</span>
+            const filtered = studentsData.filter(s => {
+                const schoolMatch = (s["מוסד"] || s["בית ספר"] || s["שם מוסד"]) === state.school;
+                
+                const recordGender = s["מגדר"] || s["מין"] || s["Mender"] || '';
+                let genderMatch = true;
+                if (state.gender === 'Male') {
+                    genderMatch = recordGender.toLowerCase().startsWith('m') || recordGender.includes('בן');
+                } else {
+                    genderMatch = recordGender.toLowerCase().startsWith('f') || recordGender.includes('בת');
+                }
+
+                const firstName = (s["שם פרטי"] || '').toLowerCase();
+                const lastName = (s["שם משפחה"] || '').toLowerCase();
+                const fullName = `${firstName} ${lastName}`;
+                
+                const nameMatch = firstName.includes(query) || lastName.includes(query) || fullName.includes(query);
+
+                return schoolMatch && genderMatch && nameMatch;
+            });
+
+            if (filtered.length === 0) {
+                resultsDiv.innerHTML = '<p style="text-align:center; color:#ef4444; padding:15px; font-weight:600;">שמך לא נמצא ברשימת המוסד. נסה חיפוש אחר או פנה לאחראי.</p>';
+                return;
+            }
+
+            filtered.forEach(student => {
+                const firstName = student["שם פרטי"] || '';
+                const lastName = student["שם משפחה"] || '';
+                const fullName = `${firstName} ${lastName}`;
+
+                const chip = document.createElement('div');
+                chip.className = 'name-chip';
+                chip.innerHTML = `
+                    <span>${fullName}</span>
                     <i class="fa-solid fa-circle-check"></i>
-                </div>
-            `).join('');
-        }
+                `;
+                chip.onclick = () => selectStudent(fullName);
+                resultsDiv.appendChild(chip);
+            });
+        };
 
-        // מודאל אישור זהות תלמיד
-        function confirmIdentity(name) {
-            state.name = name;
-            showCustomModal(
-                "אימות תלמיד/ה", 
-                `האם את/ה בטוח/ה שזה את/ה:<br><strong style="font-size:1.4rem; color:var(--primary-blue);">${name}</strong> ממוסד <br><strong>${state.school}</strong>?`,
-                "confirm",
-                [
-                    { 
-                        text: "כן, זה אני!", 
-                        class: "btn-blue", 
-                        action: () => {
-                            closeModal();
-                            startRatingPhase();
-                        } 
-                    },
-                    { text: "לא, טעיתי", class: "btn-secondary", action: closeModal }
-                ]
-            );
-        }
+        const selectStudent = (fullName) => {
+            state.name = fullName;
+            showModal("אישור זיהוי", `האם את/ה בטוח/ה ששמך הוא <strong>${fullName}</strong> ממוסד <strong>${state.school}</strong>?`, "🙋", [
+                { text: "כן, זה אני!", action: () => startProjectRating(), primary: true },
+                { text: "שגיאה בשם", action: () => {} }
+            ]);
+        };
 
-        // פתיחת שלב הדירוג
-        function startRatingPhase() {
-            const projects = projectsByGender[state.gender];
+        // שלב 4: זירת דירוג פרויקטים
+        const startProjectRating = () => {
+            currentProjectIndex = 0;
             ratings = {};
-            projects.forEach(p => {
+            
+            const currentProjects = projectsByGender[state.gender];
+            currentProjects.forEach(p => {
                 ratings[p.id] = { c1: 0, c2: 0, c3: 0 };
             });
-            
-            currentProjectIndex = 0;
-            updateProjectRatingUI();
+
+            renderProject();
             moveStep(4);
-            
-            showToast(`ברוך הבא ${state.name}! החל שלב הדירוג`, "success");
-        }
+        };
 
-        // עדכון תצוגת הפרויקט הנוכחי לדירוג
-        function updateProjectRatingUI() {
-            const projects = projectsByGender[state.gender];
-            const currentProj = projects[currentProjectIndex];
+        const renderProject = () => {
+            const currentProjects = projectsByGender[state.gender];
+            const p = currentProjects[currentProjectIndex];
             
-            document.getElementById('projectBadge').innerText = `פרויקט ${currentProjectIndex + 1} מתוך ${projects.length}`;
-            document.getElementById('projectName').innerText = currentProj.name;
-            document.getElementById('projectDesc').innerText = currentProj.desc;
-            document.getElementById('projectCounter').innerText = `${currentProjectIndex + 1} מתוך ${projects.length}`;
-            
-            // עדכון כפתורי ניווט
-            document.getElementById('prevProjectBtn').style.opacity = currentProjectIndex === 0 ? "0.5" : "1";
-            document.getElementById('prevProjectBtn').disabled = currentProjectIndex === 0;
-            
-            if (currentProjectIndex === projects.length - 1) {
-                document.getElementById('nextProjectBtn').innerHTML = `שלח דירוג וסיים <i class="fa-solid fa-paper-plane"></i>`;
-                document.getElementById('nextProjectBtn').className = "btn btn-orange";
+            document.getElementById('projectBadge').textContent = `פרויקט ${currentProjectIndex + 1} מתוך ${currentProjects.length}`;
+            document.getElementById('projectName').textContent = p.name;
+            document.getElementById('projectDesc').textContent = p.desc;
+            document.getElementById('projectCounter').textContent = `${currentProjectIndex + 1} מתוך ${currentProjects.length}`;
+
+            const savedRating = ratings[p.id];
+            setupStars('c1', savedRating.c1);
+            setupStars('c2', savedRating.c2);
+            setupStars('c3', savedRating.c3);
+
+            const prevBtn = document.getElementById('prevProjectBtn');
+            const nextBtn = document.getElementById('nextProjectBtn');
+
+            if (currentProjectIndex === 0) {
+                prevBtn.style.visibility = 'hidden';
             } else {
-                document.getElementById('nextProjectBtn').innerHTML = `הבא <i class="fa-solid fa-chevron-left"></i>`;
-                document.getElementById('nextProjectBtn').className = "btn btn-blue";
+                prevBtn.style.visibility = 'visible';
             }
 
-            // טעינת בחירות כוכבים קודמות
-            loadSavedStars(currentProj.id);
-        }
-
-        // ניווט בין פרויקטים
-        function navigateProject(direction) {
-            const projects = projectsByGender[state.gender];
-            const currentProj = projects[currentProjectIndex];
-            
-            // בדיקה שדירגו הכל בפרויקט הנוכחי לפני שממשיכים
-            const currentRatings = ratings[currentProj.id];
-            if (direction === 1 && (currentRatings.c1 === 0 || currentRatings.c2 === 0 || currentRatings.c3 === 0)) {
-                showToast("אנא דרג/י את כל 3 המדדים בפרויקט זה כדי להמשיך", "warning");
-                return;
+            if (currentProjectIndex === currentProjects.length - 1) {
+                nextBtn.innerHTML = `סיום ושליחה <i class="fa-solid fa-paper-plane"></i>`;
+                nextBtn.className = "btn btn-orange";
+            } else {
+                nextBtn.innerHTML = `הבא <i class="fa-solid fa-chevron-left"></i>`;
+                nextBtn.className = "btn btn-blue";
             }
+        };
 
-            if (currentProjectIndex === projects.length - 1 && direction === 1) {
-                submitFinalRatings();
-                return;
-            }
-
-            currentProjectIndex += direction;
-            updateProjectRatingUI();
-        }
-
-        // הגדרת מאזינים לכוכבים
-        function setupStarListeners() {
-            document.querySelectorAll('.stars').forEach(starsContainer => {
-                const criteria = starsContainer.getAttribute('data-criteria');
-                const stars = starsContainer.querySelectorAll('.star');
-                
-                stars.forEach(star => {
-                    // לחיצה על כוכב
-                    star.onclick = function() {
-                        const score = parseInt(this.getAttribute('data-value'));
-                        const projects = projectsByGender[state.gender];
-                        const currentProj = projects[currentProjectIndex];
-                        
-                        ratings[currentProj.id][criteria] = score;
-                        highlightStars(starsContainer, score);
-                        updateCriteriaFeedback(criteria, score);
-                    };
-                });
-            });
-        }
-
-        // עדכון צבעי הכוכבים בפועל
-        function highlightStars(container, score) {
+        const setupStars = (criteriaId, value) => {
+            const container = document.getElementById(`stars-${criteriaId}`);
             const stars = container.querySelectorAll('.star');
+            const feedback = document.getElementById(`feedback-${criteriaId}`);
+
+            const feedbackTexts = {
+                0: "בחר/י",
+                1: "טעון שיפור 😕",
+                2: "נחמד 🙂",
+                3: "טוב מאוד! 😀",
+                4: "מצוין! 🤩",
+                5: "מדהים ומרגש! 🏆"
+            };
+
+            feedback.textContent = feedbackTexts[value] || "בחר/י";
+            if (value > 0) {
+                feedback.style.color = "var(--success-color)";
+            } else {
+                feedback.style.color = "var(--accent-orange)";
+            }
+
             stars.forEach(star => {
                 const val = parseInt(star.getAttribute('data-value'));
-                if (val <= score) {
+                if (val <= value) {
                     star.classList.add('selected');
                 } else {
                     star.classList.remove('selected');
                 }
             });
-        }
+        };
 
-        // משוב מילולי דינמי לפי מספר הכוכבים
-        function updateCriteriaFeedback(criteria, score) {
-            const feedbackText = {
-                1: "😞 טעון שיפור",
-                2: "😐 נחמד",
-                3: "🙂 טוב מאד",
-                4: "😊 מדהים!",
-                5: "🤩 מושלם!"
+        // הוספת מאזיני אירועים לכוכבים
+        document.querySelectorAll('.stars .star').forEach(star => {
+            star.onclick = function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                const criteriaId = this.parentElement.getAttribute('data-criteria');
+                const p = projectsByGender[state.gender][currentProjectIndex];
+                
+                ratings[p.id][criteriaId] = value;
+                setupStars(criteriaId, value);
             };
-            document.getElementById(`feedback-${criteria}`).innerText = feedbackText[score] || "בחר/י";
-        }
+        });
 
-        // טעינת כוכבים השמורים במשתנה המקומי לפרויקט
-        function loadSavedStars(projectId) {
-            const projRatings = ratings[projectId];
-            ['c1', 'c2', 'c3'].forEach(crit => {
-                const container = document.getElementById(`stars-${crit}`);
-                const score = projRatings[crit];
-                highlightStars(container, score);
-                updateCriteriaFeedback(crit, score);
-            });
-        }
+        window.navigateProject = (direction) => {
+            const currentProjects = projectsByGender[state.gender];
+            const p = currentProjects[currentProjectIndex];
+            const curRating = ratings[p.id];
 
-        // שליחה סופית ושקלול התוצאות
-        function submitFinalRatings() {
-            showCustomModal(
-                "שליחת הדירוג שלך",
-                "האם סיימת לדרג את כל הפרויקטים וברצונך לשלוח את הצבעתך כעת?",
-                "confirm",
-                [
-                    {
-                        text: "כן, שלח!",
-                        class: "btn-blue",
-                        action: () => {
-                            closeModal();
-                            processAndSaveVotes();
-                        }
-                    },
-                    { text: "עדיין לא", class: "btn-secondary", action: closeModal }
-                ]
-            );
-        }
-
-        // שמירה ועיבוד הצבעה ב"דאטה-בייס" המקומי
-        function processAndSaveVotes() {
-            const userRatings = ratings;
-            
-            // עדכון המאגר המקומי בחישובים הממוצעים
-            Object.keys(userRatings).forEach(pId => {
-                const pVotes = userRatings[pId];
-                const totalGiven = pVotes.c1 + pVotes.c2 + pVotes.c3; 
-                
-                if (!allVotesDatabase[pId]) {
-                    allVotesDatabase[pId] = { count: 0, total: 0 };
+            if (direction === 1) {
+                if (curRating.c1 === 0 || curRating.c2 === 0 || curRating.c3 === 0) {
+                    showToast("אנא דרג/י את כל 3 המדדים כדי להמשיך");
+                    return;
                 }
+            }
+
+            currentProjectIndex += direction;
+
+            if (currentProjectIndex >= currentProjects.length) {
+                submitRatings();
+            } else {
+                renderProject();
+            }
+        };
+
+        // שליחה ושמירה בפיירבייס פיירסטור
+        const submitRatings = async () => {
+            showToast("שומר את ההצבעה שלך...");
+            
+            try {
+                const voteId = `${state.school}_${state.name}`.replace(/[\/\s]/g, '_');
+                const timestamp = new Date().toISOString();
                 
-                allVotesDatabase[pId].count += 1; 
-                allVotesDatabase[pId].total += totalGiven; 
-            });
+                const payload = {
+                    studentName: state.name,
+                    school: state.school,
+                    gender: state.gender,
+                    ratings: ratings,
+                    timestamp: timestamp
+                };
 
-            localStorage.setItem('allVotesDatabase', JSON.stringify(allVotesDatabase));
+                if (userAuth) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'votes', voteId);
+                    await setDoc(docRef, payload);
+                } else {
+                    const localVotes = JSON.parse(localStorage.getItem('local_votes') || '[]');
+                    localVotes.push(payload);
+                    localStorage.setItem('local_votes', JSON.stringify(localVotes));
+                }
 
-            // בניית תעודה דיגיטלית אישית
-            document.getElementById('certStudentName').innerText = state.name;
-            document.getElementById('certSchoolName').innerText = state.school;
+                showToast("הצבעתך נשמרה בבטחה!");
+                showCelebration();
 
-            // יצירת הגרפים ללוח התוצאות החי
-            generateLeaderboard();
+            } catch (error) {
+                console.error("שגיאה בשליחת נתונים:", error);
+                showToast("שגיאת רשת, שומר את ההצבעה מקומית");
+                const localVotes = JSON.parse(localStorage.getItem('local_votes') || '[]');
+                localVotes.push({
+                    studentName: state.name,
+                    school: state.school,
+                    gender: state.gender,
+                    ratings: ratings,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('local_votes', JSON.stringify(localVotes));
+                
+                showCelebration();
+            }
+        };
 
-            // הפעלת אפקט חגיגי
+        // חגיגת סיום והצגת לוח תוצאות
+        const showCelebration = async () => {
+            document.getElementById('certStudentName').textContent = state.name;
+            document.getElementById('certSchoolName').textContent = state.school;
+
+            moveStep(5);
             triggerConfetti();
 
-            // מעבר לשלב 5
-            moveStep(5);
-            showToast("הצבעתך נקלטה בהצלחה!", "success");
-        }
+            await renderLeaderboard();
+        };
 
-        // בניית לוח התוצאות מהדאטה-בייס המקומי
-        function generateLeaderboard() {
+        const renderLeaderboard = async () => {
             const container = document.getElementById('leaderboardBars');
-            container.innerHTML = '';
+            container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:10px;"><div class="loader"></div> מחשב תוצאות בזמן אמת...</p>';
 
-            const currentProjects = projectsByGender[state.gender];
-            
-            let scoredProjects = currentProjects.map(proj => {
-                const data = allVotesDatabase[proj.id] || { count: 1, total: 10 };
-                const rawAverage = data.count > 0 ? (data.total / data.count) : 0;
-                const percentage = Math.round((rawAverage / 15) * 100);
-                
-                return {
-                    name: proj.name,
-                    percentage: percentage,
-                    avgScore: (rawAverage / 3).toFixed(1) 
-                };
-            });
+            try {
+                let votes = [];
 
-            scoredProjects.sort((a, b) => b.percentage - a.percentage);
-
-            scoredProjects.forEach(proj => {
-                const item = document.createElement('div');
-                item.className = 'leaderboard-bar-item';
-                item.innerHTML = `
-                    <div class="bar-label">
-                        <span>${proj.name}</span>
-                        <span>⭐ ${proj.avgScore} כוכבים (${proj.percentage}%)</span>
-                    </div>
-                    <div class="bar-outer">
-                        <div class="bar-inner" style="width: 0%;"></div>
-                    </div>
-                `;
-                container.appendChild(item);
-
-                setTimeout(() => {
-                    item.querySelector('.bar-inner').style.width = `${proj.percentage}%`;
-                }, 400);
-            });
-        }
-
-        // ניהול המעברים בין שלבים
-        function moveStep(n) {
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            document.getElementById('step' + n).classList.add('active');
-            
-            // עדכון ה-Progress Bar
-            for(let i = 1; i <= 5; i++) {
-                const pStep = document.getElementById('prog' + i);
-                if (i < n) {
-                    pStep.className = 'progress-step completed';
-                } else if (i === n) {
-                    pStep.className = 'progress-step active';
-                } else {
-                    pStep.className = 'progress-step';
+                if (userAuth) {
+                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'votes');
+                    const snapshot = await getDocs(colRef);
+                    snapshot.forEach(doc => {
+                        votes.push(doc.data());
+                    });
                 }
+
+                const localVotes = JSON.parse(localStorage.getItem('local_votes') || '[]');
+                votes = [...votes, ...localVotes];
+
+                if (votes.length === 0) {
+                    votes = [
+                        { gender: 'Male', ratings: { M1: {c1:4, c2:5, c3:4}, M2: {c1:3, c2:4, c3:5}, M3: {c1:5, c2:3, c3:4}, M4: {c1:4, c2:4, c3:3} } },
+                        { gender: 'Female', ratings: { F1: {c1:5, c2:4, c3:4}, F2: {c1:4, c2:5, c3:4}, F3: {c1:4, c2:3, c3:5}, F4: {c1:3, c2:4, c3:4} } }
+                    ];
+                }
+
+                const currentProjects = projectsByGender[state.gender];
+                const scores = {};
+
+                currentProjects.forEach(p => {
+                    scores[p.id] = { sum: 0, count: 0, name: p.name };
+                });
+
+                votes.forEach(vote => {
+                    if (vote.ratings) {
+                        currentProjects.forEach(p => {
+                            if (vote.ratings[p.id]) {
+                                const r = vote.ratings[p.id];
+                                const avg = (r.c1 + r.c2 + r.c3) / 3;
+                                scores[p.id].sum += avg;
+                                scores[p.id].count += 1;
+                            }
+                        });
+                    }
+                });
+
+                container.innerHTML = '';
+                
+                const sortedScores = Object.keys(scores).map(id => {
+                    const avgScore = scores[id].count > 0 ? (scores[id].sum / scores[id].count).toFixed(1) : "0.0";
+                    return {
+                        id: id,
+                        name: scores[id].name,
+                        score: parseFloat(avgScore)
+                    };
+                }).sort((a, b) => b.score - a.score);
+
+                sortedScores.forEach(item => {
+                    const percentage = (item.score / 5) * 100;
+                    const itemHtml = `
+                        <div class="leaderboard-bar-item">
+                            <div class="bar-label">
+                                <span>${item.name}</span>
+                                <strong>${item.score} / 5.0</strong>
+                            </div>
+                            <div class="bar-outer">
+                                <div class="bar-inner" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const temp = document.createElement('div');
+                    temp.innerHTML = itemHtml;
+                    const el = temp.firstElementChild;
+                    container.appendChild(el);
+
+                    setTimeout(() => {
+                        const bar = el.querySelector('.bar-inner');
+                        if (bar) bar.style.width = `${percentage}%`;
+                    }, 100);
+                });
+
+            } catch (err) {
+                console.error("שגיאה בטעינת לוח תוצאות:", err);
+                container.innerHTML = '<p style="text-align:center; color:#ef4444; padding:10px;">לא הצלחנו לטעון את לוח התוצאות מהשרת כעת.</p>';
             }
+        };
 
-            if(n === 2) {
-                document.getElementById('nameInput').value = '';
-                document.getElementById('results').innerHTML = '';
-            }
-        }
-
-        // אתחול המערכת למצב התחלתי (למשתמש הבא)
-        function restartSystem() {
-            state = { gender: '', school: '', name: '' };
-            ratings = {};
-            currentProjectIndex = 0;
-            
-            document.getElementById('schoolDropdown').value = "";
-            document.getElementById('nameInput').value = "";
-            document.getElementById('results').innerHTML = "";
-            
-            moveStep(1);
-            showToast("המערכת אותחלה למשתמש הבא", "info");
-        }
-
-        // ניהול המודאלים הדינמיים
-        function showCustomModal(title, text, type, actions) {
-            const modal = document.getElementById('custom-modal');
-            const mTitle = document.getElementById('modal-title');
-            const mText = document.getElementById('modal-text');
-            const mIcon = document.getElementById('modal-icon');
-            const mActions = document.getElementById('modal-actions');
-
-            mTitle.innerHTML = title;
-            mText.innerHTML = text;
-
-            if(type === 'error') mIcon.innerHTML = '❌';
-            else if(type === 'confirm') mIcon.innerHTML = '❓';
-            else if(type === 'success') mIcon.innerHTML = '🎉';
-            else mIcon.innerHTML = '💡';
-
-            mActions.innerHTML = '';
-            actions.forEach(btn => {
-                const b = document.createElement('button');
-                b.className = `btn ${btn.class}`;
-                b.style.flex = '1';
-                b.innerHTML = btn.text;
-                b.onclick = btn.action;
-                mActions.appendChild(b);
-            });
-
-            modal.classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('custom-modal').classList.remove('active');
-        }
-
-        // התראות קופצות מהירות
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            let icon = '🔔';
-            if(type === 'success') icon = '✅';
-            if(type === 'warning') icon = '⚠️';
-
-            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        // פונקציית קונפטי עצמאית
-        function triggerConfetti() {
+        // מערכת קונפטי קנבס עצמאית וביצועית
+        const triggerConfetti = () => {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.style.display = 'block';
-            
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
+
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            const colors = ['#0284c7', '#38bdf8', '#f59e0b', '#fbbf24', '#10b981', '#ef4444', '#ec4899'];
             const particles = [];
-            const colors = ['#0284c7', '#fbbf24', '#10b981', '#ef4444', '#a855f7', '#ec4899'];
-            
+
             for (let i = 0; i < 150; i++) {
                 particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
+                    x: Math.random() * width,
+                    y: Math.random() * height - height,
                     r: Math.random() * 6 + 4,
-                    d: Math.random() * canvas.height,
+                    d: Math.random() * height,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     tilt: Math.random() * 10 - 5,
                     tiltAngleIncremental: Math.random() * 0.07 + 0.02,
                     tiltAngle: 0
                 });
             }
-            
+
             let animationFrameId;
-            let frames = 0;
 
             function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                particles.forEach((p, idx) => {
+                ctx.clearRect(0, 0, width, height);
+
+                particles.forEach((p, index) => {
                     p.tiltAngle += p.tiltAngleIncremental;
                     p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
                     p.x += Math.sin(p.tiltAngle);
-                    p.tilt = Math.sin(p.tiltAngle - idx / 3) * 15;
-                    
+                    p.tilt = Math.sin(p.tiltAngle - index / 3) * 15;
+
                     ctx.beginPath();
                     ctx.lineWidth = p.r;
                     ctx.strokeStyle = p.color;
                     ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
                     ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
                     ctx.stroke();
+
+                    if (p.y > height) {
+                        particles[index] = {
+                            x: Math.random() * width,
+                            y: -20,
+                            r: p.r,
+                            d: p.d,
+                            color: p.color,
+                            tilt: p.tilt,
+                            tiltAngleIncremental: p.tiltAngleIncremental,
+                            tiltAngle: p.tiltAngle
+                        };
+                    }
                 });
-                
-                frames++;
-                if (frames < 200) {
-                    animationFrameId = requestAnimationFrame(draw);
-                } else {
-                    canvas.style.display = 'none';
-                    cancelAnimationFrame(animationFrameId);
-                }
+
+                animationFrameId = requestAnimationFrame(draw);
             }
-            
+
             draw();
-        }
 
-        // פאנל ניהול זעיר לבדיקת נתונים ואיפוס הצבעות
-        function openAdminPanel() {
-            let statsText = "<strong>סטטיסטיקות הצבעה:</strong><br><table style='width:100%; border-collapse: collapse; margin-top:10px; font-size:0.9rem;'>";
-            statsText += "<tr style='background:#f1f5f9;'><th style='padding:5px; border:1px solid #cbd5e1;'>שם מיזם</th><th style='padding:5px; border:1px solid #cbd5e1;'>מצביעים</th><th style='padding:5px; border:1px solid #cbd5e1;'>ממוצע נק'</th></tr>";
+            setTimeout(() => {
+                cancelAnimationFrame(animationFrameId);
+                ctx.clearRect(0, 0, width, height);
+                canvas.style.display = 'none';
+            }, 7000);
+        };
+
+        // אתחול המערכת מחדש לתלמיד הבא
+        window.restartSystem = () => {
+            state = { gender: '', school: '', name: '' };
+            currentProjectIndex = 0;
+            ratings = {};
             
-            const allProj = [...projectsByGender.Male, ...projectsByGender.Female];
-            allProj.forEach(p => {
-                const data = allVotesDatabase[p.id] || { count: 0, total: 0 };
-                const avg = data.count > 0 ? (data.total / data.count).toFixed(1) : 0;
-                statsText += `<tr>
-                    <td style='padding:5px; border:1px solid #cbd5e1; text-align:right;'>${p.name}</td>
-                    <td style='padding:5px; border:1px solid #cbd5e1;'>${data.count}</td>
-                    <td style='padding:5px; border:1px solid #cbd5e1;'>${avg} מתוך 15</td>
-                </tr>`;
-            });
-            statsText += "</table>";
+            document.getElementById('nameInput').value = '';
+            document.getElementById('schoolDropdown').value = '';
+            document.getElementById('schoolNextBtn').disabled = true;
 
-            showCustomModal(
-                "פאנל מנהל כנס",
-                statsText,
-                "info",
+            // החזרת שלב 1 חזרה למצב של דף הבית המעוצב
+            showWelcomeScreen();
+
+            moveStep(1);
+        };
+
+        // מודאל מעוצב מותאם אישית
+        window.showModal = (title, text, icon, actions) => {
+            const overlay = document.getElementById('custom-modal');
+            document.getElementById('modal-title').innerHTML = title;
+            document.getElementById('modal-text').innerHTML = text;
+            document.getElementById('modal-icon').textContent = icon || "💡";
+
+            const actionsContainer = document.getElementById('modal-actions');
+            actionsContainer.innerHTML = '';
+
+            actions.forEach(act => {
+                const btn = document.createElement('button');
+                btn.className = `modal-btn ${act.primary ? 'modal-btn-primary' : 'modal-btn-secondary'}`;
+                btn.textContent = act.text;
+                btn.onclick = () => {
+                    overlay.style.display = 'none';
+                    if (act.action) act.action();
+                };
+                actionsContainer.appendChild(btn);
+            });
+
+            overlay.style.display = 'flex';
+        };
+
+        // טוסטים מעוצבים
+        window.showToast = (message) => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        };
+
+        // פאנל ניהול זעיר למטרות בדיקה ומעקב נתונים
+        window.openAdminPanel = async () => {
+            let totalVotes = 0;
+            if (userAuth) {
+                try {
+                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'votes');
+                    const snapshot = await getDocs(colRef);
+                    totalVotes = snapshot.size;
+                } catch (e) {
+                    totalVotes = "שגיאה בחיבור";
+                }
+            } else {
+                totalVotes = JSON.parse(localStorage.getItem('local_votes') || '[]').length;
+            }
+
+            showModal(
+                "פאנל ניהול ובדיקות",
+                `סה"כ הצבעות שנקלטו במערכת: <strong>${totalVotes}</strong><br><br>כאן ניתן לבצע סימולציות, לאפס הצבעות או להזין רשימת תלמידים ידנית למקרה שגוגל שיטס חסום.`,
+                "⚙️",
                 [
-                    {
-                        text: "אפס הצבעות",
-                        class: "btn-secondary",
-                        action: () => {
-                            if (confirm("האם אתה בטוח שברצונך לאפס את כל ההצבעות שנשמרו בדפדפן זה?")) {
-                                localStorage.removeItem('allVotesDatabase');
-                                allVotesDatabase = {
-                                    "M1": { count: 0, total: 0 }, "M2": { count: 0, total: 0 }, "M3": { count: 0, total: 0 }, "M4": { count: 0, total: 0 },
-                                    "F1": { count: 0, total: 0 }, "F2": { count: 0, total: 0 }, "F3": { count: 0, total: 0 }, "F4": { count: 0, total: 0 }
-                                };
-                                showToast("נתוני ההצבעה אופסו", "warning");
-                                closeModal();
+                    { text: "סגור", action: () => {} },
+                    { text: "איפוס הצבעות מקומיות", action: () => {
+                        localStorage.removeItem('local_votes');
+                        showToast("הצבעות מקומיות אופסו בהצלחה");
+                    }},
+                    { text: "הזנה ידנית של CSV", action: () => {
+                        const csvInput = prompt("הדבק כאן את תוכן קובץ ה-CSV שלך (מופרד בפסיקים):");
+                        if (csvInput) {
+                            try {
+                                const parsed = parseCSV(csvInput);
+                                if (parsed && parsed.length > 0) {
+                                    studentsData = parsed;
+                                    showToast("רשימת התלמידים עודכנה בהצלחה באופן ידני!");
+                                    restartSystem();
+                                } else {
+                                    alert("הפורמט שהוכנס אינו תקין.");
+                                }
+                            } catch(e) {
+                                alert("שגיאה בניתוח הנתונים.");
                             }
                         }
-                    },
-                    {
-                        text: "הוסף הצבעת דמו",
-                        class: "btn-blue",
-                        action: () => {
-                            const allKeys = Object.keys(allVotesDatabase);
-                            allKeys.forEach(k => {
-                                allVotesDatabase[k].count += Math.floor(Math.random() * 5) + 2;
-                                allVotesDatabase[k].total += Math.floor(Math.random() * 50) + 15;
-                            });
-                            localStorage.setItem('allVotesDatabase', JSON.stringify(allVotesDatabase));
-                            showToast("נוספו הצבעות סימולציה בהצלחה", "success");
-                            closeModal();
-                        }
-                    },
-                    { text: "סגור", class: "btn-secondary", action: closeModal }
+                    }}
                 ]
             );
-        }
+        };
 
-        // האזנה לאתחול חלון הטעינה
-        window.onload = function() {
-            init();
-        }
+        // תהליך הפעלה בטעינה
+        window.onload = async () => {
+            await initFirebase();
+            await loadStudentsCSV();
+        };
+
     </script>
 </body>
 </html>
