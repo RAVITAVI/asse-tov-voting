@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עשה טוב - מערכת דירוג וניקוד</title>
+    <!-- גופנים -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Heebo:wght@500;800;900&display=swap" rel="stylesheet">
+    <!-- אייקונים -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #0284c7; /* כחול קמפוס חמ"ד */
+            --primary-hover: #0369a1;
+            --accent-orange: #f59e0b; /* כתום כנס עשה טוב */
+            --accent-hover: #d97706;
+            --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #e0f2fe 100%);
+            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.04);
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Assistant', sans-serif;
+            margin: 0;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* מסך פתיחה - Splash Screen */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: none;
+        }
+
+        .splash-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-and-float 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-and-float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.03); }
+        }
+
+        .splash-subtitle {
+            margin-top: 25px;
+            color: #64748b;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            animation: fadeInOut 2s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* באנר עליון קבוע עם לוגואים שקופים */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* לוגו קמפוס חמד בצד ימין */
+        .header-logo-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 48px;
+        }
+
+        /* לוגו עשה טוב במרכז */
+        .header-logo-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 52px;
+        }
+
+        /* מרווח בצד שמאל לאיזון הבאנר */
+        .header-spacer-left {
+            width: 80px;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* מחוון שלבים מעוצב */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            max-width: 440px;
+            margin: 20px auto 10px auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            height: 3px;
+            background: #cbd5e1;
+            width: 100%;
+            top: 15px;
+            right: 50%;
+            z-index: 1;
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .progress-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #64748b;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 5px;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .progress-dot {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 0 10px rgba(2, 132, 199, 0.4);
+        }
+
+        .progress-step.active .progress-label {
+            color: var(--primary-blue);
+        }
+
+        .progress-step.completed .progress-dot {
+            border-color: var(--success-color);
+            background: var(--success-color);
+            color: white;
+        }
+
+        .progress-step.completed .progress-label {
+            color: var(--success-color);
+        }
+
+        .progress-step.completed::after {
+            background: var(--success-color);
+        }
+
+        /* מיכל התוכן הראשי */
+        .container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 35px 30px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            width: 100%;
+            max-width: 460px;
+            border: 1px solid rgba(255,255,255,0.8);
+            position: relative;
+        }
+
+        .step { display: none; }
+        .active { display: block; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { 
+            font-size: 1.8rem; 
+            margin-bottom: 25px; 
+            color: #0f172a; 
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: #334155;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* כפתורים ושדות קלט */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .btn {
+            padding: 16px 20px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .btn-blue { 
+            background: var(--primary-blue); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+        }
+        .btn-blue:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-orange { 
+            background: var(--accent-orange); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+        .btn-orange:hover { 
+            background: var(--accent-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            margin-top: 15px;
+            font-size: 1rem;
+            padding: 12px;
+        }
+        .btn-secondary:hover { background: #e2e8f0; }
+
+        .btn:active { transform: scale(0.97); }
+
+        select, input {
+            width: 100%;
+            padding: 16px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s;
+            text-align: right;
+            font-family: inherit;
+        }
+
+        select:focus, input:focus { 
+            border-color: var(--primary-blue); 
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+
+        /* רשימת תוצאות החיפוש */
+        .results-list {
+            margin-top: 15px;
+            max-height: 220px;
+            overflow-y: auto;
+            text-align: right;
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            padding: 5px;
+        }
+
+        .name-chip {
+            padding: 14px 18px;
+            background: #f8fafc;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .name-chip:hover { 
+            background: #f0fdf4; 
+            border-color: #4ade80;
+            transform: translateX(-4px);
+        }
+
+        .name-chip i {
+            color: #22c55e;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .name-chip:hover i {
+            opacity: 1;
+        }
+
+        /* סקציית דירוג פרויקטים (שלב 4) */
+        .project-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            text-align: right;
+            animation: slideUp 0.3s ease;
+        }
+
+        .project-badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: var(--primary-blue);
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 50px;
+            margin-bottom: 10px;
+        }
+
+        .project-desc {
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .rating-criteria {
+            margin-bottom: 15px;
+        }
+
+        .criteria-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #334155;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .criteria-feedback {
+            font-size: 0.85rem;
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+
+        .stars {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .star {
+            font-size: 1.8rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .star:hover, .star.selected {
+            color: #fbbf24;
+            transform: scale(1.25);
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+        }
+
+        .project-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .step-counter {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #64748b;
+            align-self: center;
+        }
+
+        /* סקציית סיכום ולוח תוצאות (שלב 5) */
+        .success-illustration {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .leaderboard-container {
+            margin: 20px 0;
+            text-align: right;
+        }
+
+        .leaderboard-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #0f172a;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+
+        .leaderboard-bar-item {
+            margin-bottom: 12px;
+        }
+
+        .bar-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bar-outer {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-inner {
+            height: 100%;
+            border-radius: 50px;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, #38bdf8 100%);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.1, 1, 0.1, 1);
+        }
+
+        /* תעודת הוקרה דיגיטלית */
+        .certificate-box {
+            border: 6px double #d97706;
+            background: #fffdfa;
+            padding: 25px;
+            border-radius: 16px;
+            margin: 20px 0;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.1);
+        }
+
+        .cert-seal {
+            font-size: 2.5rem;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .cert-title {
+            font-family: 'Heebo', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #d97706;
+        }
+
+        .cert-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 10px 0;
+            border-bottom: 2px dashed #cbd5e1;
+            display: inline-block;
+            padding-bottom: 3px;
+            min-width: 150px;
+        }
+
+        /* כפתור פאנל ניהול זעיר בפינה */
+        .admin-trigger {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #94a3b8;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+            z-index: 1000;
+            transition: all 0.2s;
+        }
+
+        .admin-trigger:hover {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* קנבס חלקיקים לקונפטי */
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1500;
+            pointer-events: none;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- קנבס לחגיגת הקונפטי בסיום -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- מסך פתיחה ממותג - לוגו קמפוס חמ"ד ענק במרכז -->
+    <div id="splash">
+        <div class="splash-logo-container">
+            <!-- לוגו קמפוס חמ"ד וקטורי מלא -->
+            <svg width="220" height="220" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- עשן/להבות הטיל -->
+                <path d="M100 150 C85 170, 75 180, 70 185 C65 190, 135 190, 130 185 C125 180, 115 170, 100 150 Z" fill="#f59e0b" opacity="0.8"/>
+                <path d="M100 150 C90 165, 85 170, 80 175 C75 180, 125 180, 120 175 C115 170, 110 165, 100 150 Z" fill="#ef4444"/>
+                
+                <!-- ספרים בבסיס -->
+                <rect x="50" y="145" width="100" height="15" rx="4" fill="#1e293b" />
+                <rect x="50" y="152" width="100" height="3" fill="#f59e0b" />
+                <rect x="55" y="133" width="90" height="12" rx="3" fill="#0284c7" />
+                <rect x="55" y="139" width="90" height="3" fill="#ffffff" />
+                
+                <!-- גוף הטיל -->
+                <path d="M100 20 C100 20, 120 60, 120 110 C120 125, 110 135, 100 135 C90 135, 80 125, 80 110 C80 60, 100 20, 100 20 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="4"/>
+                <!-- חרטום הטיל -->
+                <path d="M100 20 C100 20, 112 45, 116 55 C108 58, 92 58, 84 55 C88 45, 100 20, 100 20 Z" fill="#ef4444"/>
+                <!-- כנפיים -->
+                <path d="M80 100 C70 105, 60 115, 65 130 C75 130, 80 125, 80 118 Z" fill="#ef4444"/>
+                <path d="M120 100 C130 105, 140 115, 135 130 C125 130, 120 125, 120 118 Z" fill="#ef4444"/>
+                <!-- חלון עגול -->
+                <circle cx="100" cy="80" r="14" fill="#ffffff" stroke="#0284c7" stroke-width="3"/>
+                <circle cx="96" cy="76" r="4" fill="#38bdf8"/>
+
+                <!-- כיתוב קמפוס חמ"ד מעוצב בעיקול קל מתחת -->
+                <text x="100" y="185" font-family="'Heebo', sans-serif" font-weight="900" font-size="20" fill="#0284c7" text-anchor="middle">קמפוס חמ"ד</text>
+            </svg>
+            <div class="splash-subtitle">חוויה של יזמות, חינוך וערכים</div>
+        </div>
+    </div>
+
+    <!-- האפליקציה הראשית -->
+    <div id="main-app" style="display:none;">
+        <!-- הבאנר החדש: לוגו קמפוס חמד בימין, עשה טוב במרכז -->
+        <header>
+            <!-- ימין: קמפוס חמד בקטן -->
+            <div class="header-logo-right">
+                <svg width="40" height="40" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="145" width="100" height="15" rx="4" fill="#1e293b" />
+                    <rect x="55" y="133" width="90" height="12" rx="3" fill="#0284c7" />
+                    <path d="M100 20 C100 20, 120 60, 120 110 C120 125, 110 135, 100 135 C90 135, 80 125, 80 110 C80 60, 100 20, 100 20 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="4"/>
+                    <path d="M100 20 C100 20, 112 45, 116 55 C108 58, 92 58, 84 55 C88 45, 100 20, 100 20 Z" fill="#ef4444"/>
+                    <circle cx="100" cy="80" r="14" fill="#ffffff" stroke="#0284c7" stroke-width="3"/>
+                </svg>
+                <span class="logo-text" style="font-size: 1.1rem;">קמפוס חמ"ד</span>
+            </div>
+
+            <!-- מרכז: לוגו עשה טוב -->
+            <div class="header-logo-center">
+                <svg width="150" height="50" viewBox="0 0 150 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- עיגול/לב מסתובב מעוצב -->
+                    <circle cx="25" cy="25" r="18" stroke="#f59e0b" stroke-width="4" fill="#ffffff"/>
+                    <path d="M25 15 C28 12, 35 15, 25 33 C15 15, 22 12, 25 15 Z" fill="#ef4444"/>
+                    <!-- כיתוב "עשה טוב" עם פונט Heebo מובנה וצבעים קונטרסטיים -->
+                    <text x="50" y="32" font-family="'Heebo', sans-serif" font-weight="900" font-size="22" fill="#1e293b">עשה</text>
+                    <text x="98" y="32" font-family="'Heebo', sans-serif" font-weight="900" font-size="22" fill="#f59e0b">טוב</text>
+                </svg>
+            </div>
+
+            <!-- שמאל: ספייסר מאוזן מותאם לאפליקציה -->
+            <div class="header-spacer-left">
+                <span>תשפ"ו</span>
+            </div>
+        </header>
+
+        <!-- מחוון שלבים דינמי -->
+        <div class="progress-bar">
+            <div class="progress-step active" id="prog1">
+                <div class="progress-dot">1</div>
+                <div class="progress-label">מגדר</div>
+            </div>
+            <div class="progress-step" id="prog2">
+                <div class="progress-dot">2</div>
+                <div class="progress-label">בית ספר</div>
+            </div>
+            <div class="progress-step" id="prog3">
+                <div class="progress-dot">3</div>
+                <div class="progress-label">זיהוי</div>
+            </div>
+            <div class="progress-step" id="prog4">
+                <div class="progress-dot">4</div>
+                <div class="progress-label">דירוג</div>
+            </div>
+            <div class="progress-step" id="prog5">
+                <div class="progress-dot">5</div>
+                <div class="progress-label">סיום</div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                
+                <!-- שלב 1: בחירת מגדר -->
+                <div id="step1" class="step active">
+                    <h2>ברוכים הבאים!<br>נשמח להכיר, האם את/ה:</h2>
+                    <div class="btn-grid">
+                        <button class="btn btn-blue" onclick="pickGender('Male')">
+                            <i class="fa-solid fa-mars"></i> בן
+                        </button>
+                        <button class="btn btn-orange" onclick="pickGender('Female')">
+                            <i class="fa-solid fa-venus"></i> בת
+                        </button>
+                    </div>
+                </div>
+
+                <!-- שלב 2: בחירת בית ספר -->
+                <div id="step2" class="step">
+                    <h2>מאיזה מוסד לימודים את/ה?</h2>
+                    <select id="schoolDropdown">
+                        <option value="">בחר/י בית ספר...</option>
+                    </select>
+                    <button class="btn btn-blue" onclick="validateSchool()" style="width: 100%;">
+                        המשך לשלב הבא <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-secondary" onclick="moveStep(1)" style="width: 100%;">
+                        <i class="fa-solid fa-arrow-right"></i> חזור לבחירת מגדר
+                    </button>
+                </div>
+
+                <!-- שלב 3: חיפוש ובחירת שם -->
+                <div id="step3" class="step">
+                    <h2>מצא/י את שמך ברשימה:</h2>
+                    <input type="text" id="nameInput" placeholder="הקלד/י שם פרטי או משפחה..." oninput="handleSearch()">
+                    <div id="results" class="results-list"></div>
+                    <button class="btn btn-secondary" onclick="moveStep(2)" style="width:100%;">
+                        <i class="fa-solid fa-arrow-right"></i> חזור לבחירת מוסד
+                    </button>
+                </div>
+
+                <!-- שלב 4: זירת דירוג פרויקטים -->
+                <div id="step4" class="step">
+                    <h2 style="margin-bottom: 10px;">דירוג פרויקטי חסד</h2>
+                    <p style="color:#64748b; margin-top:0; font-size: 0.95rem;">דרג/י כל מיזם לפי 3 המדדים הבאים:</p>
+                    
+                    <div class="project-card">
+                        <div class="project-badge" id="projectBadge">פרויקט 1</div>
+                        <h3 id="projectName">שם הפרויקט</h3>
+                        <div class="project-desc" id="projectDesc">תיאור הפרויקט ומטרותיו.</div>
+                        
+                        <!-- מדד 1 -->
+                        <div class="rating-criteria">
+                            <div class="criteria-title">
+                                <span>❤️ השפעה ומשמעות חברתית</span>
+                                <span class="criteria-feedback" id="feedback-c1">בחר/י</span>
+                            </div>
+                            <div class="stars" id="stars-c1" data-criteria="c1">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
+                        </div>
+
+                        <!-- מדד 2 -->
+                        <div class="rating-criteria">
+                            <div class="criteria-title">
+                                <span>💡 מקוריות, יצירתיות וחדשנות</span>
+                                <span class="criteria-feedback" id="feedback-c2">בחר/י</span>
+                            </div>
+                            <div class="stars" id="stars-c2" data-criteria="c2">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
+                        </div>
+
+                        <!-- מדד 3 -->
+                        <div class="rating-criteria">
+                            <div class="criteria-title">
+                                <span>💪 רמת ביצוע ומסירות הקבוצה</span>
+                                <span class="criteria-feedback" id="feedback-c3">בחר/י</span>
+                            </div>
+                            <div class="stars" id="stars-c3" data-criteria="c3">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-nav">
+                        <button class="btn btn-secondary" id="prevProjectBtn" onclick="navigateProject(-1)" style="margin:0; padding:10px 15px;">
+                            <i class="fa-solid fa-chevron-right"></i> הקודם
+                        </button>
+                        <span class="step-counter" id="projectCounter">1 מתוך 4</span>
+                        <button class="btn btn-orange" id="nextProjectBtn" onclick="navigateProject(1)" style="margin:0; padding:10px 15px;">
+                            הבא <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- שלב 5: סיום, הצגת לוח תוצאות ותעודה -->
+                <div id="step5" class="step">
+                    <div class="success-illustration">🎉</div>
+                    <h2>הדירוג שלך נקלט בהצלחה!</h2>
+                    <p style="color: #475569;">תודה רבה על השתתפותך בכנס "עשה טוב" תשפ"ו. הקול שלך משפיע!</p>
+                    
+                    <!-- הצגת תעודה דיגיטלית הניתנת לצילום מסך -->
+                    <div class="certificate-box">
+                        <div class="cert-seal"><i class="fa-solid fa-award"></i></div>
+                        <div class="cert-title">תעודת הערכה</div>
+                        <div style="font-size:1.1rem; color:#475569; margin-top:5px;">מוענקת באהבה ל-</div>
+                        <div class="cert-name" id="certStudentName">שם התלמיד/ה</div>
+                        <div style="font-size:1rem; color:#475569;">ממוסד <strong id="certSchoolName">שם המוסד</strong></div>
+                        <div style="font-size:0.95rem; color:#d97706; font-weight:bold; margin-top:15px;">
+                            שותף/ה פעיל/ה בעיצוב פרויקט "עשה טוב"
+                        </div>
+                    </div>
+
+                    <!-- לוח תוצאות מדורג חי -->
+                    <div class="leaderboard-container">
+                        <div class="leaderboard-title"><i class="fa-solid fa-chart-bar"></i> מדד הפרויקטים המובילים</div>
+                        <div id="leaderboardBars">
+                            <!-- כאן יתווספו הגרפים -->
+                        </div>
+                    </div>
+
+                    <button class="btn btn-blue" onclick="restartSystem()" style="width:100%; margin-top:20px;">
+                        <i class="fa-solid fa-rotate-left"></i> כניסת תלמיד חדש
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- מודאלים דינמיים -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div id="modal-icon" class="modal-icon">💡</div>
+            <div id="modal-title" class="modal-title">כותרת</div>
+            <div id="modal-text" class="modal-text">תוכן הודעה</div>
+            <div id="modal-actions" class="modal-actions"></div>
+        </div>
+    </div>
+
+    <!-- מכלול התראות צפות -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- כפתור פאנל ניהול (מיועד לבדיקות מנהל) -->
+    <button class="admin-trigger" onclick="openAdminPanel()" title="פאנל מנהל">
+        <i class="fa-solid fa-gear"></i>
+    </button>
+
+    <script>
+        // קישור ה-CSV לגיליון התלמידים בגוגל שיטס שלך
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRTPL47tlU1nXN9NwUXhPMT3-r6jH0KoFhsbxkL6zhTkBPk_Y4VaYwCqdyFBsVFHl_uuuduzSlKNtOx/pub?output=csv';
+        
+        let studentsData = [];
+        let state = { gender: '', school: '', name: '' };
+        
+        // נתוני דירוג נוכחיים
+        let currentProjectIndex = 0;
+        let ratings = {}; // שמירת דירוגים של המשתמש: { projectId: {c1: val, c2: val, c3: val} }
+        
+        // פרויקטים להצבעה - מחולק לפי מגדר
+        const projectsByGender = {
+            Male: [
+                { id: "M1", name: "תיקון עולם הנדסי", desc: "שיפוץ וצביעת מועדוניות ובתים של קשישים בשכונות מצוקה." },
+                { id: "M2", name: "אחים בדם", desc: "מיזם נוער לעידוד תרומות דם וליווי תורמים בפריסה ארצית." },
+                { id: "M3", name: "מחשב לכל ילד", desc: "איסוף, תיקון והפצה של מחשבים משומשים למשפחות מעוטות יכולת." },
+                { id: "M4", name: "משמחי לב", desc: "חברי הרכב מוזיקלי צעיר המשמחים חולים ומאושפזים במחלקות בתי חולים." }
+            ],
+            Female: [
+                { id: "F1", name: "כוחה של מילה", desc: "כתיבת מכתבי חיזוק, אריזת חבילות שי ועידוד משפחות מילואימניקים." },
+                { id: "F2", name: "סיירת חסד", desc: "הקמת בנק מזון קהילתי וחלוקת סלי מזון שבועיים למשפחות נזקקות." },
+                { id: "F3", name: "אחות בלב", desc: "ליווי לימודי ורגשי קבוע לילדים המאושפזים לתקופות ארוכות בבתי חולים." },
+                { id: "F4", name: "שזירת שמחה", desc: "שזירת זרי פרחים שנשארו מאירועים וחלוקתם בימי שישי לבתי אבות וחולים." }
+            ]
+        };
+
+        // מאגר נתונים סימולטיבי לגיבוי מלא במקרה של בעיות CORS/חסימות רשת בדפדפנים מוגנים
+        const mockStudents = [
+            { Gender: "Male", School: "ישיבת נעם ירושלים", FullName: "איתי כהן", Status: "" },
+            { Gender: "Male", School: "ישיבת נעם ירושלים", FullName: "אלעד לוי", Status: "" },
+            { Gender: "Male", School: "ישיבת נעם ירושלים", FullName: "יהונתן מזרחי", Status: "" },
+            { Gender: "Male", School: "אמי\"ת בנים מודיעין", FullName: "שילת אברהם", Status: "" },
+            { Gender: "Male", School: "אמי\"ת בנים מודיעין", FullName: "דניאל יוסף", Status: "" },
+            { Gender: "Male", School: "תיכון תורני בנים חיפה", FullName: "נתנאל מאיר", Status: "" },
+            
+            { Gender: "Female", School: "אולפנת להבה קדומים", FullName: "שרה כהן", Status: "" },
+            { Gender: "Female", School: "אולפנת להבה קדומים", FullName: "רבקה לוי", Status: "" },
+            { Gender: "Female", School: "אולפנת להבה קדומים", FullName: "תאיר אברהמי", Status: "" },
+            { Gender: "Female", School: "אולפנת ישורון פתח תקווה", FullName: "נועה אטיאס", Status: "" },
+            { Gender: "Female", School: "אולפנת ישורון פתח תקווה", FullName: "מיכל חדד", Status: "" },
+            { Gender: "Female", School: "תיכון בנות פלך", FullName: "הדר ששון", Status: "" }
+        ];
+
+        // מאגר כלל ההצבעות המקומיות המאוחסנות ב-Session למניעת כפילויות, בתוספת בסיס הצבעות סימולטיבי ללוח התוצאות
+        let allVotesDatabase = JSON.parse(localStorage.getItem('allVotesDatabase')) || {
+            "M1": { count: 12, total: 145 },
+            "M2": { count: 15, total: 195 },
+            "M3": { count: 8, total: 88 },
+            "M4": { count: 19, total: 240 },
+            "F1": { count: 14, total: 168 },
+            "F2": { count: 22, total: 290 },
+            "F3": { count: 11, total: 130 },
+            "F4": { count: 17, total: 205 }
+        };
+
+        // פונקציית אתחול וטעינת נתונים
+        async function init() {
+            // טיימר אבטחה קבוע - יסיר את ה-Splash Screen וימנע תקיעה גם אם הרשת קורסת
+            const failsafeTimeout = setTimeout(() => {
+                hideSplashAndShowApp();
+                if (studentsData.length === 0) {
+                    studentsData = mockStudents;
+                    showToast("טעינה מאובטחת: נתוני הגיבוי נטענו בהצלחה", "warning");
+                }
+            }, 2500);
+
+            try {
+                // משיכת נתונים בזמן אמת מהגוגל שיטס הממותג
+                const res = await fetch(CSV_URL);
+                if (!res.ok) throw new Error("Network request failed");
+                const text = await res.text();
+                
+                parseData(text);
+                
+                // במקרה שקיבלנו נתון ריק או פירמוט עמודות שגוי
+                if (studentsData.length === 0) {
+                    throw new Error("No valid data parsed from CSV");
+                }
+                
+                clearTimeout(failsafeTimeout);
+                showToast("החיבור לגוגל שיטס בוצע בהצלחה!", "success");
+                hideSplashAndShowApp();
+            } catch (err) {
+                console.warn("Using simulation fallback data due to fetch error/CORS:", err);
+                studentsData = mockStudents;
+                clearTimeout(failsafeTimeout);
+                hideSplashAndShowApp();
+                showToast("מצב סימולציה: נתוני הגיבוי נטענו בהצלחה", "warning");
+            }
+
+            setupStarListeners();
+        }
+
+        // הסרה אלגנטית של מסך הפתיחה
+        function hideSplashAndShowApp() {
+            const splash = document.getElementById('splash');
+            if (splash && splash.style.display !== 'none') {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.getElementById('main-app').style.display = 'block';
+                }, 800);
+            }
+        }
+
+        // המרה בטוחה של קובץ ה-CSV המיובא מהרשת
+        function parseData(csv) {
+            const lines = csv.split('\n').map(l => l.replace('\r', '').trim());
+            if (lines.length === 0) return;
+            
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^\uFEFF/, '')); // הסרת BOM במידה וקיים
+            
+            studentsData = [];
+            for(let i = 1; i < lines.length; i++) {
+                if(!lines[i]) continue;
+                
+                // תמיכה בפיצול פסיקים פנימי במרכאות
+                let row = [];
+                let insideQuote = false;
+                let currentVal = '';
+                
+                for (let c = 0; c < lines[i].length; c++) {
+                    let char = lines[i][c];
+                    if (char === '"') {
+                        insideQuote = !insideQuote;
+                    } else if (char === ',' && !insideQuote) {
+                        row.push(currentVal);
+                        currentVal = '';
+                    } else {
+                        currentVal += char;
+                    }
+                }
+                row.push(currentVal);
+
+                let obj = {};
+                headers.forEach((h, idx) => {
+                    obj[h] = row[idx] ? row[idx].trim().replace(/^"|"$/g, '') : '';
+                });
+
+                if(obj.FullName && obj.School && obj.Gender) {
+                    studentsData.push(obj);
+                }
+            }
+        }
+
+        // מעבר שלבים ובניית רשימת בתי הספר דינמית
+        function pickGender(g) {
+            state.gender = g;
+            
+            // סינון בתי ספר הרלוונטיים למגדר שנבחר
+            const schools = [...new Set(studentsData
+                .filter(s => s.Gender === g)
+                .map(s => s.School))].sort();
+            
+            const drop = document.getElementById('schoolDropdown');
+            drop.innerHTML = '<option value="">בחר/י בית ספר...</option>';
+            
+            schools.forEach(sch => {
+                if(sch) {
+                    const opt = document.createElement('option');
+                    opt.value = sch;
+                    opt.innerText = sch;
+                    drop.appendChild(opt);
+                }
+            });
+            
+            moveStep(2);
+        }
+
+        function validateSchool() {
+            state.school = document.getElementById('schoolDropdown').value;
+            if(!state.school) {
+                showCustomModal("שגיאה", "אנא בחר/י בית ספר מתוך הרשימה כדי להמשיך.", "error", [
+                    { text: "הבנתי", class: "btn-blue", action: closeModal }
+                ]);
+                return;
+            }
+            moveStep(3);
+        }
+
+        // סינון רשימת השמות
+        function handleSearch() {
+            const query = document.getElementById('nameInput').value.trim();
+            const resDiv = document.getElementById('results');
+            
+            if(query.length < 2) { 
+                resDiv.innerHTML = ''; 
+                return; 
+            }
+
+            const matches = studentsData.filter(s => 
+                s.Gender === state.gender && 
+                s.School === state.school && 
+                s.FullName.includes(query)
+            );
+
+            if(matches.length === 0) {
+                resDiv.innerHTML = '<div style="padding:15px; text-align:center; color:#64748b;">לא נמצאו שמות תואמים...</div>';
+                return;
+            }
+
+            resDiv.innerHTML = matches.map(s => `
+                <div class="name-chip" onclick="confirmIdentity('${s.FullName}')">
+                    <span>${s.FullName}</span>
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            `).join('');
+        }
+
+        // מודאל אישור זהות תלמיד
+        function confirmIdentity(name) {
+            state.name = name;
+            showCustomModal(
+                "אימות תלמיד/ה", 
+                `האם את/ה בטוח/ה שזה את/ה:<br><strong style="font-size:1.4rem; color:var(--primary-blue);">${name}</strong> ממוסד <br><strong>${state.school}</strong>?`,
+                "confirm",
+                [
+                    { 
+                        text: "כן, זה אני!", 
+                        class: "btn-blue", 
+                        action: () => {
+                            closeModal();
+                            startRatingPhase();
+                        } 
+                    },
+                    { text: "לא, טעיתי", class: "btn-secondary", action: closeModal }
+                ]
+            );
+        }
+
+        // פתיחת שלב הדירוג
+        function startRatingPhase() {
+            const projects = projectsByGender[state.gender];
+            ratings = {};
+            projects.forEach(p => {
+                ratings[p.id] = { c1: 0, c2: 0, c3: 0 };
+            });
+            
+            currentProjectIndex = 0;
+            updateProjectRatingUI();
+            moveStep(4);
+            
+            showToast(`ברוך הבא ${state.name}! החל שלב הדירוג`, "success");
+        }
+
+        // עדכון תצוגת הפרויקט הנוכחי לדירוג
+        function updateProjectRatingUI() {
+            const projects = projectsByGender[state.gender];
+            const currentProj = projects[currentProjectIndex];
+            
+            document.getElementById('projectBadge').innerText = `פרויקט ${currentProjectIndex + 1} מתוך ${projects.length}`;
+            document.getElementById('projectName').innerText = currentProj.name;
+            document.getElementById('projectDesc').innerText = currentProj.desc;
+            document.getElementById('projectCounter').innerText = `${currentProjectIndex + 1} מתוך ${projects.length}`;
+            
+            // עדכון כפתורי ניווט
+            document.getElementById('prevProjectBtn').style.opacity = currentProjectIndex === 0 ? "0.5" : "1";
+            document.getElementById('prevProjectBtn').disabled = currentProjectIndex === 0;
+            
+            if (currentProjectIndex === projects.length - 1) {
+                document.getElementById('nextProjectBtn').innerHTML = `שלח דירוג וסיים <i class="fa-solid fa-paper-plane"></i>`;
+                document.getElementById('nextProjectBtn').className = "btn btn-orange";
+            } else {
+                document.getElementById('nextProjectBtn').innerHTML = `הבא <i class="fa-solid fa-chevron-left"></i>`;
+                document.getElementById('nextProjectBtn').className = "btn btn-blue";
+            }
+
+            // טעינת בחירות כוכבים קודמות
+            loadSavedStars(currentProj.id);
+        }
+
+        // ניווט בין פרויקטים
+        function navigateProject(direction) {
+            const projects = projectsByGender[state.gender];
+            const currentProj = projects[currentProjectIndex];
+            
+            // בדיקה שדירגו הכל בפרויקט הנוכחי לפני שממשיכים
+            const currentRatings = ratings[currentProj.id];
+            if (direction === 1 && (currentRatings.c1 === 0 || currentRatings.c2 === 0 || currentRatings.c3 === 0)) {
+                showToast("אנא דרג/י את כל 3 המדדים בפרויקט זה כדי להמשיך", "warning");
+                return;
+            }
+
+            if (currentProjectIndex === projects.length - 1 && direction === 1) {
+                submitFinalRatings();
+                return;
+            }
+
+            currentProjectIndex += direction;
+            updateProjectRatingUI();
+        }
+
+        // הגדרת מאזינים לכוכבים
+        function setupStarListeners() {
+            document.querySelectorAll('.stars').forEach(starsContainer => {
+                const criteria = starsContainer.getAttribute('data-criteria');
+                const stars = starsContainer.querySelectorAll('.star');
+                
+                stars.forEach(star => {
+                    // לחיצה על כוכב
+                    star.onclick = function() {
+                        const score = parseInt(this.getAttribute('data-value'));
+                        const projects = projectsByGender[state.gender];
+                        const currentProj = projects[currentProjectIndex];
+                        
+                        ratings[currentProj.id][criteria] = score;
+                        highlightStars(starsContainer, score);
+                        updateCriteriaFeedback(criteria, score);
+                    };
+                });
+            });
+        }
+
+        // עדכון צבעי הכוכבים בפועל
+        function highlightStars(container, score) {
+            const stars = container.querySelectorAll('.star');
+            stars.forEach(star => {
+                const val = parseInt(star.getAttribute('data-value'));
+                if (val <= score) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+
+        // משוב מילולי דינמי לפי מספר הכוכבים
+        function updateCriteriaFeedback(criteria, score) {
+            const feedbackText = {
+                1: "😞 טעון שיפור",
+                2: "😐 נחמד",
+                3: "🙂 טוב מאד",
+                4: "😊 מדהים!",
+                5: "🤩 מושלם!"
+            };
+            document.getElementById(`feedback-${criteria}`).innerText = feedbackText[score] || "בחר/י";
+        }
+
+        // טעינת כוכבים השמורים במשתנה המקומי לפרויקט
+        function loadSavedStars(projectId) {
+            const projRatings = ratings[projectId];
+            ['c1', 'c2', 'c3'].forEach(crit => {
+                const container = document.getElementById(`stars-${crit}`);
+                const score = projRatings[crit];
+                highlightStars(container, score);
+                updateCriteriaFeedback(crit, score);
+            });
+        }
+
+        // שליחה סופית ושקלול התוצאות
+        function submitFinalRatings() {
+            showCustomModal(
+                "שליחת הדירוג שלך",
+                "האם סיימת לדרג את כל הפרויקטים וברצונך לשלוח את הצבעתך כעת?",
+                "confirm",
+                [
+                    {
+                        text: "כן, שלח!",
+                        class: "btn-blue",
+                        action: () => {
+                            closeModal();
+                            processAndSaveVotes();
+                        }
+                    },
+                    { text: "עדיין לא", class: "btn-secondary", action: closeModal }
+                ]
+            );
+        }
+
+        // שמירה ועיבוד הצבעה ב"דאטה-בייס" המקומי
+        function processAndSaveVotes() {
+            const userRatings = ratings;
+            
+            // עדכון המאגר המקומי בחישובים הממוצעים
+            Object.keys(userRatings).forEach(pId => {
+                const pVotes = userRatings[pId];
+                const totalGiven = pVotes.c1 + pVotes.c2 + pVotes.c3; 
+                
+                if (!allVotesDatabase[pId]) {
+                    allVotesDatabase[pId] = { count: 0, total: 0 };
+                }
+                
+                allVotesDatabase[pId].count += 1; 
+                allVotesDatabase[pId].total += totalGiven; 
+            });
+
+            localStorage.setItem('allVotesDatabase', JSON.stringify(allVotesDatabase));
+
+            // בניית תעודה דיגיטלית אישית
+            document.getElementById('certStudentName').innerText = state.name;
+            document.getElementById('certSchoolName').innerText = state.school;
+
+            // יצירת הגרפים ללוח התוצאות החי
+            generateLeaderboard();
+
+            // הפעלת אפקט חגיגי
+            triggerConfetti();
+
+            // מעבר לשלב 5
+            moveStep(5);
+            showToast("הצבעתך נקלטה בהצלחה!", "success");
+        }
+
+        // בניית לוח התוצאות מהדאטה-בייס המקומי
+        function generateLeaderboard() {
+            const container = document.getElementById('leaderboardBars');
+            container.innerHTML = '';
+
+            const currentProjects = projectsByGender[state.gender];
+            
+            let scoredProjects = currentProjects.map(proj => {
+                const data = allVotesDatabase[proj.id] || { count: 1, total: 10 };
+                const rawAverage = data.count > 0 ? (data.total / data.count) : 0;
+                const percentage = Math.round((rawAverage / 15) * 100);
+                
+                return {
+                    name: proj.name,
+                    percentage: percentage,
+                    avgScore: (rawAverage / 3).toFixed(1) 
+                };
+            });
+
+            scoredProjects.sort((a, b) => b.percentage - a.percentage);
+
+            scoredProjects.forEach(proj => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-bar-item';
+                item.innerHTML = `
+                    <div class="bar-label">
+                        <span>${proj.name}</span>
+                        <span>⭐ ${proj.avgScore} כוכבים (${proj.percentage}%)</span>
+                    </div>
+                    <div class="bar-outer">
+                        <div class="bar-inner" style="width: 0%;"></div>
+                    </div>
+                `;
+                container.appendChild(item);
+
+                setTimeout(() => {
+                    item.querySelector('.bar-inner').style.width = `${proj.percentage}%`;
+                }, 400);
+            });
+        }
+
+        // ניהול המעברים בין שלבים
+        function moveStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + n).classList.add('active');
+            
+            // עדכון ה-Progress Bar
+            for(let i = 1; i <= 5; i++) {
+                const pStep = document.getElementById('prog' + i);
+                if (i < n) {
+                    pStep.className = 'progress-step completed';
+                } else if (i === n) {
+                    pStep.className = 'progress-step active';
+                } else {
+                    pStep.className = 'progress-step';
+                }
+            }
+
+            if(n === 2) {
+                document.getElementById('nameInput').value = '';
+                document.getElementById('results').innerHTML = '';
+            }
+        }
+
+        // אתחול המערכת למצב התחלתי (למשתמש הבא)
+        function restartSystem() {
+            state = { gender: '', school: '', name: '' };
+            ratings = {};
+            currentProjectIndex = 0;
+            
+            document.getElementById('schoolDropdown').value = "";
+            document.getElementById('nameInput').value = "";
+            document.getElementById('results').innerHTML = "";
+            
+            moveStep(1);
+            showToast("המערכת אותחלה למשתמש הבא", "info");
+        }
+
+        // ניהול המודאלים הדינמיים
+        function showCustomModal(title, text, type, actions) {
+            const modal = document.getElementById('custom-modal');
+            const mTitle = document.getElementById('modal-title');
+            const mText = document.getElementById('modal-text');
+            const mIcon = document.getElementById('modal-icon');
+            const mActions = document.getElementById('modal-actions');
+
+            mTitle.innerHTML = title;
+            mText.innerHTML = text;
+
+            if(type === 'error') mIcon.innerHTML = '❌';
+            else if(type === 'confirm') mIcon.innerHTML = '❓';
+            else if(type === 'success') mIcon.innerHTML = '🎉';
+            else mIcon.innerHTML = '💡';
+
+            mActions.innerHTML = '';
+            actions.forEach(btn => {
+                const b = document.createElement('button');
+                b.className = `btn ${btn.class}`;
+                b.style.flex = '1';
+                b.innerHTML = btn.text;
+                b.onclick = btn.action;
+                mActions.appendChild(b);
+            });
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.remove('active');
+        }
+
+        // התראות קופצות מהירות
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '🔔';
+            if(type === 'success') icon = '✅';
+            if(type === 'warning') icon = '⚠️';
+
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // פונקציית קונפטי עצמאית
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.style.display = 'block';
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            const colors = ['#0284c7', '#fbbf24', '#10b981', '#ef4444', '#a855f7', '#ec4899'];
+            
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 6 + 4,
+                    d: Math.random() * canvas.height,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    tilt: Math.random() * 10 - 5,
+                    tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+                    tiltAngle: 0
+                });
+            }
+            
+            let animationFrameId;
+            let frames = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach((p, idx) => {
+                    p.tiltAngle += p.tiltAngleIncremental;
+                    p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+                    p.x += Math.sin(p.tiltAngle);
+                    p.tilt = Math.sin(p.tiltAngle - idx / 3) * 15;
+                    
+                    ctx.beginPath();
+                    ctx.lineWidth = p.r;
+                    ctx.strokeStyle = p.color;
+                    ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                    ctx.stroke();
+                });
+                
+                frames++;
+                if (frames < 200) {
+                    animationFrameId = requestAnimationFrame(draw);
+                } else {
+                    canvas.style.display = 'none';
+                    cancelAnimationFrame(animationFrameId);
+                }
+            }
+            
+            draw();
+        }
+
+        // פאנל ניהול זעיר לבדיקת נתונים ואיפוס הצבעות
+        function openAdminPanel() {
+            let statsText = "<strong>סטטיסטיקות הצבעה:</strong><br><table style='width:100%; border-collapse: collapse; margin-top:10px; font-size:0.9rem;'>";
+            statsText += "<tr style='background:#f1f5f9;'><th style='padding:5px; border:1px solid #cbd5e1;'>שם מיזם</th><th style='padding:5px; border:1px solid #cbd5e1;'>מצביעים</th><th style='padding:5px; border:1px solid #cbd5e1;'>ממוצע נק'</th></tr>";
+            
+            const allProj = [...projectsByGender.Male, ...projectsByGender.Female];
+            allProj.forEach(p => {
+                const data = allVotesDatabase[p.id] || { count: 0, total: 0 };
+                const avg = data.count > 0 ? (data.total / data.count).toFixed(1) : 0;
+                statsText += `<tr>
+                    <td style='padding:5px; border:1px solid #cbd5e1; text-align:right;'>${p.name}</td>
+                    <td style='padding:5px; border:1px solid #cbd5e1;'>${data.count}</td>
+                    <td style='padding:5px; border:1px solid #cbd5e1;'>${avg} מתוך 15</td>
+                </tr>`;
+            });
+            statsText += "</table>";
+
+            showCustomModal(
+                "פאנל מנהל כנס",
+                statsText,
+                "info",
+                [
+                    {
+                        text: "אפס הצבעות",
+                        class: "btn-secondary",
+                        action: () => {
+                            if (confirm("האם אתה בטוח שברצונך לאפס את כל ההצבעות שנשמרו בדפדפן זה?")) {
+                                localStorage.removeItem('allVotesDatabase');
+                                allVotesDatabase = {
+                                    "M1": { count: 0, total: 0 }, "M2": { count: 0, total: 0 }, "M3": { count: 0, total: 0 }, "M4": { count: 0, total: 0 },
+                                    "F1": { count: 0, total: 0 }, "F2": { count: 0, total: 0 }, "F3": { count: 0, total: 0 }, "F4": { count: 0, total: 0 }
+                                };
+                                showToast("נתוני ההצבעה אופסו", "warning");
+                                closeModal();
+                            }
+                        }
+                    },
+                    {
+                        text: "הוסף הצבעת דמו",
+                        class: "btn-blue",
+                        action: () => {
+                            const allKeys = Object.keys(allVotesDatabase);
+                            allKeys.forEach(k => {
+                                allVotesDatabase[k].count += Math.floor(Math.random() * 5) + 2;
+                                allVotesDatabase[k].total += Math.floor(Math.random() * 50) + 15;
+                            });
+                            localStorage.setItem('allVotesDatabase', JSON.stringify(allVotesDatabase));
+                            showToast("נוספו הצבעות סימולציה בהצלחה", "success");
+                            closeModal();
+                        }
+                    },
+                    { text: "סגור", class: "btn-secondary", action: closeModal }
+                ]
+            );
+        }
+
+        // האזנה לאתחול חלון הטעינה
+        window.onload = function() {
+            init();
+        }
+    </script>
+</body>
+</html>
