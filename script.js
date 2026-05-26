@@ -26,32 +26,41 @@ let studentName = "";
 let allStudentsInSchool = []; // רשימת השמות המיועדת להשלמה האוטומטית
 let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמיד באמת בחר מהרשימה?
 
-// רשימת בתי הספר המובנית בקוד
+// רשימת בתי הספר המעודכנת והמדויקת לפי השינויים שלך
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
     { schoolName: "אולפנת אמית שחר", gender: "Female" },
-    { schoolName: "אולפנית שחם", gender: "Female" },
+    { schoolName: "אולפנת שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
-    { schoolName: "לוינסון בנות", gender: "Female" },
-    { schoolName: "אולפנית אמונה אלישבע", gender: "Female" },
+    { schoolName: "לינסון בנות", gender: "Female" },
+    { schoolName: "אולפנת אמונה אלישבע", gender: "Female" },
     { schoolName: "פלך זכרון יעקב", gender: "Female" },
     { schoolName: "ישיבה תנ\"כית זכרון יעקב", gender: "Male" },
     { schoolName: "ישיבה תיכונית קרית אתא", gender: "Male" },
     { schoolName: "יבנה", gender: "Male" },
-    { schoolName: "לוינסון בנים", gender: "Male" },
+    { schoolName: "לינסון בנים", gender: "Male" },
     { schoolName: "נתיבות דרור", gender: "Male" },
     { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
 ];
+
+// פונקציית עזר חכמה לניקוי אגרסיבי של גרשיים, מירכאות ורווחים כפולים כדי להבטיח התאמה
+function cleanStringForComparison(str) {
+    if (!str) return "";
+    return str
+        .replace(/[\"\'\`\״\׳\‟\”\“]/g, '') // מוחק את כל סוגי הגרשיים, המירכאות והגרשים למיניהם
+        .replace(/\s+/g, ' ')             // הופך רווחים כפולים לרווח יחיד
+        .trim()                           // מוחק רווחים מהקצוות
+        .toLowerCase();
+}
 
 // פונקציה לשליפת תלמידים לפי בית ספר ומגדר מתוך גיליון "Students"
 function fetchStudentsForSchool(schoolName, genderParam) {
     const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (!matches || !matches[1]) return;
     
-    // משיכת גיליון Students כפורמט CSV ישיר
     const csvUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/gviz/tq?tqx=out:csv&sheet=Students`;
 
     fetch(csvUrl)
@@ -60,13 +69,12 @@ function fetchStudentsForSchool(schoolName, genderParam) {
             const lines = text.split(/\r?\n/);
             allStudentsInSchool = [];
             
-            // הגדרת המגדר להתאמה מדויקת (Male / Female) כפי שמופיע בשיטס שלך
             const targetGender = genderParam.trim().toLowerCase();
+            const cleanTargetSchool = cleanStringForComparison(schoolName);
             
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                // פירוק העמודות תוך ניקוי מירכאות כפולות שגוגל מוסיף מסביב לטקסט
                 const columns = lines[i].split(',').map(col => col.replace(/^"|"$/g, '').trim());
                 
                 const currentName = columns[1];   // עמודה B - FullName
@@ -74,9 +82,9 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                 const currentGender = columns[4]; // עמודה E - Gender
                 
                 if (currentSchool && currentGender) {
-                    // השוואה נקייה ללא תלות באותיות גדולות/קטנות או רווחים מיותרים
-                    if (currentSchool.toLowerCase() === schoolName.trim().toLowerCase() && 
-                        currentGender.toLowerCase() === targetGender) {
+                    const cleanCurrentSchool = cleanStringForComparison(currentSchool);
+                    
+                    if (cleanCurrentSchool === cleanTargetSchool && currentGender.toLowerCase() === targetGender) {
                         if (currentName) {
                             allStudentsInSchool.push(currentName);
                         }
@@ -132,11 +140,8 @@ nextBtn.addEventListener('click', () => {
         alert("אנא בחר בית ספר לפני ההמשך");
     } else {
         selectedSchool = schoolDropdown.value; 
-        
-        // טעינת רשימת השמות של בית הספר והמגדר שנבחרו
         fetchStudentsForSchool(selectedSchool, selectedGender);
         
-        // איפוס נתונים ישנים במעבר למסך השם
         studentNameInput.value = "";
         suggestionsContainer.innerHTML = "";
         suggestionsContainer.style.display = 'none';
@@ -159,7 +164,6 @@ studentNameInput.addEventListener('input', (e) => {
         return;
     }
 
-    // סינון שמות שמכילים את מה שהתלמיד הקליד
     const filteredNames = allStudentsInSchool.filter(name => name.includes(userInput));
 
     if (filteredNames.length > 0) {
@@ -172,7 +176,7 @@ studentNameInput.addEventListener('input', (e) => {
             div.addEventListener('click', () => {
                 studentNameInput.value = name;
                 suggestionsContainer.style.display = 'none';
-                isNameSelectedFromList = true; // סימון שהשם נבחר בצורה חוקית!
+                isNameSelectedFromList = true; 
             });
             suggestionsContainer.appendChild(div);
         });
@@ -181,7 +185,6 @@ studentNameInput.addEventListener('input', (e) => {
     }
 });
 
-// סגירת רשימת ההצעות אם לוחצים מחוץ לכרטיסייה
 document.addEventListener('click', (e) => {
     if (e.target !== studentNameInput) {
         suggestionsContainer.style.display = 'none';
