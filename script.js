@@ -16,7 +16,7 @@ const submitNameBtn = document.getElementById('submitNameBtn');
 const backToGenderBtn = document.getElementById('backToGenderBtn');
 const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 
-// קישור בסיס הנתונים המרכזי בגוגל שיטס
+// קישור בסיס הנתונים המרכזי המעודכן שלך בגוגל שיטס
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
 
 // משתנים גלובליים לשמירת נתוני התלמיד
@@ -51,29 +51,39 @@ function fetchStudentsForSchool(schoolName, genderParam) {
     const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (!matches || !matches[1]) return;
     
+    // משיכת גיליון Students כפורמט CSV ישיר
     const csvUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/gviz/tq?tqx=out:csv&sheet=Students`;
 
     fetch(csvUrl)
         .then(response => response.text())
         .then(text => {
-            const lines = text.split('\n');
+            const lines = text.split(/\r?\n/);
             allStudentsInSchool = [];
             
-            const targetGender = genderParam === "Male" ? "male" : "female";
+            // הגדרת המגדר להתאמה מדויקת (Male / Female) כפי שמופיע בשיטס שלך
+            const targetGender = genderParam.trim().toLowerCase();
             
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
+                
+                // פירוק העמודות תוך ניקוי מירכאות כפולות שגוגל מוסיף מסביב לטקסט
                 const columns = lines[i].split(',').map(col => col.replace(/^"|"$/g, '').trim());
                 
-                const currentName = columns[1];   // עמודה B - שם מלא
-                const currentSchool = columns[2]; // עמודה C - שם בית ספר
-                const currentGender = columns[4]; // עמודה E - מגדר
+                const currentName = columns[1];   // עמודה B - FullName
+                const currentSchool = columns[2]; // עמודה C - School
+                const currentGender = columns[4]; // עמודה E - Gender
                 
-                if (currentSchool === schoolName && currentGender && currentGender.toLowerCase() === targetGender) {
-                    if (currentName) allStudentsInSchool.push(currentName);
+                if (currentSchool && currentGender) {
+                    // השוואה נקייה ללא תלות באותיות גדולות/קטנות או רווחים מיותרים
+                    if (currentSchool.toLowerCase() === schoolName.trim().toLowerCase() && 
+                        currentGender.toLowerCase() === targetGender) {
+                        if (currentName) {
+                            allStudentsInSchool.push(currentName);
+                        }
+                    }
                 }
             }
-            console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים.");
+            console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים מבית הספר " + schoolName);
         })
         .catch(error => console.error("שגיאה במשיכת רשימת התלמידים:", error));
 }
@@ -116,18 +126,21 @@ backToGenderBtn.addEventListener('click', () => {
     genderScreen.classList.add('active');
 });
 
+// לוגיקת כפתור המשך של מסך בית הספר
 nextBtn.addEventListener('click', () => {
     if (schoolDropdown.value === "") {
         alert("אנא בחר בית ספר לפני ההמשך");
     } else {
         selectedSchool = schoolDropdown.value; 
+        
+        // טעינת רשימת השמות של בית הספר והמגדר שנבחרו
         fetchStudentsForSchool(selectedSchool, selectedGender);
         
         // איפוס נתונים ישנים במעבר למסך השם
         studentNameInput.value = "";
         suggestionsContainer.innerHTML = "";
         suggestionsContainer.style.display = 'none';
-        isNameSelectedFromList = false; // איפוס חובת הבחירה
+        isNameSelectedFromList = false;
 
         schoolScreen.classList.remove('active');
         nameScreen.classList.add('active');
@@ -139,13 +152,14 @@ nextBtn.addEventListener('click', () => {
 studentNameInput.addEventListener('input', (e) => {
     const userInput = e.target.value.trim();
     suggestionsContainer.innerHTML = '';
-    isNameSelectedFromList = false; // ברגע שהתלמיד מקליד או משנה משהו, הבחירה מתבטלת עד שילחץ שוב על פריט ברשימה
+    isNameSelectedFromList = false; 
     
     if (userInput.length < 2) {
         suggestionsContainer.style.display = 'none';
         return;
     }
 
+    // סינון שמות שמכילים את מה שהתלמיד הקליד
     const filteredNames = allStudentsInSchool.filter(name => name.includes(userInput));
 
     if (filteredNames.length > 0) {
@@ -158,7 +172,7 @@ studentNameInput.addEventListener('input', (e) => {
             div.addEventListener('click', () => {
                 studentNameInput.value = name;
                 suggestionsContainer.style.display = 'none';
-                isNameSelectedFromList = true; // סימון שהשם נבחר בצורה חוקית מתוך הרשימה!
+                isNameSelectedFromList = true; // סימון שהשם נבחר בצורה חוקית!
             });
             suggestionsContainer.appendChild(div);
         });
@@ -179,7 +193,7 @@ backToSchoolBtn.addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
-// כפתור המשך ממסך הקלדת שם - עם בדיקת חובת בחירה קשיחה
+// כפתור המשך ממסך הקלדת שם
 submitNameBtn.addEventListener('click', () => {
     const currentInputValue = studentNameInput.value.trim();
     
@@ -188,17 +202,13 @@ submitNameBtn.addEventListener('click', () => {
         return;
     }
     
-    // בדיקה כפולה: האם לחץ על הרשימה והאם השם הנוכחי תואם במדויק לשם ברשימה
     if (!isNameSelectedFromList || !allStudentsInSchool.includes(currentInputValue)) {
         alert("חובה לבחור את השם המלא שלך מתוך רשימת השמות המוקפצת!");
         return;
     }
 
-    // אם עבר את הבדיקות - שומרים וממשיכים
     studentName = currentInputValue;
     alert(`שם מאומת בהצלחה!\nמגדר: ${selectedGender === 'Male' ? 'בן' : 'בת'}\nבית ספר: ${selectedSchool}\nשם: ${studentName}`);
-    
-    // כאן נפתח את מסך הבחירה/הצבעה של המיזמים בשלב הבא
 });
 
 document.getElementById('adminBtn').addEventListener('click', () => {
