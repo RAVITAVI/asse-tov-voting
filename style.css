@@ -23,7 +23,7 @@ p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
 .btn-boy { background-color: #357abd; }
 .btn-girl { background-color: #9b59b6; }
 
-.school-select {
+.school-select, .name-input {
     width: 100%;
     padding: 15px;
     margin-top: 20px;
@@ -31,9 +31,15 @@ p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
     border: 1px solid #ccc;
     font-size: 1.1rem;
     background-color: white;
+    text-align: center;
 }
 
-/* עיצוב כפתור חזור החדש - ממורכז ובולט */
+.name-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.2);
+}
+
 .back-btn {
     display: inline-block;
     margin-top: 15px;
@@ -47,4 +53,44 @@ p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
 .back-btn:hover {
     color: #007bff;
     text-decoration: underline;
+}
+
+/* עיצוב תיבת רשימת ההצעות החכמה */
+.autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.suggestion-item {
+    padding: 12px;
+    cursor: pointer;
+    text-align: right;
+    border-bottom: 1px solid #eee;
+    font-size: 1rem;
+    color: #333;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f7ff;
+    color: #007bff;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
 }
