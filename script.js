@@ -1,33 +1,58 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: sans-serif; background-color: #f4f7f6; height: 100vh; overflow-x: hidden; }
+const openingScreen = document.getElementById('opening-screen');
+const genderScreen = document.getElementById('gender-screen');
+const schoolScreen = document.getElementById('school-screen');
+const schoolQuestion = document.getElementById('school-question');
+const schoolDropdown = document.getElementById('school-dropdown');
+const nextBtn = document.getElementById('nextBtn');
 
-.screen { display: none !important; width: 100%; height: 100%; flex-direction: column; }
-.screen.active { display: flex !important; }
+// עדכני כאן את הכתובת שקיבלת מה-Deploy ב-Apps Script
+const GOOGLE_SHEET_URL = "הדביקי_כאן_את_הכתובת_שלך";
 
-/* מסך פתיחה */
-#opening-screen { justify-content: center; align-items: center; text-align: center; padding: 20px; }
-.logo { width: 180px; margin-bottom: 20px; }
-h1 { font-size: 1.6rem; color: #0056b3; margin-bottom: 10px; }
-p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
-.start-btn { padding: 15px 50px; font-size: 1.2rem; background-color: #007bff; color: white; border: none; border-radius: 50px; cursor: pointer; }
-.admin-gear { position: absolute; top: 15px; left: 15px; border: none; background: none; opacity: 0.3; cursor: pointer; font-size: 1.5rem; }
+document.getElementById('startBtn').addEventListener('click', () => {
+    openingScreen.classList.remove('active');
+    genderScreen.classList.add('active');
+});
 
-/* באנר */
-.banner { width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: white; border-bottom: 2px solid #ddd; }
-.logo-right { height: 50px; }
-.logo-center { height: 60px; }
-.banner-text { font-size: 0.8rem; font-weight: bold; }
-
-/* כרטיסים ורשימות */
-.main-wrapper { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-.card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-.gender-buttons { display: flex; gap: 15px; margin-top: 20px; }
-.btn-gender { flex: 1; padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
-.btn-boy { background-color: #357abd; }
-.btn-girl { background-color: #9b59b6; }
-
-.school-btn { 
-    display: block; width: 100%; padding: 15px; margin: 10px 0; 
-    background-color: #28a745; color: white; border: none; 
-    border-radius: 10px; font-size: 1.1rem; cursor: pointer; text-align: center;
+function loadSchools(gender) {
+    fetch(GOOGLE_SHEET_URL)
+        .then(response => response.json())
+        .then(data => {
+            const filteredSchools = data.filter(item => item.gender.toLowerCase() === gender.toLowerCase());
+            schoolDropdown.innerHTML = '<option value="">בחר בית ספר...</option>';
+            filteredSchools.forEach(school => {
+                const option = document.createElement("option");
+                option.value = school.schoolName;
+                option.innerText = school.schoolName;
+                schoolDropdown.appendChild(option);
+            });
+        });
 }
+
+document.getElementById('boyBtn').addEventListener('click', () => {
+    schoolQuestion.innerText = "מאיזה בית ספר אתה לומד?";
+    loadSchools("male");
+    genderScreen.classList.remove('active');
+    schoolScreen.classList.add('active');
+});
+
+document.getElementById('girlBtn').addEventListener('click', () => {
+    schoolQuestion.innerText = "מאיזה בית ספר את לומדת?";
+    loadSchools("female");
+    genderScreen.classList.remove('active');
+    schoolScreen.classList.add('active');
+});
+
+nextBtn.addEventListener('click', () => {
+    if (schoolDropdown.value === "") {
+        alert("אנא בחר בית ספר לפני ההמשך");
+    } else {
+        alert("נבחר: " + schoolDropdown.value);
+    }
+});
+
+document.getElementById('adminBtn').addEventListener('click', () => {
+    const password = prompt("הכנס סיסמת מנהל:");
+    if (password === "02062026") {
+        alert("ברוך הבא למערכת הניהול");
+    }
+});
