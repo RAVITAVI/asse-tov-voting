@@ -10,6 +10,7 @@ const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
 const studentNameInput = document.getElementById('student-name-input');
 const suggestionsContainer = document.getElementById('suggestions-container');
+const projectsListBody = document.getElementById('projects-list-body'); // גוף טבלת המיזמים
 
 // כפתורים
 const nextBtn = document.getElementById('nextBtn');
@@ -104,6 +105,74 @@ function fetchStudentsForSchool(schoolName, genderParam) {
             console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים מבית הספר " + schoolName);
         })
         .catch(error => console.error("שגיאה במשיכת רשימת התלמידים:", error));
+}
+
+// פונקציה: משיכת מיזמים מגיליון "projects" וסינון לפי המגדר שנבחר
+function fetchAndDisplayProjects(genderParam) {
+    const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (!matches || !matches[1]) return;
+    
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/gviz/tq?tqx=out:csv&sheet=projects`;
+
+    fetch(csvUrl)
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split(/\r?\n/);
+            projectsListBody.innerHTML = ""; // איפוס הטבלה הישנה במסך
+            
+            const targetGender = genderParam.trim().toLowerCase(); // זכר או נקבה
+            let counter = 0;
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                // פירוק העמודות לפי המבנה המעודכן שלך
+                const columns = lines[i].split(',').map(col => col.replace(/^"|"$/g, '').trim());
+                
+                const projectNo = columns[1];     // עמודה B - project_no
+                const projectTitle = columns[2];  // עמודה C - title
+                const projectCourse = columns[3]; // עמודה D - Course
+                const projectCreators = columns[4]; // עמודה E - name (שמות היזמים)
+                const projectGender = columns[5]; // עמודה F - gender
+                
+                // סינון: רק מיזמים שהמגדר שלהם בשיטס שווה למגדר של התלמיד/ה הנוכחי/ת
+                if (projectGender && projectGender.toLowerCase() === targetGender) {
+                    counter++;
+                    
+                    // יצירת שורה חדשה בטבלה
+                    const tr = document.createElement('tr');
+                    
+                    // תא 1: מספר המיזם
+                    const tdNo = document.createElement('td');
+                    tdNo.style.padding = "10px";
+                    tdNo.innerText = projectNo || "";
+                    
+                    // תא 2: שם המיזם (כותרת)
+                    const tdTitle = document.createElement('td');
+                    tdTitle.style.padding = "10px";
+                    tdTitle.innerText = projectTitle || "";
+                    
+                    // תא 3: קורס
+                    const tdCourse = document.createElement('td');
+                    tdCourse.style.padding = "10px";
+                    tdCourse.innerText = projectCourse || "";
+
+                    // תא 4: שמות היזמים
+                    const tdCreators = document.createElement('td');
+                    tdCreators.style.padding = "10px";
+                    tdCreators.innerText = projectCreators || "";
+                    
+                    // חיבור התאים לשורה ואז לגוף הטבלה
+                    tr.appendChild(tdNo);
+                    tr.appendChild(tdTitle);
+                    tr.appendChild(tdCourse);
+                    tr.appendChild(tdCreators);
+                    projectsListBody.appendChild(tr);
+                }
+            }
+            console.log(`נטענו בהצלחה ${counter} מיזמים המתאימים למגדר: ${genderParam}`);
+        })
+        .catch(error => console.error("שגיאה במשיכת רשימת המיזמים:", error));
 }
 
 document.getElementById('startBtn').addEventListener('click', () => {
@@ -206,7 +275,7 @@ backToSchoolBtn.addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
-// כפתור המשך ממסך הקלדת שם עם בדיקת ה-has_voted המבוקשת
+// כפתור המשך ממסך הקלדת שם עם בדיקת ה-has_voted
 submitNameBtn.addEventListener('click', () => {
     const currentInputValue = studentNameInput.value.trim();
     
@@ -224,16 +293,16 @@ submitNameBtn.addEventListener('click', () => {
     const currentStudentObj = allStudentsData.find(student => student.name === currentInputValue);
 
     if (currentStudentObj && currentStudentObj.hasVoted === true) {
-        // אם זה TRUE - מודיע ומפסיק ריצה
         alert("מותר להצביע רק פעם אחת - תודה על השתתפותך");
         return; 
     }
 
-    // אם זה FALSE:
     alert("לא הצביע");
     studentName = currentInputValue;
     
-    // מעבר למסך הבא: בחירת היוזמה לדירוג
+    // הפעלת פונקציית טעינת המיזמים המעודכנת
+    fetchAndDisplayProjects(selectedGender);
+    
     nameScreen.classList.remove('active');
     votingScreen.classList.add('active');
     
