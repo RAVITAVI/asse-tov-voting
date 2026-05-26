@@ -1,28 +1,29 @@
-const openingScreen = document.getElementById('opening-screen');
-const genderScreen = document.getElementById('gender-screen');
-const schoolScreen = document.getElementById('school-screen');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; height: 100vh; overflow-x: hidden; }
 
-// מעבר ממסך פתיחה למגדר
-document.getElementById('startBtn').addEventListener('click', () => {
-    openingScreen.classList.remove('active');
-    genderScreen.classList.add('active');
-});
+.screen { display: none; width: 100%; height: 100%; flex-direction: column; }
+.screen.active { display: flex; }
 
-// מעבר ממסך מגדר למסך בית ספר (בשני הכפתורים)
-document.getElementById('boyBtn').addEventListener('click', () => {
-    genderScreen.classList.remove('active');
-    schoolScreen.classList.add('active');
-});
+/* מסך פתיחה - ללא שינוי */
+#opening-screen { justify-content: center; align-items: center; text-align: center; padding: 20px; }
+.logo { width: 180px; margin-bottom: 20px; }
+h1 { font-size: 1.6rem; color: #0056b3; margin-bottom: 10px; }
+p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
+.start-btn { padding: 15px 50px; font-size: 1.2rem; background-color: #007bff; color: white; border: none; border-radius: 50px; cursor: pointer; }
+.admin-gear { position: absolute; top: 15px; left: 15px; border: none; background: none; opacity: 0.3; cursor: pointer; font-size: 1.5rem; }
 
-document.getElementById('girlBtn').addEventListener('click', () => {
-    genderScreen.classList.remove('active');
-    schoolScreen.classList.add('active');
-});
+/* באנר חדש ומדויק */
+.banner { width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: white; border-bottom: 2px solid #ddd; }
+.logo-right { height: 50px; width: auto; }
+.logo-center { height: 75px; width: auto; }
+.banner-text { font-size: 0.9rem; font-weight: bold; color: #333; }
 
-// לוגיקת מנהל
-document.getElementById('adminBtn').addEventListener('click', () => {
-    const password = prompt("הכנס סיסמת מנהל:");
-    if (password === "02062026") {
-        alert("ברוך הבא למערכת הניהול");
-    }
-});
+/* אזור מותחם למסך מגדר */
+.main-wrapper { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+.card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
+.card h2 { margin-bottom: 30px; color: #333; }
+.gender-buttons { display: flex; gap: 15px; }
+.btn-gender { flex: 1; padding: 20px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; color: white; transition: 0.3s; }
+.btn-boy { background-color: #357abd; }
+.btn-girl { background-color: #9b59b6; }
+.btn-gender:active { transform: scale(0.95); }
