@@ -26,7 +26,7 @@ let studentName = "";
 let allStudentsInSchool = []; // רשימת השמות המיועדת להשלמה האוטומטית
 let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמיד באמת בחר מהרשימה?
 
-// רשימת בתי הספר המעודכנת (מתוקן לאולפנית שחם ואולפנית אמונה אלישבע)
+// רשימת בתי הספר המעודכנת (מתוקן ללוינסון בנים ולוינסון בנות)
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
@@ -34,13 +34,13 @@ const SCHOOLS_DATA = [
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
-    { schoolName: "לינסון בנות", gender: "Female" },
+    { schoolName: "לוינסון בנות", gender: "Female" },
     { schoolName: "אולפנית אמונה אלישבע", gender: "Female" },
     { schoolName: "פלך זכרון יעקב", gender: "Female" },
     { schoolName: "ישיבה תנ\"כית זכרון יעקב", gender: "Male" },
     { schoolName: "ישיבה תיכונית קרית אתא", gender: "Male" },
     { schoolName: "יבנה", gender: "Male" },
-    { schoolName: "לינסון בנים", gender: "Male" },
+    { schoolName: "לוינסון בנים", gender: "Male" },
     { schoolName: "נתיבות דרור", gender: "Male" },
     { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
