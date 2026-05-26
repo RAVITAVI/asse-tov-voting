@@ -8,6 +8,7 @@ const nameScreen = document.getElementById('name-screen');
 const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
 const studentNameInput = document.getElementById('student-name-input');
+const suggestionsContainer = document.getElementById('suggestions-container');
 
 // כפתורים
 const nextBtn = document.getElementById('nextBtn');
@@ -15,16 +16,20 @@ const submitNameBtn = document.getElementById('submitNameBtn');
 const backToGenderBtn = document.getElementById('backToGenderBtn');
 const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 
-// משתנים גלובליים - כאן אנחנו שומרים את הבחירות של התלמיד כדי שיעברו בין המסכים!
+// קישור בסיס הנתונים המרכזי בגוגל שיטס
+const GOOGLE_SHEET_URL = "הדביקי_כאן_את_הקישור_הרגיל_של_הגיליון_מהדפדפן";
+
+// משתנים גלובליים לשמירת נתוני התלמיד
 let selectedGender = "";
 let selectedSchool = "";
 let studentName = "";
+let allStudentsInSchool = []; // רשימת השמות המיועדת להשלמה האוטומטית
 
 // רשימת בתי הספר המובנית בקוד
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנת אמית שחר", gender: "Female" },
+    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
+    { schoolName: "אולפנת אמิต שחר", gender: "Female" },
     { schoolName: "אולפנת שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
@@ -39,6 +44,41 @@ const SCHOOLS_DATA = [
     { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
 ];
+
+// פונקציה לשליפת תלמידים לפי בית ספר ומגדר מתוך גיליון "Students"
+function fetchStudentsForSchool(schoolName, genderParam) {
+    const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (!matches || !matches[1]) return;
+    
+    // משיכת גיליון Students כפורמט CSV ישיר שעוקף חסימות ארגוניות
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/gviz/tq?tqx=out:csv&sheet=Students`;
+
+    fetch(csvUrl)
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\n');
+            allStudentsInSchool = [];
+            
+            // תרגום מגדר אנגלי למגדר שנבחר בקוד
+            const targetGender = genderParam === "Male" ? "male" : "female";
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const columns = lines[i].split(',').map(col => col.replace(/^"|"$/g, '').trim());
+                
+                const currentName = columns[1];   // עמודה B - שם מלא
+                const currentSchool = columns[2]; // עמודה C - שם בית ספר
+                const currentGender = columns[4]; // עמודה E - מגדר (Male / Female)
+                
+                // סינון והכנסה למערך ההצעות המקומי רק של התלמידים הרלוונטיים
+                if (currentSchool === schoolName && currentGender && currentGender.toLowerCase() === targetGender) {
+                    if (currentName) allStudentsInSchool.push(currentName);
+                }
+            }
+            console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים מבית הספר " + schoolName);
+        })
+        .catch(error => console.error("שגיאה במשיכת רשימת התלמידים:", error));
+}
 
 document.getElementById('startBtn').addEventListener('click', () => {
     openingScreen.classList.remove('active');
@@ -58,7 +98,7 @@ function loadSchools(genderParam) {
 }
 
 document.getElementById('boyBtn').addEventListener('click', () => {
-    selectedGender = "בן"; // שומר את המגדר שנבחר
+    selectedGender = "Male";
     schoolQuestion.innerText = "באיזה בית ספר אתה לומד?";
     loadSchools("Male");
     genderScreen.classList.remove('active');
@@ -66,7 +106,7 @@ document.getElementById('boyBtn').addEventListener('click', () => {
 });
 
 document.getElementById('girlBtn').addEventListener('click', () => {
-    selectedGender = "בת"; // שומר את המגדר שנבחר
+    selectedGender = "Female";
     schoolQuestion.innerText = "באיזה בית ספר את לומדת?";
     loadSchools("Female");
     genderScreen.classList.remove('active');
@@ -83,15 +123,60 @@ nextBtn.addEventListener('click', () => {
     if (schoolDropdown.value === "") {
         alert("אנא בחר בית ספר לפני ההמשך");
     } else {
-        // שומרים את שם בית הספר שנבחר לתוך המשתנה הכללי (לצורך סינונים עתידיים)
         selectedSchool = schoolDropdown.value; 
         
-        console.log("בית הספר שנבחר ונשמר בזיכרון:", selectedSchool); // בדיקת פיתוח מאחורי הקלעים
+        // טעינת רשימת השמות של בית הספר והמגדר שנבחרו
+        fetchStudentsForSchool(selectedSchool, selectedGender);
         
-        // מעבר למסך הבא (שם)
+        // איפוס שדה הקלט ומסך ההצעות הישן לביטחון
+        studentNameInput.value = "";
+        suggestionsContainer.innerHTML = "";
+        suggestionsContainer.style.display = 'none';
+
+        // מעבר למסך הבא
         schoolScreen.classList.remove('active');
         nameScreen.classList.add('active');
         studentNameInput.focus();
+    }
+});
+
+// לוגיקת השלמה אוטומטית (Autocomplete) במסך השם
+studentNameInput.addEventListener('input', (e) => {
+    const userInput = e.target.value.trim();
+    suggestionsContainer.innerHTML = '';
+    
+    // מציג הצעות רק החל משני תווים שהוקלדו
+    if (userInput.length < 2) {
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
+
+    // סינון שמות שמכילים את מה שהתלמיד הקליד
+    const filteredNames = allStudentsInSchool.filter(name => name.includes(userInput));
+
+    if (filteredNames.length > 0) {
+        suggestionsContainer.style.display = 'block';
+        filteredNames.forEach(name => {
+            const div = document.createElement('div');
+            div.classList.add('suggestion-item');
+            div.innerText = name;
+            
+            // בחירה מתוך רשימת ההצעות
+            div.addEventListener('click', () => {
+                studentNameInput.value = name;
+                suggestionsContainer.style.display = 'none';
+            });
+            suggestionsContainer.appendChild(div);
+        });
+    } else {
+        suggestionsContainer.style.display = 'none';
+    }
+});
+
+// סגירת רשימת ההצעות אם לוחצים מחוץ לכרטיסייה
+document.addEventListener('click', (e) => {
+    if (e.target !== studentNameInput) {
+        suggestionsContainer.style.display = 'none';
     }
 });
 
@@ -108,7 +193,7 @@ submitNameBtn.addEventListener('click', () => {
         alert("אנא הקלד/י את שמך לפני ההמשך");
     } else {
         studentName = trimmedName;
-        alert(`נתונים זמניים שנשמרו:\nמגדר: ${selectedGender}\nבית ספר: ${selectedSchool}\nשם: ${studentName}`);
+        alert(`נתונים זמניים שנשמרו:\nמגדר: ${selectedGender === 'Male' ? 'בן' : 'בת'}\nבית ספר: ${selectedSchool}\nשם: ${studentName}`);
     }
 });
 
