@@ -43,7 +43,6 @@ function loadSchools(genderParam) {
     });
 }
 
-// תיקון הניסוח ל-"באיזה"
 document.getElementById('boyBtn').addEventListener('click', () => {
     schoolQuestion.innerText = "באיזה בית ספר אתה לומד?";
     loadSchools("Male");
@@ -51,7 +50,6 @@ document.getElementById('boyBtn').addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
-// תיקון הניסוח ל-"באיזה"
 document.getElementById('girlBtn').addEventListener('click', () => {
     schoolQuestion.innerText = "באיזה בית ספר את לומדת?";
     loadSchools("Female");
@@ -59,6 +57,7 @@ document.getElementById('girlBtn').addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
+// פונקציונליות כפתור חזור
 backToGenderBtn.addEventListener('click', () => {
     schoolScreen.classList.remove('active');
     genderScreen.classList.add('active');
