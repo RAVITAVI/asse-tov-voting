@@ -17,7 +17,7 @@ const backToGenderBtn = document.getElementById('backToGenderBtn');
 const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 
 // קישור בסיס הנתונים המרכזי בגוגל שיטס
-const GOOGLE_SHEET_URL = "הדביקי_כאן_את_הקישור_הרגיל_של_הגיליון_מהדפדפן";
+const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
 
 // משתנים גלובליים לשמירת נתוני התלמיד
 let selectedGender = "";
