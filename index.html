@@ -3,29 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>כנס קמפוס חמ"ד</title>
+    <title>כנס עשה טוב בגדול</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f0f4f8; }
+        .admin-gear { color: #d1d5db; transition: all 0.3s; cursor: pointer; }
+        .admin-gear:hover { color: #9ca3af; transform: rotate(45deg); }
+    </style>
 </head>
-<body>
+<body class="h-screen flex flex-col items-center justify-center p-6">
 
-    <div id="opening-screen" class="screen active">
-        <button id="adminBtn" class="admin-gear">⚙️</button>
-        <img src="campus-hemad-logo.jpg" alt="לוגו קמפוס חמד" class="logo">
-        <h1>ברוכים הבאים לכנס "עשה טוב"</h1>
-        <p>כנס להצגת יוזמות של תלמידי קמפוס חמ"ד תשפ"ו</p>
-        <button id="startBtn" class="start-btn">מתחילים</button>
+    <div class="fixed top-4 left-4">
+        <button onclick="openAdminLogin()" class="admin-gear">
+            <i class="fas fa-cog text-lg"></i>
+        </button>
     </div>
 
-    <div id="gender-screen" class="screen">
-        <div class="banner">
-            <img src="campus-hemad-logo.jpg" class="banner-logo-right">
-            <img src="asse-tov-logo.png" class="banner-logo-center">
-            <span class="banner-text-left">קמפוס חמ"ד - תשפ"ו</span>
+    <main id="screen-1" class="flex flex-col items-center text-center max-w-sm w-full space-y-8 bg-white p-8 rounded-3xl shadow-xl">
+        
+        <div class="w-48 h-48 flex items-center justify-center">
+            <img src="image_5e92d4.png" alt="לוגו קמפוס חמד" class="max-w-full max-height-full">
         </div>
-        <div class="content">
+
+        <div class="space-y-3">
+            <h1 class="text-2xl font-bold text-blue-700 leading-tight">ברוכים הבאים לכנס <br>"עשה טוב בגדול"</h1>
+            <p class="text-gray-600 text-lg">כנס להצגת יוזמות של תלמידי קמפוס חמ"ד תשפ"ו</p>
+        </div>
+
+        <button onclick="goToScreen2()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-xl shadow-lg transition transform active:scale-95">
+            מתחילים
+        </button>
+    </main>
+
+    <div id="admin-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl">
+            <h3 class="text-lg font-bold mb-4 text-center">כניסת מנהל</h3>
+            <input type="password" id="admin-pass" placeholder="סיסמה" class="w-full border-2 border-gray-200 p-3 rounded-xl mb-4 text-center focus:border-blue-500 outline-none" dir="ltr">
+            <div class="flex gap-3">
+                <button onclick="checkAdminPassword()" class="bg-blue-600 text-white flex-1 py-3 rounded-xl font-bold">כניסה</button>
+                <button onclick="closeAdminLogin()" class="bg-gray-100 text-gray-600 flex-1 py-3 rounded-xl font-bold">ביטול</button>
             </div>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        function goToScreen2() {
+            // כאן נגדיר את המעבר למסך הבא אחרי שנאפיין אותו
+            alert("עוברים למסך בחירת מגדר ובית ספר...");
+        }
+
+        function openAdminLogin() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-pass').focus();
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-pass').value = '';
+        }
+
+        function checkAdminPassword() {
+            if (document.getElementById('admin-pass').value === "02062026") {
+                alert("ברוך הבא מנהל");
+                closeAdminLogin();
+            } else {
+                alert("סיסמה שגויה");
+                closeAdminLogin();
+            }
+        }
+    </script>
 </body>
 </html>
