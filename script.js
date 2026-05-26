@@ -26,16 +26,16 @@ let studentName = "";
 let allStudentsInSchool = []; // רשימת השמות המיועדת להשלמה האוטומטית
 let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמיד באמת בחר מהרשימה?
 
-// רשימת בתי הספר המעודכנת והמדויקת לפי השינויים שלך
+// רשימת בתי הספר המעודכנת (מתוקן לאולפנית שחם ואולפנית אמונה אלישבע)
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנת אמית שחר", gender: "Female" },
-    { schoolName: "אולפנת שחם", gender: "Female" },
+    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
+    { schoolName: "אולפנת אמิต שחר", gender: "Female" },
+    { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
     { schoolName: "לינסון בנות", gender: "Female" },
-    { schoolName: "אולפנת אמונה אלישבע", gender: "Female" },
+    { schoolName: "אולפנית אמונה אלישבע", gender: "Female" },
     { schoolName: "פלך זכרון יעקב", gender: "Female" },
     { schoolName: "ישיבה תנ\"כית זכרון יעקב", gender: "Male" },
     { schoolName: "ישיבה תיכונית קרית אתא", gender: "Male" },
