@@ -1,9 +1,7 @@
 const openingScreen = document.getElementById('opening-screen');
 const genderScreen = document.getElementById('gender-screen');
 const schoolScreen = document.getElementById('school-screen');
-const schoolTitle = document.getElementById('school-title');
-
-let userGender = "";
+const schoolQuestion = document.getElementById('school-question');
 
 document.getElementById('startBtn').addEventListener('click', () => {
     openingScreen.classList.remove('active');
@@ -11,15 +9,13 @@ document.getElementById('startBtn').addEventListener('click', () => {
 });
 
 document.getElementById('boyBtn').addEventListener('click', () => {
-    userGender = "male";
-    schoolTitle.innerText = "מאיזה בית ספר אתה?";
+    schoolQuestion.innerText = "מאיזה בית ספר אתה לומד?";
     genderScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
 
 document.getElementById('girlBtn').addEventListener('click', () => {
-    userGender = "female";
-    schoolTitle.innerText = "מאיזה בית ספר את?";
+    schoolQuestion.innerText = "מאיזה בית ספר את לומדת?";
     genderScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
