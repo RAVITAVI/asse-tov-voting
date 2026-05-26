@@ -1,0 +1,5 @@
+body { font-family: sans-serif; text-align: center; background-color: #f4f7f6; padding: 20px; }
+.container { max-width: 500px; margin: auto; }
+.logo { width: 200px; margin-bottom: 20px; }
+.admin-gear { position: fixed; top: 10px; left: 10px; background: none; border: none; opacity: 0.3; cursor: pointer; }
+.start-btn { padding: 15px 40px; font-size: 1.2rem; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
