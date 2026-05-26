@@ -1,40 +1,18 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    background-color: #f0f4f8; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh;
-}
-.container { 
-    width: 90%; 
-    max-width: 400px; 
-    text-align: center; 
-    background: white; 
-    padding: 2rem; 
-    border-radius: 20px; 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-}
-.logo { width: 60%; margin-bottom: 1.5rem; }
-h1 { color: #0056b3; font-size: 1.5rem; margin-bottom: 1rem; }
-p { color: #555; font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.4; }
+body { font-family: sans-serif; background-color: #f4f7f6; height: 100vh; }
 
-.start-btn { 
-    width: 100%; 
-    padding: 1rem; 
-    font-size: 1.2rem; 
-    background-color: #007bff; 
-    color: white; 
-    border: none; 
-    border-radius: 50px; 
-    cursor: pointer; 
-    transition: background 0.3s;
-}
-.start-btn:active { background-color: #0056b3; }
+.screen { display: none; flex-direction: column; align-items: center; height: 100%; }
+.screen.active { display: flex; }
 
-.admin-gear { 
-    position: absolute; top: 15px; left: 15px; 
-    background: none; border: none; font-size: 1.5rem; 
-    opacity: 0.2; cursor: pointer; 
-}
+/* עיצוב מסך פתיחה */
+#opening-screen { justify-content: center; text-align: center; padding: 20px; }
+.logo { width: 150px; margin-bottom: 20px; }
+.start-btn { padding: 15px 40px; font-size: 1.2rem; background-color: #007bff; color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px; }
+
+/* עיצוב הבאנר למסכי המשתמש */
+.banner { width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: white; border-bottom: 2px solid #ddd; }
+.banner-logo-right { height: 60px; }
+.banner-logo-center { height: 60px; }
+.banner-text-left { font-weight: bold; }
+
+.admin-gear { position: absolute; top: 10px; left: 10px; border: none; background: none; opacity: 0.3; cursor: pointer; }
