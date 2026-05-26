@@ -24,12 +24,13 @@ let selectedGender = "";
 let selectedSchool = "";
 let studentName = "";
 let allStudentsInSchool = []; // רשימת השמות המיועדת להשלמה האוטומטית
+let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמיד באמת בחר מהרשימה?
 
 // רשימת בתי הספר המובנית בקוד
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
-    { schoolName: "אולפנת אמิต שחר", gender: "Female" },
+    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
+    { schoolName: "אולפנת אמית שחר", gender: "Female" },
     { schoolName: "אולפנת שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
@@ -50,7 +51,6 @@ function fetchStudentsForSchool(schoolName, genderParam) {
     const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (!matches || !matches[1]) return;
     
-    // משיכת גיליון Students כפורמט CSV ישיר שעוקף חסימות ארגוניות
     const csvUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/gviz/tq?tqx=out:csv&sheet=Students`;
 
     fetch(csvUrl)
@@ -59,7 +59,6 @@ function fetchStudentsForSchool(schoolName, genderParam) {
             const lines = text.split('\n');
             allStudentsInSchool = [];
             
-            // תרגום מגדר אנגלי למגדר שנבחר בקוד
             const targetGender = genderParam === "Male" ? "male" : "female";
             
             for (let i = 1; i < lines.length; i++) {
@@ -68,14 +67,13 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                 
                 const currentName = columns[1];   // עמודה B - שם מלא
                 const currentSchool = columns[2]; // עמודה C - שם בית ספר
-                const currentGender = columns[4]; // עמודה E - מגדר (Male / Female)
+                const currentGender = columns[4]; // עמודה E - מגדר
                 
-                // סינון והכנסה למערך ההצעות המקומי רק של התלמידים הרלוונטיים
                 if (currentSchool === schoolName && currentGender && currentGender.toLowerCase() === targetGender) {
                     if (currentName) allStudentsInSchool.push(currentName);
                 }
             }
-            console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים מבית הספר " + schoolName);
+            console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים.");
         })
         .catch(error => console.error("שגיאה במשיכת רשימת התלמידים:", error));
 }
@@ -118,22 +116,19 @@ backToGenderBtn.addEventListener('click', () => {
     genderScreen.classList.add('active');
 });
 
-// לוגיקת כפתור המשך של מסך בית הספר
 nextBtn.addEventListener('click', () => {
     if (schoolDropdown.value === "") {
         alert("אנא בחר בית ספר לפני ההמשך");
     } else {
         selectedSchool = schoolDropdown.value; 
-        
-        // טעינת רשימת השמות של בית הספר והמגדר שנבחרו
         fetchStudentsForSchool(selectedSchool, selectedGender);
         
-        // איפוס שדה הקלט ומסך ההצעות הישן לביטחון
+        // איפוס נתונים ישנים במעבר למסך השם
         studentNameInput.value = "";
         suggestionsContainer.innerHTML = "";
         suggestionsContainer.style.display = 'none';
+        isNameSelectedFromList = false; // איפוס חובת הבחירה
 
-        // מעבר למסך הבא
         schoolScreen.classList.remove('active');
         nameScreen.classList.add('active');
         studentNameInput.focus();
@@ -144,14 +139,13 @@ nextBtn.addEventListener('click', () => {
 studentNameInput.addEventListener('input', (e) => {
     const userInput = e.target.value.trim();
     suggestionsContainer.innerHTML = '';
+    isNameSelectedFromList = false; // ברגע שהתלמיד מקליד או משנה משהו, הבחירה מתבטלת עד שילחץ שוב על פריט ברשימה
     
-    // מציג הצעות רק החל משני תווים שהוקלדו
     if (userInput.length < 2) {
         suggestionsContainer.style.display = 'none';
         return;
     }
 
-    // סינון שמות שמכילים את מה שהתלמיד הקליד
     const filteredNames = allStudentsInSchool.filter(name => name.includes(userInput));
 
     if (filteredNames.length > 0) {
@@ -161,10 +155,10 @@ studentNameInput.addEventListener('input', (e) => {
             div.classList.add('suggestion-item');
             div.innerText = name;
             
-            // בחירה מתוך רשימת ההצעות
             div.addEventListener('click', () => {
                 studentNameInput.value = name;
                 suggestionsContainer.style.display = 'none';
+                isNameSelectedFromList = true; // סימון שהשם נבחר בצורה חוקית מתוך הרשימה!
             });
             suggestionsContainer.appendChild(div);
         });
@@ -180,21 +174,31 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// כפתור חזור ממסך השם למסך בית ספר
 backToSchoolBtn.addEventListener('click', () => {
     nameScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
 
-// כפתור המשך ממסך הקלדת שם
+// כפתור המשך ממסך הקלדת שם - עם בדיקת חובת בחירה קשיחה
 submitNameBtn.addEventListener('click', () => {
-    const trimmedName = studentNameInput.value.trim();
-    if (trimmedName === "") {
-        alert("אנא הקלד/י את שמך לפני ההמשך");
-    } else {
-        studentName = trimmedName;
-        alert(`נתונים זמניים שנשמרו:\nמגדר: ${selectedGender === 'Male' ? 'בן' : 'בת'}\nבית ספר: ${selectedSchool}\nשם: ${studentName}`);
+    const currentInputValue = studentNameInput.value.trim();
+    
+    if (currentInputValue === "") {
+        alert("אנא הקלד/י ובחר/י את שמך מתוך הרשימה");
+        return;
     }
+    
+    // בדיקה כפולה: האם לחץ על הרשימה והאם השם הנוכחי תואם במדויק לשם ברשימה
+    if (!isNameSelectedFromList || !allStudentsInSchool.includes(currentInputValue)) {
+        alert("חובה לבחור את השם המלא שלך מתוך רשימת השמות המוקפצת!");
+        return;
+    }
+
+    // אם עבר את הבדיקות - שומרים וממשיכים
+    studentName = currentInputValue;
+    alert(`שם מאומת בהצלחה!\nמגדר: ${selectedGender === 'Male' ? 'בן' : 'בת'}\nבית ספר: ${selectedSchool}\nשם: ${studentName}`);
+    
+    // כאן נפתח את מסך הבחירה/הצבעה של המיזמים בשלב הבא
 });
 
 document.getElementById('adminBtn').addEventListener('click', () => {
