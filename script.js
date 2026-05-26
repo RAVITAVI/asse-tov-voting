@@ -5,7 +5,7 @@ const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
 const nextBtn = document.getElementById('nextBtn');
 
-// עדכני כאן את הכתובת שקיבלת מה-Deploy ב-Apps Script
+// עדכני כאן את הכתובת שקיבלת מה-Deploy ב-Apps Script:
 const GOOGLE_SHEET_URL = "הדביקי_כאן_את_הכתובת_שלך";
 
 document.getElementById('startBtn').addEventListener('click', () => {
@@ -17,7 +17,8 @@ function loadSchools(gender) {
     fetch(GOOGLE_SHEET_URL)
         .then(response => response.json())
         .then(data => {
-            const filteredSchools = data.filter(item => item.gender.toLowerCase() === gender.toLowerCase());
+            // מסננים לפי המגדר שנבחר בגיליון (נניח שרשום "בן" או "בת")
+            const filteredSchools = data.filter(item => item.gender.trim() === gender);
             schoolDropdown.innerHTML = '<option value="">בחר בית ספר...</option>';
             filteredSchools.forEach(school => {
                 const option = document.createElement("option");
@@ -30,14 +31,14 @@ function loadSchools(gender) {
 
 document.getElementById('boyBtn').addEventListener('click', () => {
     schoolQuestion.innerText = "מאיזה בית ספר אתה לומד?";
-    loadSchools("male");
+    loadSchools("בן"); // משנה ל-"בן" בהתאם לגיליון שלך
     genderScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
 
 document.getElementById('girlBtn').addEventListener('click', () => {
     schoolQuestion.innerText = "מאיזה בית ספר את לומדת?";
-    loadSchools("female");
+    loadSchools("בת"); // משנה ל-"בת" בהתאם לגיליון שלך
     genderScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
