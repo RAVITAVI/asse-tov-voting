@@ -3,6 +3,7 @@ const openingScreen = document.getElementById('opening-screen');
 const genderScreen = document.getElementById('gender-screen');
 const schoolScreen = document.getElementById('school-screen');
 const nameScreen = document.getElementById('name-screen');
+const votingScreen = document.getElementById('voting-screen'); // מסך ההצבעה החדש
 
 // אלמנטים
 const schoolQuestion = document.getElementById('school-question');
@@ -23,10 +24,11 @@ const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1
 let selectedGender = "";
 let selectedSchool = "";
 let studentName = "";
-let allStudentsInSchool = []; // רשימת השמות המיועדת להשלמה האוטומטית
+let allStudentsData = []; // נשמור כאן אובייקטים מלאים של התלמידים כולל מצב הצבעה
+let allStudentsInSchool = []; // רשימת השמות בלבד לצורך ההשלמה האוטומטית
 let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמיד באמת בחר מהרשימה?
 
-// רשימת בתי הספר המעודכנת (מתוקן ללוינסון בנים ולוינסון בנות)
+// רשימת בתי הספר המעודכנת והמדויקת שהגדרת
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
@@ -50,7 +52,7 @@ const SCHOOLS_DATA = [
 function cleanStringForComparison(str) {
     if (!str) return "";
     return str
-        .replace(/[\"\'\`\״\׳\‟\”\“]/g, '') // מוחק את כל סוגי הגרשיים, המירכאות והגרשים למיניהם
+        .replace(/[\"\'\`\״\׳\俘\”\“]/g, '') // מוחק את כל סוגי הגרשיים, המירכאות והגרשים למיניהם
         .replace(/\s+/g, ' ')             // הופך רווחים כפולים לרווח יחיד
         .trim()                           // מוחק רווחים מהקצוות
         .toLowerCase();
@@ -68,6 +70,7 @@ function fetchStudentsForSchool(schoolName, genderParam) {
         .then(text => {
             const lines = text.split(/\r?\n/);
             allStudentsInSchool = [];
+            allStudentsData = []; // איפוס המערך המורחב
             
             const targetGender = genderParam.trim().toLowerCase();
             const cleanTargetSchool = cleanStringForComparison(schoolName);
@@ -80,6 +83,7 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                 const currentName = columns[1];   // עמודה B - FullName
                 const currentSchool = columns[2]; // עמודה C - School
                 const currentGender = columns[4]; // עמודה E - Gender
+                const hasVotedStr = columns[5];   // עמודה F - has_voted
                 
                 if (currentSchool && currentGender) {
                     const cleanCurrentSchool = cleanStringForComparison(currentSchool);
@@ -87,6 +91,12 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                     if (cleanCurrentSchool === cleanTargetSchool && currentGender.toLowerCase() === targetGender) {
                         if (currentName) {
                             allStudentsInSchool.push(currentName);
+                            
+                            // שמירת האובייקט המלא של התלמיד כולל בדיקה האם כבר הצביע
+                            allStudentsData.push({
+                                name: currentName,
+                                hasVoted: (hasVotedStr && hasVotedStr.toUpperCase() === "TRUE") // הופך לערך בולאני אמיתי
+                            });
                         }
                     }
                 }
@@ -196,7 +206,7 @@ backToSchoolBtn.addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
-// כפתור המשך ממסך הקלדת שם
+// כפתור המשך ממסך הקלדת שם עם בדיקת ה-has_voted
 submitNameBtn.addEventListener('click', () => {
     const currentInputValue = studentNameInput.value.trim();
     
@@ -210,8 +220,22 @@ submitNameBtn.addEventListener('click', () => {
         return;
     }
 
+    // בדיקת הסטטוס: האם התלמיד כבר הצביע בעבר?
+    const currentStudentObj = allStudentsData.find(student => student.name === currentInputValue);
+
+    if (currentStudentObj && currentStudentObj.hasVoted === true) {
+        alert("ההצבעה מותרת פעם אחת בלבד!");
+        return; // חוסר את התלמיד ומפסיק את הריצה
+    }
+
+    // אם הכל תקין (הסטטוס הוא FALSE):
     studentName = currentInputValue;
-    alert(`שם מאומת בהצלחה!\nמגדר: ${selectedGender === 'Male' ? 'בן' : 'בת'}\nבית ספר: ${selectedSchool}\nשם: ${studentName}`);
+    
+    // מעבר למסך הבא: בחירת היוזמה לדירוג
+    nameScreen.classList.remove('active');
+    votingScreen.classList.add('active');
+    
+    console.log("התלמיד עבר בהצלחה לדף ההצבעה: " + studentName);
 });
 
 document.getElementById('adminBtn').addEventListener('click', () => {
