@@ -6,7 +6,7 @@ const schoolDropdown = document.getElementById('school-dropdown');
 const nextBtn = document.getElementById('nextBtn');
 
 // עדכני כאן את הכתובת שקיבלת מה-Deploy ב-Apps Script:
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwaCMudWkNY6U-ZNUUsRv6aaL5fDnYGMqxtxsreLILfWjDsL3vYwb6qWf8hw-nCDoju/exec";
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzY3YIJh8gCciFp6Tfd6hy7hlNDJBCXnNMAmKKcQMRIDTGv2ZwYfNKYxGwyzjM2Anii/exec";
 
 document.getElementById('startBtn').addEventListener('click', () => {
     openingScreen.classList.remove('active');
