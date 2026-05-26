@@ -1,6 +1,9 @@
+const openingScreen = document.getElementById('opening-screen');
+const genderScreen = document.getElementById('gender-screen');
+
 document.getElementById('startBtn').addEventListener('click', () => {
-    document.getElementById('opening-screen').classList.remove('active');
-    document.getElementById('gender-screen').classList.add('active');
+    openingScreen.classList.remove('active');
+    genderScreen.classList.add('active');
 });
 
 document.getElementById('adminBtn').addEventListener('click', () => {
