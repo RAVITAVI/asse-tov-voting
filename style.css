@@ -1,7 +1,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: sans-serif; background-color: #f4f7f6; height: 100vh; overflow-x: hidden; }
 
-/* הסתרת כל המסכים כברירת מחדל */
 .screen { display: none !important; width: 100%; height: 100%; flex-direction: column; }
 .screen.active { display: flex !important; }
 
@@ -13,16 +12,22 @@ p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
 .start-btn { padding: 15px 50px; font-size: 1.2rem; background-color: #007bff; color: white; border: none; border-radius: 50px; cursor: pointer; }
 .admin-gear { position: absolute; top: 15px; left: 15px; border: none; background: none; opacity: 0.3; cursor: pointer; font-size: 1.5rem; }
 
-/* באנר משותף */
+/* באנר */
 .banner { width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: white; border-bottom: 2px solid #ddd; }
 .logo-right { height: 50px; }
 .logo-center { height: 60px; }
 .banner-text { font-size: 0.8rem; font-weight: bold; }
 
-/* עיצוב כללי למסכים */
+/* כרטיסים ורשימות */
 .main-wrapper { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
 .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
 .gender-buttons { display: flex; gap: 15px; margin-top: 20px; }
 .btn-gender { flex: 1; padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
 .btn-boy { background-color: #357abd; }
 .btn-girl { background-color: #9b59b6; }
+
+.school-btn { 
+    display: block; width: 100%; padding: 15px; margin: 10px 0; 
+    background-color: #28a745; color: white; border: none; 
+    border-radius: 10px; font-size: 1.1rem; cursor: pointer; text-align: center;
+}
