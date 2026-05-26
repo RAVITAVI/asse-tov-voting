@@ -13,38 +13,40 @@ document.getElementById('startBtn').addEventListener('click', () => {
     genderScreen.classList.add('active');
 });
 
-function loadSchools(genderParam) {
+// פונקציה חדשה שטוענת את כל בתי הספר ללא סינון בכלל
+function loadAllSchools() {
     fetch(GOOGLE_SHEET_URL)
         .then(response => response.json())
         .then(data => {
-            // סינון לפי המילים המדויקות מהטבלה שלך: "בנים" או "בנות"
-            const filteredSchools = data.filter(item => {
-                if (!item.gender) return false;
-                return item.gender.toString().trim() === genderParam;
-            });
-            
+            // איפוס שדה הגלילה והוספת אפשרות ברירת המחדל
             schoolDropdown.innerHTML = '<option value="">בחר בית ספר...</option>';
             
-            filteredSchools.forEach(school => {
-                const option = document.createElement("option");
-                option.value = school.schoolName;
-                option.innerText = school.schoolName;
-                schoolDropdown.appendChild(option);
+            // מעבר על כל בתי הספר שהגיעו מהגיליון והוספתם לשדה הגלילה
+            data.forEach(school => {
+                if (school.schoolName) { // בדיקה ששם בית הספר לא ריק
+                    const option = document.createElement("option");
+                    option.value = school.schoolName;
+                    option.innerText = school.schoolName;
+                    schoolDropdown.appendChild(option);
+                }
             });
         })
-        .catch(error => console.error('שגיאה בטעינת בתי הספר:', error));
+        .catch(error => {
+            console.error('שגיאה במשיכת בתי הספר:', error);
+            alert("שגיאה בקבלת הנתונים מגוגל שיטס. ודאי שהקישור תקין.");
+        });
 }
 
 document.getElementById('boyBtn').addEventListener('click', () => {
     schoolQuestion.innerText = "מאיזה בית ספר אתה לומד?";
-    loadSchools("בנים"); // מחפש בטבלה את הערך "בנים"
+    loadAllSchools(); // טעינת הרשימה המלאה
     genderScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
 
 document.getElementById('girlBtn').addEventListener('click', () => {
     schoolQuestion.innerText = "מאיזה בית ספר את לומדת?";
-    loadSchools("בנות"); // מחפש בטבלה את הערך "בנות"
+    loadAllSchools(); // טעינת הרשימה המלאה
     genderScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
