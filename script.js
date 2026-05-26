@@ -31,8 +31,8 @@ let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמי�
 // רשימת בתי הספר המעודכנת והמדויקת שהגדרת
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנית אמית שחר", gender: "Female" },
+    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
+    { schoolName: "אולפנית אמิต שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
@@ -206,7 +206,7 @@ backToSchoolBtn.addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
-// כפתור המשך ממסך הקלדת שם עם בדיקת ה-has_voted
+// כפתור המשך ממסך הקלדת שם עם בדיקת ה-has_voted המבוקשת
 submitNameBtn.addEventListener('click', () => {
     const currentInputValue = studentNameInput.value.trim();
     
@@ -224,11 +224,13 @@ submitNameBtn.addEventListener('click', () => {
     const currentStudentObj = allStudentsData.find(student => student.name === currentInputValue);
 
     if (currentStudentObj && currentStudentObj.hasVoted === true) {
-        alert("ההצבעה מותרת פעם אחת בלבד!");
-        return; // חוסר את התלמיד ומפסיק את הריצה
+        // אם זה TRUE - מודיע ומפסיק ריצה
+        alert("מותר להצביע רק פעם אחת - תודה על השתתפותך");
+        return; 
     }
 
-    // אם הכל תקין (הסטטוס הוא FALSE):
+    // אם זה FALSE:
+    alert("לא הצביע");
     studentName = currentInputValue;
     
     // מעבר למסך הבא: בחירת היוזמה לדירוג
