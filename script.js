@@ -1,10 +1,24 @@
+// מסכים
 const openingScreen = document.getElementById('opening-screen');
 const genderScreen = document.getElementById('gender-screen');
 const schoolScreen = document.getElementById('school-screen');
+const nameScreen = document.getElementById('name-screen');
+
+// אלמנטים
 const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
+const studentNameInput = document.getElementById('student-name-input');
+
+// כפתורים
 const nextBtn = document.getElementById('nextBtn');
+const submitNameBtn = document.getElementById('submitNameBtn');
 const backToGenderBtn = document.getElementById('backToGenderBtn');
+const backToSchoolBtn = document.getElementById('backToSchoolBtn');
+
+// משתנים גלובליים - כאן אנחנו שומרים את הבחירות של התלמיד כדי שיעברו בין המסכים!
+let selectedGender = "";
+let selectedSchool = "";
+let studentName = "";
 
 // רשימת בתי הספר המובנית בקוד
 const SCHOOLS_DATA = [
@@ -44,6 +58,7 @@ function loadSchools(genderParam) {
 }
 
 document.getElementById('boyBtn').addEventListener('click', () => {
+    selectedGender = "בן"; // שומר את המגדר שנבחר
     schoolQuestion.innerText = "באיזה בית ספר אתה לומד?";
     loadSchools("Male");
     genderScreen.classList.remove('active');
@@ -51,23 +66,49 @@ document.getElementById('boyBtn').addEventListener('click', () => {
 });
 
 document.getElementById('girlBtn').addEventListener('click', () => {
+    selectedGender = "בת"; // שומר את המגדר שנבחר
     schoolQuestion.innerText = "באיזה בית ספר את לומדת?";
     loadSchools("Female");
     genderScreen.classList.remove('active');
     schoolScreen.classList.add('active');
 });
 
-// פונקציונליות כפתור חזור
 backToGenderBtn.addEventListener('click', () => {
     schoolScreen.classList.remove('active');
     genderScreen.classList.add('active');
 });
 
+// לוגיקת כפתור המשך של מסך בית הספר
 nextBtn.addEventListener('click', () => {
     if (schoolDropdown.value === "") {
         alert("אנא בחר בית ספר לפני ההמשך");
     } else {
-        alert("נבחר: " + schoolDropdown.value);
+        // שומרים את שם בית הספר שנבחר לתוך המשתנה הכללי (לצורך סינונים עתידיים)
+        selectedSchool = schoolDropdown.value; 
+        
+        console.log("בית הספר שנבחר ונשמר בזיכרון:", selectedSchool); // בדיקת פיתוח מאחורי הקלעים
+        
+        // מעבר למסך הבא (שם)
+        schoolScreen.classList.remove('active');
+        nameScreen.classList.add('active');
+        studentNameInput.focus();
+    }
+});
+
+// כפתור חזור ממסך השם למסך בית ספר
+backToSchoolBtn.addEventListener('click', () => {
+    nameScreen.classList.remove('active');
+    schoolScreen.classList.add('active');
+});
+
+// כפתור המשך ממסך הקלדת שם
+submitNameBtn.addEventListener('click', () => {
+    const trimmedName = studentNameInput.value.trim();
+    if (trimmedName === "") {
+        alert("אנא הקלד/י את שמך לפני ההמשך");
+    } else {
+        studentName = trimmedName;
+        alert(`נתונים זמניים שנשמרו:\nמגדר: ${selectedGender}\nבית ספר: ${selectedSchool}\nשם: ${studentName}`);
     }
 });
 
