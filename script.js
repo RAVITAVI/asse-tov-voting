@@ -31,7 +31,7 @@ const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
     { schoolName: "אולפנת אמית שחר", gender: "Female" },
-    { schoolName: "אולפנת שחם", gender: "Female" },
+    { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
     { schoolName: "לינסון בנות", gender: "Female" },
