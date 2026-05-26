@@ -6,7 +6,7 @@ const schoolDropdown = document.getElementById('school-dropdown');
 const nextBtn = document.getElementById('nextBtn');
 
 // הדביקי כאן את הקישור הרגיל של ה-Google Sheet שלך מהדפדפן (זה שכולל את ה- /edit)
-const GOOGLE_SHEET_URL = "הדביקי_כאן_את_הקישור_הרגיל_של_הגיליון_מהדפדפן";
+const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=1774263604#gid=1774263604";
 
 // פונקציה שמייצרת קישור ישיר לגיליון Schools בפורמט CSV, ללא חסימות
 function getSchoolsCsvUrl(url) {
