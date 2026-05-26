@@ -32,3 +32,19 @@ p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
     font-size: 1.1rem;
     background-color: white;
 }
+
+/* עיצוב כפתור חזור החדש - ממורכז ובולט */
+.back-btn {
+    display: inline-block;
+    margin-top: 15px;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+.back-btn:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
