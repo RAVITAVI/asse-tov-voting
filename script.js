@@ -44,19 +44,19 @@ let currentSelectedCardElement = null;
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנת אמית שחר", gender: "Female" },
+    { schoolName: "אולפנית אמית שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
     { schoolName: "לוינסון בנות", gender: "Female" },
     { schoolName: "אולפנית אמונה אלישבע", gender: "Female" },
     { schoolName: "פלך זכרון יעקב", gender: "Female" },
-    { schoolName: "ישיבה תנכית זכרון יעקב", gender: "Male" },
+    { schoolName: "ישיבה תנ\"כית זכרון יעקב", gender: "Male" },
     { schoolName: "ישיבה תיכונית קרית אתא", gender: "Male" },
     { schoolName: "יבנה", gender: "Male" },
     { schoolName: "לוינסון בנים", gender: "Male" },
     { schoolName: "נתיבות דרור", gender: "Male" },
-    { schoolName: "ישיבת בנע חריש", gender: "Male" },
+    { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
 ];
 
@@ -104,7 +104,7 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                         if (currentName) {
                             allStudentsInSchool.push(currentName);
                             const projScores = {};
-                            // תיקון קריאת ציונים: עמודה G (אינדקס 6 ב-CSV המפורסר) היא PROJ1
+                            // תיקון: עמודה G (PROJ1) היא אינדקס 6 במערך ה-CSV המפורסר
                             for (let p = 1; p <= 15; p++) {
                                 const columnIndex = 5 + p; 
                                 projScores[p] = columns[columnIndex] ? parseInt(columns[columnIndex]) || 0 : 0;
@@ -164,7 +164,6 @@ function fetchAndDisplayProjects(genderParam) {
                         modalProjectCreators.innerText = projectCreators || "לא צוין";
                         modalProjectCourse.innerText = projectCourse || "לא צוין";
                         
-                        // שליפת הציון העדכני ביותר מתוך הזיכרון המקומי
                         const liveScore = currentStudentVotingRow[projectNo] || 0;
                         if (liveScore > 0) {
                             ratingSlider.value = liveScore;
