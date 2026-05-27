@@ -32,8 +32,8 @@ let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמי�
 // רשימת בתי הספר המעודכנת והמדויקת שהגדרת
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנית אמית שחר", gender: "Female" },
+    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
+    { schoolName: "אולפנית אמิต שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
@@ -59,6 +59,27 @@ function cleanStringForComparison(str) {
         .toLowerCase();
 }
 
+// פונקציה חכמה לפירוק שורת CSV בצורה בטוחה שמתחשבת במירכאות ופסיקים פנימיים
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+            inQuotes = !inQuotes; // מחליף מצב מירכאות
+        } else if (char === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    result.push(current.trim());
+    return result.map(col => col.replace(/^"|"$/g, '').trim());
+}
+
 // פונקציה לשליפת תלמידים לפי בית ספר ומגדר מתוך גיליון "Students"
 function fetchStudentsForSchool(schoolName, genderParam) {
     const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
@@ -71,7 +92,7 @@ function fetchStudentsForSchool(schoolName, genderParam) {
         .then(text => {
             const lines = text.split(/\r?\n/);
             allStudentsInSchool = [];
-            allStudentsData = []; // איפוס המערך המורחב
+            allStudentsData = [];
             
             const targetGender = genderParam.trim().toLowerCase();
             const cleanTargetSchool = cleanStringForComparison(schoolName);
@@ -79,7 +100,7 @@ function fetchStudentsForSchool(schoolName, genderParam) {
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                const columns = lines[i].split(',').map(col => col.replace(/^"|"$/g, '').trim());
+                const columns = parseCSVLine(lines[i]);
                 
                 const currentName = columns[1];   // עמודה B - FullName
                 const currentSchool = columns[2]; // עמודה C - School
@@ -92,11 +113,9 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                     if (cleanCurrentSchool === cleanTargetSchool && currentGender.toLowerCase() === targetGender) {
                         if (currentName) {
                             allStudentsInSchool.push(currentName);
-                            
-                            // שמירת האובייקט המלא של התלמיד כולל בדיקה האם כבר הצביע
                             allStudentsData.push({
                                 name: currentName,
-                                hasVoted: (hasVotedStr && hasVotedStr.toUpperCase() === "TRUE") // הופך לערך בולאני אמיתי
+                                hasVoted: (hasVotedStr && hasVotedStr.toUpperCase() === "TRUE")
                             });
                         }
                     }
@@ -118,51 +137,44 @@ function fetchAndDisplayProjects(genderParam) {
         .then(response => response.text())
         .then(text => {
             const lines = text.split(/\r?\n/);
-            projectsListBody.innerHTML = ""; // איפוס הטבלה הישנה במסך
+            projectsListBody.innerHTML = ""; // איפוס הטבלה
             
-            const targetGender = genderParam.trim().toLowerCase(); // זכר או נקבה
+            const targetGender = genderParam.trim().toLowerCase();
             let counter = 0;
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                // פירוק העמודות לפי המבנה המעודכן שלך
-                const columns = lines[i].split(',').map(col => col.replace(/^"|"$/g, '').trim());
+                // שימוש במפרק הבטוח החדש שמציל פסיקים פנימיים בשמות או בקורסים
+                const columns = parseCSVLine(lines[i]);
                 
                 const projectNo = columns[1];     // עמודה B - project_no
                 const projectTitle = columns[2];  // עמודה C - title
                 const projectCourse = columns[3]; // עמודה D - Course
-                const projectCreators = columns[4]; // עמודה E - name (שמות היזמים)
+                const projectCreators = columns[4]; // עמודה E - name
                 const projectGender = columns[5]; // עמודה F - gender
                 
-                // סינון: רק מיזמים שהמגדר שלהם בשיטס שווה למגדר של התלמיד/ה הנוכחי/ת
                 if (projectGender && projectGender.toLowerCase() === targetGender) {
                     counter++;
                     
-                    // יצירת שורה חדשה בטבלה
                     const tr = document.createElement('tr');
                     
-                    // תא 1: מספר המיזם
                     const tdNo = document.createElement('td');
                     tdNo.style.padding = "10px";
                     tdNo.innerText = projectNo || "";
                     
-                    // תא 2: שם המיזם (כותרת)
                     const tdTitle = document.createElement('td');
                     tdTitle.style.padding = "10px";
                     tdTitle.innerText = projectTitle || "";
                     
-                    // תא 3: קורס
                     const tdCourse = document.createElement('td');
                     tdCourse.style.padding = "10px";
                     tdCourse.innerText = projectCourse || "";
 
-                    // תא 4: שמות היזמים
                     const tdCreators = document.createElement('td');
                     tdCreators.style.padding = "10px";
                     tdCreators.innerText = projectCreators || "";
                     
-                    // חיבור התאים לשורה ואז לגוף הטבלה
                     tr.appendChild(tdNo);
                     tr.appendChild(tdTitle);
                     tr.appendChild(tdCourse);
@@ -213,7 +225,6 @@ backToGenderBtn.addEventListener('click', () => {
     genderScreen.classList.add('active');
 });
 
-// לוגיקת כפתור המשך של מסך בית הספר
 nextBtn.addEventListener('click', () => {
     if (schoolDropdown.value === "") {
         alert("אנא בחר בית ספר לפני ההמשך");
@@ -232,7 +243,6 @@ nextBtn.addEventListener('click', () => {
     }
 });
 
-// לוגיקת השלמה אוטומטית (Autocomplete) במסך השם
 studentNameInput.addEventListener('input', (e) => {
     const userInput = e.target.value.trim();
     suggestionsContainer.innerHTML = '';
@@ -275,7 +285,7 @@ backToSchoolBtn.addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
-// כפתור המשך ממסך הקלדת שם עם בדיקת ה-has_voted
+// כפתור המשך ממסך הקלדת שם
 submitNameBtn.addEventListener('click', () => {
     const currentInputValue = studentNameInput.value.trim();
     
@@ -289,7 +299,6 @@ submitNameBtn.addEventListener('click', () => {
         return;
     }
 
-    // בדיקת הסטטוס: האם התלמיד כבר הצביע בעבר?
     const currentStudentObj = allStudentsData.find(student => student.name === currentInputValue);
 
     if (currentStudentObj && currentStudentObj.hasVoted === true) {
@@ -297,10 +306,9 @@ submitNameBtn.addEventListener('click', () => {
         return; 
     }
 
-    alert("לא הצביע");
+    // הוסר הפופ-אפ של "לא הצביע"!
     studentName = currentInputValue;
     
-    // הפעלת פונקציית טעינת המיזמים המעודכנת
     fetchAndDisplayProjects(selectedGender);
     
     nameScreen.classList.remove('active');
