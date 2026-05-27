@@ -73,6 +73,8 @@ const SCHOOLS_DATA = [
     { schoolName: "נתיבות דרור", gender: "Male" },
     { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
+    { schoolName: "ניהול בנים", gender: "Male" }
+    { schoolName: "ניהול בנות", gender: "Female" }
 ];
 
 function cleanStringForComparison(str) {
@@ -423,7 +425,7 @@ submitNameBtn.onclick = function() {
 
 backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
 
-// פאנל הניהול של האדמין - תיקון ניווט ומחזורי רנדור
+// פאנל הניהול של האדמין 
 document.querySelectorAll('.tab-nav-btn').forEach(button => {
     button.onclick = function() {
         document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -454,6 +456,11 @@ document.getElementById('refreshAdminBtn').onclick = function() {
 document.getElementById('closeAdminPanelBtn').onclick = function() {
     adminPanelScreen.classList.remove('active');
     openingScreen.classList.add('active');
+};
+
+// פקודת ההדפסה ל-PDF
+document.getElementById('printPdfBtn').onclick = function() {
+    window.print();
 };
 
 function fetchAndRenderAdminData() {
