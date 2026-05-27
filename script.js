@@ -3,6 +3,8 @@ const genderScreen = document.getElementById('gender-screen');
 const schoolScreen = document.getElementById('school-screen');
 const nameScreen = document.getElementById('name-screen');
 const votingScreen = document.getElementById('voting-screen'); 
+const summaryScreen = document.getElementById('summary-screen');
+const thankYouScreen = document.getElementById('thank-you-screen');
 
 const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
@@ -20,6 +22,11 @@ const sliderValuePreview = document.getElementById('slider-value-preview');
 const modalSaveBtn = document.getElementById('modal-save-btn');
 const modalCancelBtn = document.getElementById('modal-cancel-btn');
 const modalCloseX = document.getElementById('modal-close-x');
+
+// רכיבי סיום וסיכום
+const finishVotingBtn = document.getElementById('finish-voting-btn');
+const bestProjectDropdown = document.getElementById('best-project-dropdown');
+const submitBestBtn = document.getElementById('submit-best-btn');
 
 // רכיבי סורק ברקודים
 const scanQrBtn = document.getElementById('scan-qr-btn');
@@ -148,6 +155,26 @@ function openRatingPanelDirectly(projectNo, projectTitle, projectCreators, proje
     ratingModal.style.display = 'flex';
 }
 
+// פונקציה חכמה שבודקת ומעדכנת את כפתור הסיום
+function updateFinishButtonStatus() {
+    let votedCount = 0;
+    for (let key in currentStudentVotingRow) {
+        if (currentStudentVotingRow[key] > 0) {
+            votedCount++;
+        }
+    }
+    
+    if (votedCount >= 6) {
+        finishVotingBtn.disabled = false;
+        finishVotingBtn.className = "finish-btn active-finish";
+        finishVotingBtn.innerText = "🏁 סיימתי לדרג – המשך לשלב הסיכום";
+    } else {
+        finishVotingBtn.disabled = true;
+        finishVotingBtn.className = "finish-btn";
+        finishVotingBtn.innerText = "יש לדרג לפחות 6 מיזמים (" + votedCount + "/6)";
+    }
+}
+
 function fetchAndDisplayProjects(genderParam) {
     const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (!matches || !matches[1]) return;
@@ -159,6 +186,7 @@ function fetchAndDisplayProjects(genderParam) {
             const lines = text.split(/\r?\n/);
             projectsGrid.innerHTML = ""; 
             rawProjectsData = []; 
+            bestProjectDropdown.innerHTML = '<option value="">בחר/י את המיזם המצטיין שלך...</option>';
             const targetGender = genderParam.trim().toLowerCase();
 
             for (let i = 1; i < lines.length; i++) {
@@ -179,6 +207,14 @@ function fetchAndDisplayProjects(genderParam) {
                         no: projectNo, title: projectTitle, creators: projectCreators, course: projectCourse, element: projectButton
                     });
 
+                    // הוספה דינמית של המיזם לרשימת ה-Dropdown של הסיכום
+                    const opt = document.createElement('option');
+                    // שמירה בפורמט מגדרי: G3 או B3
+                    const prefix = selectedGender === 'Female' ? 'G' : 'B';
+                    opt.value = prefix + projectNo;
+                    opt.innerText = "מיזם " + projectNo + " - " + projectTitle;
+                    bestProjectDropdown.appendChild(opt);
+
                     if (currentScore > 0) {
                         projectButton.className = 'project-grid-button color-green';
                         projectButton.innerHTML = '<div class="proj-number">' + projectNo + '</div><div class="proj-title">' + projectTitle + '</div><div class="proj-status-label">✓ דורג (' + currentScore + ')</div>';
@@ -194,37 +230,32 @@ function fetchAndDisplayProjects(genderParam) {
                     projectsGrid.appendChild(projectButton);
                 }
             }
+            // עדכון ראשוני של כפתור הסיום
+            updateFinishButtonStatus();
         }).catch(error => console.error(error));
 }
 
-// לוגיקת סורק הברקודים מותאמת המגדר
 scanQrBtn.onclick = function() {
     scannerModal.style.display = 'flex';
-    
     html5QrcodeScanner = new Html5Qrcode("qr-reader");
     html5QrcodeScanner.start(
         { facingMode: "environment" }, 
         { fps: 10, qrbox: { width: 250, height: 250 } },
         (decodedText) => { 
             const rawText = decodedText.trim().toUpperCase();
-            
-            // בדיקת המגדר של הברקוד לעומת המגדר של התלמיד
-            const barcodeGenderPrefix = rawText.charAt(0); // 'G' או 'B'
-            const scannedProjNo = parseInt(rawText.replace(/[^\d]/g, '')); // חילוץ מספר המיזם מתוך הברקוד
+            const barcodeGenderPrefix = rawText.charAt(0); 
+            const scannedProjNo = parseInt(rawText.replace(/[^\d]/g, '')); 
 
             if (barcodeGenderPrefix === 'G' && selectedGender !== 'Female') {
                 alert("סרקת ברקוד של מסלול בנות, אך הנך רשום במסלול בנים!");
-                stopScanner();
-                return;
+                stopScanner(); return;
             }
             if (barcodeGenderPrefix === 'B' && selectedGender !== 'Male') {
                 alert("סרקת ברקוד של מסלול בנים, אך הנך רשומה במסלול בנות!");
-                stopScanner();
-                return;
+                stopScanner(); return;
             }
 
             stopScanner();
-            
             const foundProj = rawProjectsData.find(p => p.no === scannedProjNo);
             if (foundProj) {
                 openRatingPanelDirectly(foundProj.no, foundProj.title, foundProj.creators, foundProj.course, currentStudentVotingRow[foundProj.no] || 0, foundProj.element);
@@ -242,14 +273,9 @@ scanQrBtn.onclick = function() {
 
 function stopScanner() {
     if (html5QrcodeScanner) {
-        html5QrcodeScanner.stop().then(() => {
-            scannerModal.style.display = 'none';
-        }).catch(err => console.error(err));
-    } else {
-        scannerModal.style.display = 'none';
-    }
+        html5QrcodeScanner.stop().then(() => { scannerModal.style.display = 'none'; }).catch(err => console.error(err));
+    } else { scannerModal.style.display = 'none'; }
 }
-
 scannerCloseX.onclick = stopScanner;
 
 ratingSlider.oninput = function(e) {
@@ -294,12 +320,54 @@ modalSaveBtn.onclick = function() {
         modalSaveBtn.innerText = "שמור";
         modalSaveBtn.disabled = false;
         closeRatingModal();
+        
+        // עדכון מצב כפתור הסיום לאחר כל שמירה מוצלחת
+        updateFinishButtonStatus();
     })
     .catch(err => {
         console.error("שגיאה בשמירה:", err);
         alert("תקלה בתקשורת. אנא נסו שנית.");
         modalSaveBtn.innerText = "שמור";
         modalSaveBtn.disabled = false;
+    });
+};
+
+// לחיצה על סיימתי מעבירה למסך הסיכום
+finishVotingBtn.onclick = function() {
+    votingScreen.classList.remove('active');
+    summaryScreen.classList.add('active');
+};
+
+// לחיצה על שליחת המיזם המצטיין הסופי
+submitBestBtn.onclick = function() {
+    const selectedBest = bestProjectDropdown.value;
+    if (selectedBest === "") {
+        alert("חובה לבחור את המיזם שהרשים אותך ביותר לפני השליחה!");
+        return;
+    }
+    
+    submitBestBtn.innerText = "שולח...";
+    submitBestBtn.disabled = true;
+    
+    fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        cache: "no-cache",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            studentName: studentName,
+            bestProj: selectedBest // שליחת המזהה (למשל G6) לשרת
+        })
+    })
+    .then(() => {
+        summaryScreen.classList.remove('active');
+        thankYouScreen.classList.add('add', 'active');
+    })
+    .catch(err => {
+        console.error(err);
+        alert("תקלה בשליחה הסופית. אנא נסו שנית.");
+        submitBestBtn.innerText = "שלח דירוג סופי ותודה";
+        submitBestBtn.disabled = false;
     });
 };
 
