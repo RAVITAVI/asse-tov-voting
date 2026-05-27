@@ -37,7 +37,6 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .page-title { font-size: 1.7rem; color: #1e3c72; margin-bottom: 6px; font-weight: bold; }
 .page-subtitle { font-size: 1rem; color: #475569; margin-bottom: 20px; text-align: center; }
 
-/* כפתור סריקה ראשי משופר */
 .scan-main-btn { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 14px 28px; font-size: 1.15rem; font-weight: bold; border-radius: 15px; cursor: pointer; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); width: 100%; max-width: 320px; transition: transform 0.2s; }
 .scan-main-btn:active { transform: scale(0.98); }
 
@@ -49,9 +48,28 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 
 .color-red { background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%); color: #991b1b; border: 1px solid #f87171; }
 .color-green { background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%); color: #166534; border: 1px solid #4ade80; }
-.back-btn-voting { background: #ffffff; border: 2px solid #cbd5e1; color: #475569; font-size: 1.05rem; font-weight: bold; padding: 12px 30px; border-radius: 25px; cursor: pointer; }
+.back-btn-voting { background: #ffffff; border: 2px solid #cbd5e1; color: #475569; font-size: 1.05rem; font-weight: bold; padding: 12px 30px; border-radius: 25px; cursor: pointer; margin-top: 15px; }
 
-/* חלונות קופצים (Modals) */
+/* כפתור סיימתי החדש */
+.finish-btn-wrapper { width: 100%; max-width: 600px; padding: 0 5px; margin-bottom: 10px; }
+.finish-btn { width: 100%; padding: 16px; font-size: 1.15rem; font-weight: bold; border-radius: 16px; border: none; color: #94a3b8; background-color: #e2e8f0; cursor: not-allowed; transition: all 0.3s ease; }
+.finish-btn.active-finish { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 124, 0, 0.3); }
+.finish-btn.active-finish:active { transform: scale(0.99); }
+
+/* מסך סיכום */
+.summary-card { max-width: 500px; padding: 40px 30px; }
+.summary-prompt { font-size: 1.15rem; color: #475569; margin-top: 15px; margin-bottom: 20px; line-height: 1.5; text-align: right; }
+
+/* מסך תודה רבה סופי */
+.thank-you-wrapper { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 20px; }
+.thank-you-card { background: white; border-radius: 24px; padding: 45px 30px; text-align: center; width: 100%; max-width: 450px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+.success-icon { width: 70px; height: 70px; background-color: #dcfce7; color: #166534; font-size: 2.5rem; font-weight: bold; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 25px auto; box-shadow: 0 4px 10px rgba(22, 101, 52, 0.15); }
+.thank-you-card h1 { color: #1e3c72; font-size: 2.2rem; margin-bottom: 15px; font-weight: bold; }
+.thank-you-card p { color: #475569; font-size: 1.2rem; line-height: 1.5; margin-bottom: 10px; }
+.thank-you-card .sub-thank { color: #ff9800; font-weight: bold; font-size: 1.1rem; margin-bottom: 30px; }
+.thank-logo { width: 120px; height: auto; border-radius: 8px; opacity: 0.9; }
+
+/* חלונות קופצים Modals */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: flex-end; z-index: 99999; }
 .modal-card { background-color: white; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); text-align: right; position: relative; }
 .modal-close-x { position: absolute; top: 20px; left: 20px; background: #f1f5f9; border: none; font-size: 1.2rem; font-weight: bold; color: #64748b; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; }
@@ -61,7 +79,6 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .modal-body { font-size: 1.05rem; color: #334155; line-height: 1.6; margin-bottom: 30px; }
 .modal-body p { margin-bottom: 8px; }
 
-/* עיצוב רספונסיבי למצלמה */
 .scanner-card { align-self: center; border-radius: 25px; width: 90%; max-width: 400px; }
 #qr-reader__dashboard { display: none !important; } 
 #qr-reader video { border-radius: 12px; object-fit: cover; }
