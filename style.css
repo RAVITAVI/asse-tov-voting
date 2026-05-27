@@ -1,11 +1,10 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 body { background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; width: 100vw; }
 
-/* חוקי המסכים המקוריים והיציבים ללא !important מפריע */
+/* הגדרת מסכים נקייה - הסתרה מלאה כברירת מחדל */
 .screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background-color: #f0f4f8; }
-.screen.active { display: flex; flex-direction: column; }
 
-#opening-screen { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; text-align: center; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+#opening-screen { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; text-align: center; padding: 20px; justify-content: center; align-items: center; }
 #opening-screen .logo-square { width: 160px; height: auto; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); background-color: white; padding: 5px; }
 #opening-screen h1 { font-size: 2.2rem; margin-bottom: 15px; font-weight: 700; }
 #opening-screen p { font-size: 1.2rem; margin-bottom: 40px; opacity: 0.9; }
@@ -66,8 +65,8 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .thank-you-card .sub-thank { color: #ff9800; font-weight: bold; font-size: 1.1rem; margin-bottom: 30px; }
 .thank-logo { width: 120px; height: auto; border-radius: 8px; opacity: 0.9; }
 
-/* 💎 פאנל ניהול עצמאי ומבודד לחלוטין למניעת באג התנגשות כפתורים 💎 */
-.admin-panel-layout { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background-color: #f8fafc !important; z-index: 999999; }
+/* פאנל ניהול אדמין מבודד */
+.admin-panel-layout { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background-color: #f8fafc; z-index: 999999; }
 .admin-page-wrapper { background-color: #f8fafc; padding: 30px 20px; width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: center; direction: rtl; }
 .admin-header-card { background: white; width: 100%; max-width: 900px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(30, 60, 114, 0.05); text-align: center; margin-bottom: 25px; border: 1px solid #e2e8f0; }
 .admin-header-card h2 { color: #1e3c72; font-size: 1.8rem; margin-bottom: 20px; font-weight: bold; }
@@ -87,8 +86,8 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .tab-nav-btn.active { background-color: white; color: #1e3c72; box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
 
 .tab-content-wrapper { width: 100%; max-width: 900px; margin-bottom: 20px; }
-.admin-tab-content { display: none !important; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
-.admin-tab-content.active { display: block !important; }
+.admin-tab-content { display: none; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+.admin-tab-content.active { display: block; }
 .admin-tab-content h3 { font-size: 1.3rem; color: #1e3c72; margin-bottom: 20px; border-bottom: 3px solid #f1f5f9; padding-bottom: 10px; text-align: right; font-weight: bold; }
 
 .force-visible-print { display: block !important; opacity: 1 !important; margin-bottom: 30px !important; box-shadow: none !important; }
