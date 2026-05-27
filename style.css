@@ -249,11 +249,9 @@ body {
     color: white;
 }
 
-/* ======================================================= */
-/* מסך כפתורי המיזמים (מסך 5) - תוקן לרקע לבן מוחלט וקריא   */
-/* ======================================================= */
+/* מסך כפתורי המיזמים (מסך 5) */
 .projects-page-wrapper {
-    background-color: #f0f4f8; /* כופה רקע בהיר ונקי על כל המסך */
+    background-color: #f0f4f8; 
     padding-top: 40px; 
     padding-left: 15px;
     padding-right: 15px;
@@ -269,7 +267,7 @@ body {
 
 .page-title {
     font-size: 1.7rem;
-    color: #1e3c72; /* כחול כהה ברור מאוד לקריאה */
+    color: #1e3c72; 
     margin-bottom: 6px;
     text-align: center;
     font-weight: bold;
@@ -277,7 +275,7 @@ body {
 
 .page-subtitle {
     font-size: 1rem;
-    color: #475569; /* צבע טקסט כהה וקריא */
+    color: #475569; 
     margin-bottom: 25px;
     text-align: center;
 }
@@ -290,7 +288,7 @@ body {
     width: 100%;
     max-width: 600px; 
     padding: 5px;
-    margin-bottom: 25px; /* מרווח קטן עבור כפתור החזור בתחתית */
+    margin-bottom: 25px; 
 }
 
 /* עיצוב הריבועים */
@@ -337,21 +335,18 @@ body {
     background-color: rgba(255, 255, 255, 0.4);
 }
 
-/* צבע אדום - לדירוג */
 .color-red {
     background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
     color: #991b1b;
     border: 1px solid #f87171;
 }
 
-/* צבע ירוק - דורג בהצלחה */
 .color-green {
     background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%);
     color: #166534;
     border: 1px solid #4ade80;
 }
 
-/* כפתור חזור ייעודי למסך המיזמים בתחתית הדף */
 .back-btn-voting {
     background: #ffffff;
     border: 2px solid #cbd5e1;
@@ -361,13 +356,192 @@ body {
     padding: 12px 30px;
     border-radius: 25px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-    transition: all 0.2s;
     margin-top: 10px;
 }
 
-.back-btn-voting:hover {
-    background-color: #f1f5f9;
+/* ======================================================= */
+/* עיצוב החלון הקופץ (Modal)                             */
+/* ======================================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; 
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-card {
+    background-color: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 25px 25px 0 0; 
+    padding: 30px 24px;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+    text-align: right;
+    position: relative;
+}
+
+.modal-overlay.active .modal-card {
+    transform: translateY(0);
+}
+
+/* כפתור ה-X הפינתי לסגירה */
+.modal-close-x {
+    position: absolute;
+    top: 20px;
+    left: 20px; 
+    background: #f1f5f9;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #64748b;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-close-x:hover {
+    background-color: #e2e8f0;
     color: #1e3c72;
-    border-color: #1e3c72;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 15px;
+    padding-left: 35px; 
+}
+
+.modal-badge {
+    background-color: #1e3c72;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.modal-header h3 {
+    font-size: 1.3rem;
+    color: #1e3c72;
+    flex: 1;
+}
+
+.modal-body {
+    font-size: 1.05rem;
+    color: #334155;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.modal-body p {
+    margin-bottom: 8px;
+}
+
+/* סליידר וציון */
+.rating-range-wrapper {
+    margin-top: 25px;
+    background-color: #f8fafc;
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.rating-range-wrapper label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #475569;
+}
+
+.slider-val-display {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #ff9800;
+    margin-bottom: 2px;
+}
+
+.modern-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 10px;
+    border-radius: 5px;
+    background: #cbd5e1;
+    outline: none;
+    margin: 15px 0;
+}
+
+.modern-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ff9800;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 5px;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    font-weight: bold;
+}
+
+/* כפתורי שמור/בטל */
+.modal-footer {
+    display: flex;
+    gap: 15px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 15px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.modal-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-save {
+    background-color: #166534;
+    color: white;
+}
+
+.btn-cancel {
+    background-color: #e2e8f0;
+    color: #475569;
 }
