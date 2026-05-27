@@ -440,7 +440,7 @@ document.getElementById('adminBtn').onclick = function() {
     const password = prompt("הכנס סיסמת מנהל:");
     if (password === "02062026") {
         openingScreen.classList.remove('active');
-        adminPanelScreen.classList.add('active');
+        adminPanelScreen.style.display = 'block'; // פתיחה מבודדת לחלוטין
         fetchAndRenderAdminData();
     } else if (password !== null) {
         alert("סיסמה שגויה!");
@@ -454,7 +454,7 @@ document.getElementById('refreshAdminBtn').onclick = function() {
 };
 
 document.getElementById('closeAdminPanelBtn').onclick = function() {
-    adminPanelScreen.classList.remove('active');
+    adminPanelScreen.style.display = 'none'; // סגירה מבודדת
     openingScreen.classList.add('active');
 };
 
