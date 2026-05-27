@@ -152,7 +152,6 @@ function fetchAndDisplayProjects(genderParam) {
                         projectButton.innerHTML = `<div class="proj-number">${projectNo}</div><div class="proj-title">${projectTitle}</div><div class="proj-status-label">לדירוג</div>`;
                     }
                     
-                    // שינוי לפקודת האזנה תקנית וחזקה ביותר - יעבוד בכל דפדפן ומכשיר
                     projectButton.addEventListener('click', function() {
                         currentSelectedProjectNo = projectNo;
                         currentSelectedCardElement = projectButton;
@@ -179,7 +178,7 @@ ratingSlider.addEventListener('input', function(e) {
 });
 
 function closeRatingModal() {
-    ratingModal.style.style.display = 'none';
+    ratingModal.style.display = 'none'; // תוקן מ-style.style
     currentSelectedProjectNo = null;
     currentSelectedCardElement = null;
 }
