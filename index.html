@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <title>כנס קמפוס חמ"ד</title>
 </head>
 <body>
 
-    <div id="opening-screen" class="screen">
+    <div id="opening-screen" class="screen active">
         <button id="adminBtn" class="admin-gear">⚙️</button>
         <img src="campus-hemad-logo.jpg" alt="לוגו קמפוס חמד" class="logo-square">
         <h1>ברוכים הבאים לכנס "עשה טוב"</h1>
@@ -121,8 +120,8 @@
         </div>
     </div>
 
-    <div id="admin-panel-screen" class="admin-panel-layout">
-        <div class="admin-page-wrapper" id="admin-printable-content">
+    <div id="admin-panel-screen" class="screen">
+        <div class="admin-page-wrapper">
             <div class="admin-header-card">
                 <h2>📊 פאנל מנהל - כנס קמפוס חמ"ד</h2>
                 <div class="voters-stats-strip">
@@ -132,7 +131,7 @@
                 </div>
                 <div class="admin-actions-row">
                     <button id="refreshAdminBtn" class="refresh-btn">🔄 רענן נתונים</button>
-                    <button id="printPdfBtn" class="print-pdf-btn">📥 הורדת דו"ח PDF</button>
+                    <button id="printPdfBtn" class="print-pdf-btn">🖨️ הדפסת דו"ח PDF</button>
                 </div>
             </div>
 
@@ -143,7 +142,7 @@
             </div>
 
             <div class="tab-content-wrapper">
-                <div id="tab-all-scores" class="admin-tab-content active">
+                <div id="tab-all-scores" class="admin-tab-content active-tab-print">
                     <h3>🏆 דירוג כללי (לפי ממוצע שופטים)</h3>
                     <div class="table-container">
                         <table id="table-all-scores-body">
@@ -162,7 +161,7 @@
                     </div>
                 </div>
 
-                <div id="tab-gender-scores" class="admin-tab-content">
+                <div id="tab-gender-scores" class="admin-tab-content active-tab-print">
                     <div class="split-tables-grid">
                         <div class="gender-table-block">
                             <span class="table-gender-title boys">🔷 מובילים בנים (ממוצע)</span>
@@ -185,7 +184,7 @@
                     </div>
                 </div>
 
-                <div id="tab-bast-scores" class="admin-tab-content">
+                <div id="tab-bast-scores" class="admin-tab-content active-tab-print">
                     <h3>🔥 דירוג BAST (חביב הקהל הכללי)</h3>
                     <div class="table-container" style="margin-bottom: 30px;">
                         <table id="table-all-bast-body">
