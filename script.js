@@ -57,6 +57,8 @@ let currentSelectedCardElement = null;
 let rawProjectsData = []; 
 
 const SCHOOLS_DATA = [
+    { schoolName: "ניהול בנים", gender: "Male" },   // <-- הוספת בית ספר להתנסות מנהלים
+    { schoolName: "ניהול בנות", gender: "Female" }, // <-- הוספת בית ספר להתנסות מנהלות
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
     { schoolName: "אולפנית אמית שחר", gender: "Female" },
