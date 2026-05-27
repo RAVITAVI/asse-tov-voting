@@ -17,6 +17,7 @@ const nextBtn = document.getElementById('nextBtn');
 const submitNameBtn = document.getElementById('submitNameBtn');
 const backToGenderBtn = document.getElementById('backToGenderBtn');
 const backToSchoolBtn = document.getElementById('backToSchoolBtn');
+const backToNameBtn = document.getElementById('backToNameBtn'); // כפתור החזור החדש של מסך 5
 
 // קישור בסיס הנתונים המרכזי המעודכן שלך בגוגל שיטס
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
@@ -29,7 +30,7 @@ let allStudentsData = [];
 let allStudentsInSchool = []; 
 let isNameSelectedFromList = false; 
 
-// רשימת בתי הספר המעודכנת, הנקייה והנעולה - מאומתת ותקינה לחלוטין!
+// רשימת בתי הספר המעודכנת, נקייה מגרשיים פנימיים כדי למנוע שיבושי קידול ב-GitHub
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
@@ -163,7 +164,6 @@ function fetchAndDisplayProjects(genderParam) {
                         <div class="proj-status-label">לדירוג</div>
                     `;
                     
-                    // לוגיקת לחיצה זמנית לבדיקת העיצוב (מחליף בין אדום לירוק)
                     projectButton.addEventListener('click', () => {
                         if (projectButton.classList.contains('color-red')) {
                             projectButton.classList.remove('color-red');
@@ -308,6 +308,12 @@ submitNameBtn.addEventListener('click', () => {
     
     nameScreen.classList.remove('active');
     votingScreen.classList.add('active');
+});
+
+// לוגיקת כפתור חזור ממסך המיזמים למסך השם
+backToNameBtn.addEventListener('click', () => {
+    votingScreen.classList.remove('active');
+    nameScreen.classList.add('active');
 });
 
 document.getElementById('adminBtn').addEventListener('click', () => {
