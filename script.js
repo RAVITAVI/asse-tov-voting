@@ -458,20 +458,14 @@ document.getElementById('closeAdminPanelBtn').onclick = function() {
     openingScreen.classList.add('active');
 };
 
-// 🔥 תיקון מנגנון ה-PDF החכם והרשמי למובייל ולמחשב 🔥
 document.getElementById('printPdfBtn').onclick = function() {
     const printButton = document.getElementById('printPdfBtn');
-    const refreshButton = document.getElementById('refreshAdminBtn');
-    const closeButton = document.getElementById('closeAdminPanelBtn');
-    
     printButton.innerText = "מייצר PDF...";
     printButton.disabled = true;
 
-    // הפיכת כל הלשוניות לגלויות לחלוטין זמנית רק עבור צילום ה-PDF
     const allTabs = document.querySelectorAll('.admin-tab-content');
     allTabs.forEach(tab => tab.classList.add('force-visible-print'));
 
-    // הגדרות עימוד מקצועיות לקובץ ה-PDF שיוורד
     const opt = {
         margin:       [10, 10, 10, 10],
         filename:     'דוח_תוצאות_כנס_עשה_טוב.pdf',
@@ -482,9 +476,7 @@ document.getElementById('printPdfBtn').onclick = function() {
 
     const element = document.getElementById('admin-printable-content');
 
-    // הרצת הספרייה להורדת הקובץ ישירות לתיקיית ההורדות במכשיר
     html2pdf().set(opt).from(element).save().then(() => {
-        // החזרת המצב לקדמותו לאחר סיום ההורדה
         allTabs.forEach(tab => tab.classList.remove('force-visible-print'));
         printButton.innerText = "📥 הורדת דו"ח PDF";
         printButton.disabled = false;
