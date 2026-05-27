@@ -1,267 +1,579 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <title>כנס קמפוס חמ"ד</title>
-</head>
-<body>
+const openingScreen = document.getElementById('opening-screen');
+const genderScreen = document.getElementById('gender-screen');
+const schoolScreen = document.getElementById('school-screen');
+const nameScreen = document.getElementById('name-screen');
+const votingScreen = document.getElementById('voting-screen'); 
+const summaryScreen = document.getElementById('summary-screen');
+const thankYouScreen = document.getElementById('thank-you-screen');
+const adminPanelScreen = document.getElementById('admin-panel-screen');
 
-    <div id="opening-screen" class="screen active">
-        <button id="adminBtn" class="admin-gear">⚙️</button>
-        <img src="campus-hemad-logo.jpg" alt="לוגו קמפוס חמד" class="logo-square">
-        <h1>ברוכים הבאים לכנס "עשה טוב"</h1>
-        <p>כנס להצגת יוזמות של תלמידי קמפוס חמ"ד תשפ"ו</p>
-        <button id="startBtn" class="start-btn">מתחילים</button>
-    </div>
+const schoolQuestion = document.getElementById('school-question');
+const schoolDropdown = document.getElementById('school-dropdown');
+const studentNameInput = document.getElementById('student-name-input');
+const suggestionsContainer = document.getElementById('suggestions-container');
+const projectsGrid = document.getElementById('projects-grid'); 
 
-    <div id="gender-screen" class="screen">
-        <div class="banner">
-            <img src="campus-hemad-logo.jpg" class="logo-right">
-            <img src="asse-tov-logo.PNG" class="logo-center">
-            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
-        </div>
-        <div class="main-wrapper">
-            <div class="card">
-                <h2>האם את/ה:</h2>
-                <div class="gender-buttons">
-                    <button class="btn-gender btn-boy" id="boyBtn">בן</button>
-                    <button class="btn-gender btn-girl" id="girlBtn">בת</button>
-                </div>
-            </div>
-        </div>
-    </div>
+const ratingModal = document.getElementById('rating-modal');
+const modalProjectNo = document.getElementById('modal-project-no');
+const modalProjectTitle = document.getElementById('modal-project-title');
+const modalProjectCourse = document.getElementById('modal-project-course');
+const modalProjectCreators = document.getElementById('modal-project-creators');
+const ratingSlider = document.getElementById('rating-slider');
+const sliderValuePreview = document.getElementById('slider-value-preview');
+const modalSaveBtn = document.getElementById('modal-save-btn');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
+const modalCloseX = document.getElementById('modal-close-x');
 
-    <div id="school-screen" class="screen">
-        <div class="banner">
-            <img src="campus-hemad-logo.jpg" class="logo-right">
-            <img src="asse-tov-logo.PNG" class="logo-center">
-            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
-        </div>
-        <div class="main-wrapper">
-            <div class="card">
-                <h2 id="school-question"></h2>
-                <select id="school-dropdown" class="school-select">
-                    <option value="">בחר בית ספר...</option>
-                </select>
-                <button id="nextBtn" class="start-btn" style="margin-top: 25px; width: 100%;">המשך</button>
-                <button id="backToGenderBtn" class="back-btn">↩️ חזור למסך הקודם</button>
-            </div>
-        </div>
-    </div>
+// רכיבי סיום וסיכום
+const finishVotingBtn = document.getElementById('finish-voting-btn');
+const bestProjectDropdown = document.getElementById('best-project-dropdown');
+const submitBestBtn = document.getElementById('submit-best-btn');
 
-    <div id="name-screen" class="screen">
-        <div class="banner">
-            <img src="campus-hemad-logo.jpg" class="logo-right">
-            <img src="asse-tov-logo.PNG" class="logo-center">
-            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
-        </div>
-        <div class="main-wrapper">
-            <div class="card">
-                <h2 id="name-question">מה שמך המלא?</h2>
-                <div class="autocomplete-wrapper">
-                    <input type="text" id="student-name-input" class="name-input" placeholder="התחל/י להקליד את שמך..." autocomplete="off">
-                    <div id="suggestions-container" class="suggestions-list"></div>
-                </div>
-                <button id="submitNameBtn" class="start-btn" style="margin-top: 25px; width: 100%;">המשך</button>
-                <button id="backToSchoolBtn" class="back-btn">↩️ חזור למסך הקודם</button>
-            </div>
-        </div>
-    </div>
+// רכיבי סורק ברקודים
+const scanQrBtn = document.getElementById('scan-qr-btn');
+const scannerModal = document.getElementById('scanner-modal');
+const scannerCloseX = document.getElementById('scanner-close-x');
+let html5QrcodeScanner = null;
 
-    <div id="voting-screen" class="screen">
-        <div class="projects-page-wrapper">
-            <h2 class="page-title">בחירת היוזמה לדירוג</h2>
-            <p class="page-subtitle">לחצו על מיזם או סרקו את הברקוד שעל השולחן:</p>
-            
-            <button id="scan-qr-btn" class="scan-main-btn">📷 סרוק ברקוד שולחן</button>
-            
-            <div id="projects-grid" class="projects-grid-container"></div>
-            
-            <div class="finish-btn-wrapper">
-                <button id="finish-voting-btn" class="finish-btn" disabled>יש לדרג לפחות 6 מיזמים (0/6)</button>
-            </div>
-            
-            <button id="backToNameBtn" class="back-btn-voting">↩️ חזור למסך הקודם</button>
-        </div>
-    </div>
+const startBtn = document.getElementById('startBtn');
+const nextBtn = document.getElementById('nextBtn');
+const submitNameBtn = document.getElementById('submitNameBtn');
+const backToGenderBtn = document.getElementById('backToGenderBtn');
+const backToSchoolBtn = document.getElementById('backToSchoolBtn');
+const backToNameBtn = document.getElementById('backToNameBtn'); 
 
-    <div id="summary-screen" class="screen">
-        <div class="banner">
-            <img src="campus-hemad-logo.jpg" class="logo-right">
-            <img src="asse-tov-logo.PNG" class="logo-center">
-            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
-        </div>
-        <div class="main-wrapper">
-            <div class="card summary-card">
-                <h2>שלב סיכום קצר וסיימנו! ✨</h2>
-                <p class="summary-prompt">נחשפתם למיזמים שונים בתערוכה - איזה מיזם הרשים אתכם ביותר?</p>
+const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyTj6OuSvDvgfru8VN-9SCwxmciiBZ59Y-aCZeWZLzXV1AgZvTwMdKM2jVgnIG3OSI/exec";
+
+let selectedGender = "";
+let selectedSchool = "";
+let studentName = "";
+let allStudentsData = []; 
+let allStudentsInSchool = []; 
+let isNameSelectedFromList = false; 
+let currentStudentVotingRow = {}; 
+let currentSelectedProjectNo = null; 
+let currentSelectedCardElement = null; 
+let rawProjectsData = []; 
+
+const SCHOOLS_DATA = [
+    { schoolName: "סגולה", gender: "Female" },
+    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
+    { schoolName: "אולפנית אמית שחר", gender: "Female" },
+    { schoolName: "אולפנית שחם", gender: "Female" },
+    { schoolName: "צביה", gender: "Female" },
+    { schoolName: "אולפנת חריש", gender: "Female" },
+    { schoolName: "לוינסון בנות", gender: "Female" },
+    { schoolName: "אולפנית אמונה אלישבע", gender: "Female" },
+    { schoolName: "פלך זכרון יעקב", gender: "Female" },
+    { schoolName: "ישיבה תנ\"כית זכרון יעקב", gender: "Male" },
+    { schoolName: "ישיבה תיכונית קרית אתא", gender: "Male" },
+    { schoolName: "יבנה", gender: "Male" },
+    { schoolName: "לוינסון בנים", gender: "Male" },
+    { schoolName: "נתיבות דרור", gender: "Male" },
+    { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
+    { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
+    { schoolName: "ניהול בנים", gender: "Male" }
+    { schoolName: "ניהול בנות", gender: "Female" }
+];
+
+function cleanStringForComparison(str) {
+    if (!str) return "";
+    return str.replace(/[\"\'\`\״\׳\俘\”\“]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') { inQuotes = !inQuotes; }
+        else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+        else { current += char; }
+    }
+    result.push(current.trim());
+    return result.map(col => col.replace(/^"|"$/g, '').trim());
+}
+
+function fetchStudentsForSchool(schoolName, genderParam) {
+    const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (!matches || !matches[1]) return;
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/gviz/tq?tqx=out:csv&sheet=Students`;
+    fetch(csvUrl)
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split(/\r?\n/);
+            allStudentsInSchool = [];
+            allStudentsData = [];
+            const targetGender = genderParam.trim().toLowerCase();
+            const cleanTargetSchool = cleanStringForComparison(schoolName);
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const columns = parseCSVLine(lines[i]);
+                const currentName = columns[1];   
+                const currentSchool = columns[2]; 
+                const currentGender = columns[4]; 
+                const hasVotedStr = columns[5];   
+                if (currentSchool && currentGender) {
+                    const cleanCurrentSchool = cleanStringForComparison(currentSchool);
+                    if (cleanCurrentSchool === cleanTargetSchool && currentGender.toLowerCase() === targetGender) {
+                        if (currentName) {
+                            allStudentsInSchool.push(currentName);
+                            const projScores = {};
+                            for (let p = 1; p <= 15; p++) {
+                                const columnIndex = 5 + p; 
+                                projScores[p] = columns[columnIndex] ? parseInt(columns[columnIndex]) || 0 : 0;
+                            }
+                            allStudentsData.push({
+                                name: currentName,
+                                hasVoted: (hasVotedStr && hasVotedStr.toUpperCase() === "TRUE"),
+                                scores: projScores
+                            });
+                        }
+                    }
+                }
+            }
+        }).catch(error => console.error(error));
+}
+
+function openRatingPanelDirectly(projectNo, projectTitle, projectCreators, projectCourse, currentScore, cardElement) {
+    currentSelectedProjectNo = projectNo;
+    currentSelectedCardElement = cardElement;
+    
+    modalProjectNo.innerText = "מיזם מספר " + projectNo;
+    modalProjectTitle.innerText = projectTitle;
+    modalProjectCreators.innerText = projectCreators || "לא צוין";
+    modalProjectCourse.innerText = projectCourse || "לא צוין";
+    
+    const liveScore = currentStudentVotingRow[projectNo] || 0;
+    if (liveScore > 0) {
+        ratingSlider.value = liveScore;
+        sliderValuePreview.innerText = liveScore;
+    } else {
+        ratingSlider.value = 0;
+        sliderValuePreview.innerText = "לא דורג";
+    }
+    
+    ratingModal.style.display = 'flex';
+}
+
+function updateFinishButtonStatus() {
+    let votedCount = 0;
+    for (let key in currentStudentVotingRow) {
+        if (currentStudentVotingRow[key] > 0) {
+            votedCount++;
+        }
+    }
+    
+    if (votedCount >= 6) {
+        finishVotingBtn.disabled = false;
+        finishVotingBtn.className = "finish-btn active-finish";
+        finishVotingBtn.innerText = "🏁 סיימתי לדרג – המשך לשלב הסיכום";
+    } else {
+        finishVotingBtn.disabled = true;
+        finishVotingBtn.className = "finish-btn";
+        finishVotingBtn.innerText = "יש לדרג לפחות 6 מיזמים (" + votedCount + "/6)";
+    }
+}
+
+function fetchAndDisplayProjects(genderParam) {
+    const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (!matches || !matches[1]) return;
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/gviz/tq?tqx=out:csv&sheet=projects`;
+
+    fetch(csvUrl)
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split(/\r?\n/);
+            projectsGrid.innerHTML = ""; 
+            rawProjectsData = []; 
+            bestProjectDropdown.innerHTML = '<option value="">בחר/י את המיזם המצטיין שלך...</option>';
+            const targetGender = genderParam.trim().toLowerCase();
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const columns = parseCSVLine(lines[i]);
                 
-                <select id="best-project-dropdown" class="school-select" style="margin-top: 15px; text-align: right;">
-                    <option value="">בחר/י את המיזם המצטיין שלך...</option>
-                </select>
+                const projectNo = parseInt(columns[1]);     
+                const projectTitle = columns[2];  
+                const projectCourse = columns[3];
+                const projectCreators = columns[4];
+                const projectGender = columns[5]; 
                 
-                <button id="submit-best-btn" class="start-btn" style="margin-top: 30px; width: 100%;">שלח דירוג סופי ותודה</button>
-            </div>
-        </div>
-    </div>
+                if (projectGender && projectGender.toLowerCase() === targetGender) {
+                    const projectButton = document.createElement('div');
+                    const currentScore = currentStudentVotingRow[projectNo] || 0;
+                    
+                    rawProjectsData.push({
+                        no: projectNo, title: projectTitle, creators: projectCreators, course: projectCourse, element: projectButton
+                    });
 
-    <div id="thank-you-screen" class="screen">
-        <div class="thank-you-wrapper">
-            <div class="thank-you-card">
-                <div class="success-icon">✓</div>
-                <h1>תודה רבה!</h1>
-                <p>ההצבעה והציון הסופי שלך נקלטו בהצלחה במערכת.</p>
-                <p class="sub-thank">המשך כנס פורה ומהנה!</p>
-                <img src="campus-hemad-logo.jpg" class="thank-logo">
-            </div>
-        </div>
-    </div>
+                    const opt = document.createElement('option');
+                    const prefix = selectedGender === 'Female' ? 'G' : 'B';
+                    opt.value = prefix + projectNo;
+                    opt.innerText = "מיזם " + projectNo + " - " + projectTitle;
+                    bestProjectDropdown.appendChild(opt);
 
-    <div id="admin-panel-screen" class="screen">
-        <div class="admin-page-wrapper" id="admin-printable-content">
-            <div class="admin-header-card">
-                <h2>📊 פאנל מנהל - כנס קמפוס חמ"ד</h2>
-                <div class="voters-stats-strip">
-                    <div class="stat-box">בנים שהצביעו<span id="stat-boys-count">0</span></div>
-                    <div class="stat-box">בנות שהצביעו<span id="stat-girls-count">0</span></div>
-                    <div class="stat-box total">סה"כ מצביעים<span id="stat-total-count">0</span></div>
-                </div>
-                <div class="admin-actions-row">
-                    <button id="refreshAdminBtn" class="refresh-btn">🔄 רענן נתונים</button>
-                    <button id="printPdfBtn" class="print-pdf-btn">📥 הורדת דו"ח PDF</button>
-                </div>
-            </div>
+                    if (currentScore > 0) {
+                        projectButton.className = 'project-grid-button color-green';
+                        projectButton.innerHTML = '<div class="proj-number">' + projectNo + '</div><div class="proj-title">' + projectTitle + '</div><div class="proj-status-label">✓ דורג (' + currentScore + ')</div>';
+                    } else {
+                        projectButton.className = 'project-grid-button color-red';
+                        projectButton.innerHTML = '<div class="proj-number">' + projectNo + '</div><div class="proj-title">' + projectTitle + '</div><div class="proj-status-label">לדירוג</div>';
+                    }
+                    
+                    projectButton.onclick = function() {
+                        openRatingPanelDirectly(projectNo, projectTitle, projectCreators, projectCourse, currentScore, projectButton);
+                    };
+                    
+                    projectsGrid.appendChild(projectButton);
+                }
+            }
+            updateFinishButtonStatus();
+        }).catch(error => console.error(error));
+}
 
-            <div class="admin-tabs-nav">
-                <button class="tab-nav-btn active" data-tab="tab-all-scores">כל המיזמים (ניקוד)</button>
-                <button class="tab-nav-btn" data-tab="tab-gender-scores">ניקוד מופרד</button>
-                <button class="tab-nav-btn" data-tab="tab-bast-scores">דירוג חביב הקהל (BAST)</button>
-            </div>
+scanQrBtn.onclick = function() {
+    scannerModal.style.display = 'flex';
+    html5QrcodeScanner = new Html5Qrcode("qr-reader");
+    html5QrcodeScanner.start(
+        { facingMode: "environment" }, 
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => { 
+            const rawText = decodedText.trim().toUpperCase();
+            const barcodeGenderPrefix = rawText.charAt(0); 
+            const scannedProjNo = parseInt(rawText.replace(/[^\d]/g, '')); 
 
-            <div class="tab-content-wrapper">
-                <div id="tab-all-scores" class="admin-tab-content active">
-                    <h3>🏆 דירוג כללי (לפי ממוצע שופטים)</h3>
-                    <div class="table-container">
-                        <table id="table-all-scores-body">
-                            <thead>
-                                <tr>
-                                    <th>מקום</th>
-                                    <th>מספר מיזם</th>
-                                    <th>שם המיזם</th>
-                                    <th>מגדר</th>
-                                    <th>ממוצע</th>
-                                    <th>הצבעות</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+            if (barcodeGenderPrefix === 'G' && selectedGender !== 'Female') {
+                alert("סרקת ברקוד של מסלול בנות, אך הנך רשום במסלול בנים!");
+                stopScanner(); return;
+            }
+            if (barcodeGenderPrefix === 'B' && selectedGender !== 'Male') {
+                alert("סרקת ברקוד של מסלול בנים, אך הנך רשומה במסלול בנות!");
+                stopScanner(); return;
+            }
 
-                <div id="tab-gender-scores" class="admin-tab-content">
-                    <div class="split-tables-grid">
-                        <div class="gender-table-block">
-                            <span class="table-gender-title boys">🔷 מובילים בנים (ממוצע)</span>
-                            <div class="table-container">
-                                <table id="table-boys-scores-body">
-                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="gender-table-block">
-                            <span class="table-gender-title girls">💖 מובילות בנות (ממוצע)</span>
-                            <div class="table-container">
-                                <table id="table-girls-scores-body">
-                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            stopScanner();
+            const foundProj = rawProjectsData.find(p => p.no === scannedProjNo);
+            if (foundProj) {
+                openRatingPanelDirectly(foundProj.no, foundProj.title, foundProj.creators, foundProj.course, currentStudentVotingRow[foundProj.no] || 0, foundProj.element);
+            } else {
+                alert("מיזם מספר " + scannedProjNo + " לא נמצא ברשימה הפעילה שלך.");
+            }
+        },
+        (errorMessage) => { }
+    ).catch(err => {
+        console.error(err);
+        alert("לא ניתן לגשת למצלמה. ודאו שאישרתם הרשאת מצלמה בדפדפן.");
+        scannerModal.style.display = 'none';
+    });
+};
 
-                <div id="tab-bast-scores" class="admin-tab-content">
-                    <h3>🔥 דירוג BAST (חביב הקהל הכללי)</h3>
-                    <div class="table-container" style="margin-bottom: 30px;">
-                        <table id="table-all-bast-body">
-                            <thead><tr><th>מקום</th><th>מספר מיזם</th><th>שם המיזם</th><th>מגדר</th><th>קולות BAST</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+function stopScanner() {
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().then(() => { scannerModal.style.display = 'none'; }).catch(err => console.error(err));
+    } else { scannerModal.style.display = 'none'; }
+}
+scannerCloseX.onclick = stopScanner;
 
-                    <div class="split-tables-grid">
-                        <div class="gender-table-block">
-                            <span class="table-gender-title boys">🔷 חביב הקהל - בנים</span>
-                            <div class="table-container">
-                                <table id="table-boys-bast-body">
-                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>קולות</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="gender-table-block">
-                            <span class="table-gender-title girls">💖 חביב הקהל - בנות</span>
-                            <div class="table-container">
-                                <table id="table-girls-bast-body">
-                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>קולות</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+ratingSlider.oninput = function(e) {
+    const val = parseInt(e.target.value);
+    if (val === 0) { sliderValuePreview.innerText = "לא דורג"; } 
+    else { sliderValuePreview.innerText = val; }
+};
 
-            <button id="closeAdminPanelBtn" class="back-btn-voting-admin">🚪 יציאה מפאנל ניהול</button>
-        </div>
-    </div>
+function closeRatingModal() {
+    ratingModal.style.display = 'none';
+    currentSelectedProjectNo = null;
+    currentSelectedCardElement = null;
+}
+modalCancelBtn.onclick = closeRatingModal;
+modalCloseX.onclick = closeRatingModal;
 
-    <div id="scanner-modal" class="modal-overlay">
-        <div class="modal-card scanner-card">
-            <button id="scanner-close-x" class="modal-close-x">✕</button>
-            <div class="modal-header">
-                <h3>סריקת ברקוד המיזם</h3>
-            </div>
-            <div class="modal-body">
-                <p style="margin-bottom: 15px; text-align: center;">כוונו את המצלמה לברקוד שעל השולחן</p>
-                <div id="qr-reader" style="width: 100%; max-width: 350px; margin: 0 auto; border-radius: 12px; overflow: hidden;"></div>
-            </div>
-        </div>
-    </div>
+modalSaveBtn.onclick = function() {
+    const selectedScore = parseInt(ratingSlider.value);
+    if (selectedScore === 0) {
+        alert("אנא בחרו ציון בין 1 ל-10 לפני הלחיצה על שמור, או לחצו ביטול.");
+        return;
+    }
+    
+    modalSaveBtn.innerText = "שומר...";
+    modalSaveBtn.disabled = true;
+    
+    fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", 
+        cache: "no-cache",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            studentName: studentName,
+            projNumber: currentSelectedProjectNo,
+            score: selectedScore
+        })
+    })
+    .then(() => {
+        currentStudentVotingRow[currentSelectedProjectNo] = selectedScore;
+        currentSelectedCardElement.className = 'project-grid-button color-green';
+        currentSelectedCardElement.querySelector('.proj-status-label').innerText = '✓ דורג (' + selectedScore + ')';
+        modalSaveBtn.innerText = "שמור";
+        modalSaveBtn.disabled = false;
+        closeRatingModal();
+        updateFinishButtonStatus();
+    })
+    .catch(err => {
+        console.error("שגיאה בשמירה:", err);
+        alert("תקלה בתקשורת. אנא נסו שנית.");
+        modalSaveBtn.innerText = "שמור";
+        modalSaveBtn.disabled = false;
+    });
+};
 
-    <div id="rating-modal" class="modal-overlay">
-        <div class="modal-card">
-            <button id="modal-close-x" class="modal-close-x">✕</button>
-            <div class="modal-header">
-                <span id="modal-project-no" class="modal-badge"></span>
-                <h3 id="modal-project-title"></h3>
-            </div>
-            <div class="modal-body">
-                <p><strong>יזמים:</strong> <span id="modal-project-creators"></span></p>
-                <p><strong>קורס:</strong> <span id="modal-project-course"></span></p>
-                <div class="rating-range-wrapper">
-                    <label>דרגו את המיזם:</label>
-                    <div class="slider-val-display" id="slider-value-preview">לא דורג</div>
-                    <input type="range" id="rating-slider" min="0" max="10" value="0" class="modern-slider">
-                    <div class="slider-labels">
-                        <span>לא דורג</span>
-                        <span>5</span>
-                        <span>10</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="modal-save-btn" class="modal-btn btn-save">שמור</button>
-                <button id="modal-cancel-btn" class="modal-btn btn-cancel">ביטול</button>
-            </div>
-        </div>
-    </div>
+finishVotingBtn.onclick = function() {
+    votingScreen.classList.remove('active');
+    summaryScreen.classList.add('active');
+};
 
-    <script src="script.js"></script>
-</body>
-</html>
+submitBestBtn.onclick = function() {
+    const selectedBest = bestProjectDropdown.value;
+    if (selectedBest === "") {
+        alert("חובה לבחור את המיזם שהרשים אותך ביותר לפני השליחה!");
+        return;
+    }
+    
+    submitBestBtn.innerText = "שולח...";
+    submitBestBtn.disabled = true;
+    
+    fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        cache: "no-cache",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            studentName: studentName,
+            bestProj: selectedBest
+        })
+    })
+    .then(() => {
+        summaryScreen.classList.remove('active');
+        thankYouScreen.classList.add('active');
+    })
+    .catch(err => {
+        console.error(err);
+        alert("תקלה בשליחה הסופית. אנא נסו שנית.");
+        submitBestBtn.innerText = "שלח דירוג סופי ותודה";
+        submitBestBtn.disabled = false;
+    });
+};
+
+startBtn.onclick = function() { openingScreen.classList.remove('active'); genderScreen.classList.add('active'); };
+
+function loadSchools(genderParam) {
+    schoolDropdown.innerHTML = '<option value="">בחר בית ספר...</option>';
+    const filteredSchools = SCHOOLS_DATA.filter(item => item.gender === genderParam);
+    filteredSchools.forEach(school => {
+        const option = document.createElement("option");
+        option.value = school.schoolName;
+        option.innerText = school.schoolName;
+        schoolDropdown.appendChild(option);
+    });
+}
+
+document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+backToGenderBtn.onclick = function() { schoolScreen.classList.remove('active'); genderScreen.classList.add('active'); };
+
+nextBtn.onclick = function() {
+    if (schoolDropdown.value === "") { alert("אנא בחר בית ספר לפני ההמשך"); } 
+    else {
+        selectedSchool = schoolDropdown.value; 
+        fetchStudentsForSchool(selectedSchool, selectedGender);
+        studentNameInput.value = ""; suggestionsContainer.innerHTML = ""; suggestionsContainer.style.display = 'none'; isNameSelectedFromList = false;
+        schoolScreen.classList.remove('active'); nameScreen.classList.add('active'); studentNameInput.focus();
+    }
+};
+
+studentNameInput.oninput = function(e) {
+    const userInput = e.target.value.trim();
+    suggestionsContainer.innerHTML = ''; isNameSelectedFromList = false; 
+    if (userInput.length < 2) { suggestionsContainer.style.display = 'none'; return; }
+    const filteredNames = allStudentsInSchool.filter(name => name.includes(userInput));
+    if (filteredNames.length > 0) {
+        suggestionsContainer.style.display = 'block';
+        filteredNames.forEach(name => {
+            const div = document.createElement('div'); div.className = 'suggestion-item'; div.innerText = name;
+            div.onclick = function() { studentNameInput.value = name; suggestionsContainer.style.display = 'none'; isNameSelectedFromList = true; };
+            suggestionsContainer.appendChild(div);
+        });
+    } else { suggestionsContainer.style.display = 'none'; }
+};
+
+document.onclick = function(e) { if (e.target !== studentNameInput) { suggestionsContainer.style.display = 'none'; } };
+backToSchoolBtn.onclick = function() { nameScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+
+submitNameBtn.onclick = function() {
+    const currentInputValue = studentNameInput.value.trim();
+    if (currentInputValue === "") { alert("אנא הקלד/י ובחר/י את שמך מתוך הרשימה"); return; }
+    if (!isNameSelectedFromList || !allStudentsInSchool.includes(currentInputValue)) { alert("חובה לבחור את השם המלא שלך מתוך רשימת השמות המוקפצת!"); return; }
+    const currentStudentObj = allStudentsData.find(student => student.name === currentInputValue);
+    if (currentStudentObj && currentStudentObj.hasVoted === true) { alert("מותר להצביע רק פעם אחת - תודה על השתתפותך"); return; }
+    studentName = currentInputValue;
+    currentStudentVotingRow = (currentStudentObj && currentStudentObj.scores) ? currentStudentObj.scores : {};
+    fetchAndDisplayProjects(selectedGender);
+    nameScreen.classList.remove('active'); votingScreen.classList.add('active');
+};
+
+backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
+
+// פאנל הניהול של האדמין
+document.querySelectorAll('.tab-nav-btn').forEach(button => {
+    button.onclick = function() {
+        document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
+        
+        this.classList.add('active');
+        document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+    };
+});
+
+document.getElementById('adminBtn').onclick = function() {
+    const password = prompt("הכנס סיסמת מנהל:");
+    if (password === "02062026") {
+        openingScreen.classList.remove('active');
+        adminPanelScreen.classList.add('active');
+        fetchAndRenderAdminData();
+    } else if (password !== null) {
+        alert("סיסמה שגויה!");
+    }
+};
+
+document.getElementById('refreshAdminBtn').onclick = function() {
+    this.innerText = "מרענן...";
+    this.disabled = true;
+    fetchAndRenderAdminData();
+};
+
+document.getElementById('closeAdminPanelBtn').onclick = function() {
+    adminPanelScreen.classList.remove('active');
+    openingScreen.classList.add('active');
+};
+
+// 🔥 תיקון מנגנון ה-PDF החכם והרשמי למובייל ולמחשב 🔥
+document.getElementById('printPdfBtn').onclick = function() {
+    const printButton = document.getElementById('printPdfBtn');
+    const refreshButton = document.getElementById('refreshAdminBtn');
+    const closeButton = document.getElementById('closeAdminPanelBtn');
+    
+    printButton.innerText = "מייצר PDF...";
+    printButton.disabled = true;
+
+    // הפיכת כל הלשוניות לגלויות לחלוטין זמנית רק עבור צילום ה-PDF
+    const allTabs = document.querySelectorAll('.admin-tab-content');
+    allTabs.forEach(tab => tab.classList.add('force-visible-print'));
+
+    // הגדרות עימוד מקצועיות לקובץ ה-PDF שיוורד
+    const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     'דוח_תוצאות_כנס_עשה_טוב.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, alpha: false },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    const element = document.getElementById('admin-printable-content');
+
+    // הרצת הספרייה להורדת הקובץ ישירות לתיקיית ההורדות במכשיר
+    html2pdf().set(opt).from(element).save().then(() => {
+        // החזרת המצב לקדמותו לאחר סיום ההורדה
+        allTabs.forEach(tab => tab.classList.remove('force-visible-print'));
+        printButton.innerText = "📥 הורדת דו"ח PDF";
+        printButton.disabled = false;
+    }).catch(err => {
+        console.error(err);
+        allTabs.forEach(tab => tab.classList.remove('force-visible-print'));
+        printButton.innerText = "📥 הורדת דו"ח PDF";
+        printButton.disabled = false;
+        alert("תקלה בייצוא ה-PDF. נסו שוב.");
+    });
+};
+
+function fetchAndRenderAdminData() {
+    fetch(APPS_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('stat-boys-count').innerText = data.stats.boysVoted;
+            document.getElementById('stat-girls-count').innerText = data.stats.girlsVoted;
+            document.getElementById('stat-total-count').innerText = data.stats.totalVoted;
+
+            const projects = data.projects;
+
+            // טאב 1
+            const allSortedByScore = [...projects].sort((a, b) => b.averageScore - a.averageScore);
+            const allScoresTable = document.getElementById('table-all-scores-body').querySelector('tbody');
+            allScoresTable.innerHTML = '';
+            allSortedByScore.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${index + 1}</strong></td><td>${p.number}</td><td style="text-align:right; font-weight:600;">${p.title}</td><td>${p.gender === 'male' ? '🔷 בן' : '💖 בת'}</td><td><span class="badge-avg">${p.averageScore.toFixed(2)}</span></td><td>${p.voteCount}</td>`;
+                allScoresTable.appendChild(tr);
+            });
+
+            // טאב 2
+            const boysSortedByScore = projects.filter(p => p.gender === 'male').sort((a, b) => b.averageScore - a.averageScore);
+            const girlsSortedByScore = projects.filter(p => p.gender === 'female').sort((a, b) => b.averageScore - a.averageScore);
+            
+            const boysScoresTable = document.getElementById('table-boys-scores-body').querySelector('tbody');
+            boysScoresTable.innerHTML = '';
+            boysSortedByScore.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-avg blue">${p.averageScore.toFixed(2)}</span></td>`;
+                boysScoresTable.appendChild(tr);
+            });
+
+            const girlsScoresTable = document.getElementById('table-girls-scores-body').querySelector('tbody');
+            girlsScoresTable.innerHTML = '';
+            girlsSortedByScore.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-avg pink">${p.averageScore.toFixed(2)}</span></td>`;
+                girlsScoresTable.appendChild(tr);
+            });
+
+            // טאב 3
+            const allSortedByBast = [...projects].sort((a, b) => b.bastCount - a.bastCount);
+            const allBastTable = document.getElementById('table-all-bast-body').querySelector('tbody');
+            allBastTable.innerHTML = '';
+            allSortedByBast.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${index + 1}</strong></td><td>${p.number}</td><td style="text-align:right; font-weight:600;">${p.title}</td><td>${p.gender === 'male' ? 'בן' : 'בת'}</td><td><span class="badge-bast">${p.bastCount} קולות</span></td>`;
+                allBastTable.appendChild(tr);
+            });
+
+            const boysSortedByBast = projects.filter(p => p.gender === 'male').sort((a, b) => b.bastCount - a.bastCount);
+            const boysBastTable = document.getElementById('table-boys-bast-body').querySelector('tbody');
+            boysBastTable.innerHTML = '';
+            boysSortedByBast.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-bast blue">${p.bastCount}</span></td>`;
+                boysBastTable.appendChild(tr);
+            });
+
+            const girlsSortedByBast = projects.filter(p => p.gender === 'female').sort((a, b) => b.bastCount - a.bastCount);
+            const girlsBastTable = document.getElementById('table-girls-bast-body').querySelector('tbody');
+            girlsBastTable.innerHTML = '';
+            girlsSortedByBast.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-bast pink">${p.bastCount}</span></td>`;
+                girlsBastTable.appendChild(tr);
+            });
+
+            const refreshBtn = document.getElementById('refreshAdminBtn');
+            refreshBtn.innerText = "🔄 רענן נתונים";
+            refreshBtn.disabled = false;
+        })
+        .catch(err => {
+            console.error(err);
+            alert("שגיאה במשיכת הנתונים.");
+            const refreshBtn = document.getElementById('refreshAdminBtn');
+            refreshBtn.innerText = "🔄 רענן נתונים";
+            refreshBtn.disabled = false;
+        });
+}
