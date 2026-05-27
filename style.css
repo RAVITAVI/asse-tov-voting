@@ -33,10 +33,14 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .suggestion-item:hover { background-color: #f0f4f8; color: #1e3c72; }
 .admin-gear { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.8rem; color: white; cursor: pointer; }
 
-/* מסך 5 */
 .projects-page-wrapper { background-color: #f0f4f8; padding-top: 40px; padding-left: 15px; padding-right: 15px; padding-bottom: 40px; width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
 .page-title { font-size: 1.7rem; color: #1e3c72; margin-bottom: 6px; font-weight: bold; }
-.page-subtitle { font-size: 1rem; color: #475569; margin-bottom: 25px; }
+.page-subtitle { font-size: 1rem; color: #475569; margin-bottom: 20px; text-align: center; }
+
+/* כפתור סריקה ראשי משופר */
+.scan-main-btn { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 14px 28px; font-size: 1.15rem; font-weight: bold; border-radius: 15px; cursor: pointer; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); width: 100%; max-width: 320px; transition: transform 0.2s; }
+.scan-main-btn:active { transform: scale(0.98); }
+
 .projects-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; width: 100%; max-width: 600px; padding: 5px; margin-bottom: 25px; }
 .project-grid-button { border-radius: 16px; padding: 20px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; min-height: 130px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
 .proj-number { font-size: 1.9rem; font-weight: 800; margin-bottom: 4px; }
@@ -47,14 +51,8 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .color-green { background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%); color: #166534; border: 1px solid #4ade80; }
 .back-btn-voting { background: #ffffff; border: 2px solid #cbd5e1; color: #475569; font-size: 1.05rem; font-weight: bold; padding: 12px 30px; border-radius: 25px; cursor: pointer; }
 
-/* חלון קופץ Modal */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); 
-    display: none; /* נפתח ישירות דרך ה-JS בלחיצה */
-    justify-content: center; align-items: flex-end; 
-    z-index: 99999;
-}
+/* חלונות קופצים (Modals) */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: flex-end; z-index: 99999; }
 .modal-card { background-color: white; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); text-align: right; position: relative; }
 .modal-close-x { position: absolute; top: 20px; left: 20px; background: #f1f5f9; border: none; font-size: 1.2rem; font-weight: bold; color: #64748b; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; padding-left: 35px; }
@@ -62,6 +60,11 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .modal-header h3 { font-size: 1.3rem; color: #1e3c72; flex: 1; }
 .modal-body { font-size: 1.05rem; color: #334155; line-height: 1.6; margin-bottom: 30px; }
 .modal-body p { margin-bottom: 8px; }
+
+/* עיצוב רספונסיבי למצלמה */
+.scanner-card { align-self: center; border-radius: 25px; width: 90%; max-width: 400px; }
+#qr-reader__dashboard { display: none !important; } 
+#qr-reader video { border-radius: 12px; object-fit: cover; }
 
 .rating-range-wrapper { margin-top: 25px; background-color: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; text-align: center; }
 .rating-range-wrapper label { font-weight: bold; display: block; margin-bottom: 5px; color: #475569; }
