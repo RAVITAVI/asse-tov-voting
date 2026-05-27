@@ -29,6 +29,7 @@ const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 const backToNameBtn = document.getElementById('backToNameBtn'); 
 
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6Z5YI6N9Nsh7863Xh1F2D0wY6520W_eAbe4rE60kZg9XwA2wMvxK8lS9n84yD6-pC/exec";
 
 let selectedGender = "";
 let selectedSchool = "";
@@ -153,7 +154,6 @@ function fetchAndDisplayProjects(genderParam) {
                         projectButton.innerHTML = '<div class="proj-number">' + projectNo + '</div><div class="proj-title">' + projectTitle + '</div><div class="proj-status-label">לדירוג</div>';
                     }
                     
-                    // שימוש בשיטה ישירה וחסינה של לחיצה על אלמנט דינמי
                     projectButton.onclick = function() {
                         currentSelectedProjectNo = projectNo;
                         currentSelectedCardElement = projectButton;
@@ -163,10 +163,15 @@ function fetchAndDisplayProjects(genderParam) {
                         modalProjectCreators.innerText = projectCreators || "לא צוין";
                         modalProjectCourse.innerText = projectCourse || "לא צוין";
                         
-                        ratingSlider.value = currentScore > 0 ? currentScore : 5;
-                        sliderValuePreview.innerText = ratingSlider.value;
+                        // קביעת מיקום הסליידר לפי הדירוג הקיים בקובץ גוגל שיטס
+                        if (currentScore > 0) {
+                            ratingSlider.value = currentScore;
+                            sliderValuePreview.innerText = currentScore;
+                        } else {
+                            ratingSlider.value = 0;
+                            sliderValuePreview.innerText = "לא דורג";
+                        }
                         
-                        // פתיחת החלון באמצעות הזרקת סגנון ישיר למסך
                         ratingModal.style.display = 'flex';
                     };
                     
@@ -176,8 +181,14 @@ function fetchAndDisplayProjects(genderParam) {
         }).catch(error => console.error(error));
 }
 
+// עדכון דינמי של הטקסט מעל הסליידר בזמן גרירה
 ratingSlider.oninput = function(e) {
-    sliderValuePreview.innerText = e.target.value;
+    const val = parseInt(e.target.value);
+    if (val === 0) {
+        sliderValuePreview.innerText = "לא דורג";
+    } else {
+        sliderValuePreview.innerText = val;
+    }
 };
 
 function closeRatingModal() {
@@ -188,14 +199,47 @@ function closeRatingModal() {
 modalCancelBtn.onclick = closeRatingModal;
 modalCloseX.onclick = closeRatingModal;
 
+// כפתור שמור: שולח את הנתונים ישירות ל-Google Sheets בזמן אמת!
 modalSaveBtn.onclick = function() {
     const selectedScore = parseInt(ratingSlider.value);
-    currentStudentVotingRow[currentSelectedProjectNo] = selectedScore;
     
-    currentSelectedCardElement.className = 'project-grid-button color-green';
-    currentSelectedCardElement.querySelector('.proj-status-label').innerText = '✓ דורג (' + selectedScore + ')';
+    // מניעת מצב ששומרים את הציון 0 כציון דירוג
+    if (selectedScore === 0) {
+        alert("אנא בחרו ציון בין 1 ל-10 לפני הלחיצה על שמור, או לחצו ביטול.");
+        return;
+    }
     
-    closeRatingModal();
+    modalSaveBtn.innerText = "שומר...";
+    modalSaveBtn.disabled = true;
+    
+    fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", 
+        cache: "no-cache",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            studentName: studentName,
+            projNumber: currentSelectedProjectNo,
+            score: selectedScore
+        })
+    })
+    .then(() => {
+        // עדכון גרפי מקומי מיידי לאחר שמירה מוצלחת בשרת
+        currentStudentVotingRow[currentSelectedProjectNo] = selectedScore;
+        
+        currentSelectedCardElement.className = 'project-grid-button color-green';
+        currentSelectedCardElement.querySelector('.proj-status-label').innerText = '✓ דורג (' + selectedScore + ')';
+        
+        modalSaveBtn.innerText = "שמור";
+        modalSaveBtn.disabled = false;
+        closeRatingModal();
+    })
+    .catch(err => {
+        console.error("שגיאה בשמירה:", err);
+        alert("תקלה בתקשורת. אנא נסו שנית.");
+        modalSaveBtn.innerText = "שמור";
+        modalSaveBtn.disabled = false;
+    });
 };
 
 startBtn.onclick = function() { openingScreen.classList.remove('active'); genderScreen.classList.add('active'); };
