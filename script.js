@@ -29,7 +29,9 @@ const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 const backToNameBtn = document.getElementById('backToNameBtn'); 
 
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6Z5YI6N9Nsh7863Xh1F2D0wY6520W_eAbe4rE60kZg9XwA2wMvxK8lS9n84yD6-pC/exec";
+
+// הכתובת החדשה והמעודכנת של ה-Apps Script שלך
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyTj6OuSvDvgfru8VN-9SCwxmciiBZ59Y-aCZeWZLzXV1AgZvTwMdKM2jVgnIG3OSI/exec";
 
 let selectedGender = "";
 let selectedSchool = "";
@@ -163,7 +165,6 @@ function fetchAndDisplayProjects(genderParam) {
                         modalProjectCreators.innerText = projectCreators || "לא צוין";
                         modalProjectCourse.innerText = projectCourse || "לא צוין";
                         
-                        // קביעת מיקום הסליידר לפי הדירוג הקיים בקובץ גוגל שיטס
                         if (currentScore > 0) {
                             ratingSlider.value = currentScore;
                             sliderValuePreview.innerText = currentScore;
@@ -181,7 +182,6 @@ function fetchAndDisplayProjects(genderParam) {
         }).catch(error => console.error(error));
 }
 
-// עדכון דינמי של הטקסט מעל הסליידר בזמן גרירה
 ratingSlider.oninput = function(e) {
     const val = parseInt(e.target.value);
     if (val === 0) {
@@ -199,11 +199,9 @@ function closeRatingModal() {
 modalCancelBtn.onclick = closeRatingModal;
 modalCloseX.onclick = closeRatingModal;
 
-// כפתור שמור: שולח את הנתונים ישירות ל-Google Sheets בזמן אמת!
 modalSaveBtn.onclick = function() {
     const selectedScore = parseInt(ratingSlider.value);
     
-    // מניעת מצב ששומרים את הציון 0 כציון דירוג
     if (selectedScore === 0) {
         alert("אנא בחרו ציון בין 1 ל-10 לפני הלחיצה על שמור, או לחצו ביטול.");
         return;
@@ -224,7 +222,6 @@ modalSaveBtn.onclick = function() {
         })
     })
     .then(() => {
-        // עדכון גרפי מקומי מיידי לאחר שמירה מוצלחת בשרת
         currentStudentVotingRow[currentSelectedProjectNo] = selectedScore;
         
         currentSelectedCardElement.className = 'project-grid-button color-green';
