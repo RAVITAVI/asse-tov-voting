@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <title>כנס קמפוס חמ"ד</title>
 </head>
 <body>
@@ -73,9 +74,25 @@
     <div id="voting-screen" class="screen">
         <div class="projects-page-wrapper">
             <h2 class="page-title">בחירת היוזמה לדירוג</h2>
-            <p class="page-subtitle">לחצו על המיזם כדי לדרג אותו:</p>
+            <p class="page-subtitle">לחצו על מיזם או סרקו את הברקוד שעל השולחן:</p>
+            
+            <button id="scan-qr-btn" class="scan-main-btn">📷 סרוק ברקוד שולחן</button>
+            
             <div id="projects-grid" class="projects-grid-container"></div>
             <button id="backToNameBtn" class="back-btn-voting">↩️ חזור למסך הקודם</button>
+        </div>
+    </div>
+
+    <div id="scanner-modal" class="modal-overlay">
+        <div class="modal-card scanner-card">
+            <button id="scanner-close-x" class="modal-close-x">✕</button>
+            <div class="modal-header">
+                <h3>סריקת ברקוד המיזם</h3>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; text-align: center;">כוונו את המצלמה לברקוד שעל השולחן</p>
+                <div id="qr-reader" style="width: 100%; max-width: 350px; margin: 0 auto; border-radius: 12px; overflow: hidden;"></div>
+            </div>
         </div>
     </div>
 
@@ -94,7 +111,7 @@
                     <div class="slider-val-display" id="slider-value-preview">לא דורג</div>
                     <input type="range" id="rating-slider" min="0" max="10" value="0" class="modern-slider">
                     <div class="slider-labels">
-                        <span>ללא דירוג</span>
+                        <span>לא דורג</span>
                         <span>5</span>
                         <span>10</span>
                     </div>
