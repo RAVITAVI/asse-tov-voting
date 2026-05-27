@@ -5,7 +5,6 @@ const nameScreen = document.getElementById('name-screen');
 const votingScreen = document.getElementById('voting-screen'); 
 const summaryScreen = document.getElementById('summary-screen');
 const thankYouScreen = document.getElementById('thank-you-screen');
-const adminPanelScreen = document.getElementById('admin-panel-screen');
 
 const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
@@ -425,121 +424,12 @@ submitNameBtn.onclick = function() {
 
 backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
 
-// פאנל הניהול של האדמין 
-document.querySelectorAll('.tab-nav-btn').forEach(button => {
-    button.onclick = function() {
-        document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
-        
-        this.classList.add('active');
-        document.getElementById(this.getAttribute('data-tab')).classList.add('active');
-    };
-});
-
+// כפתור אדמין מקורי ובסיסי
 document.getElementById('adminBtn').onclick = function() {
     const password = prompt("הכנס סיסמת מנהל:");
     if (password === "02062026") {
-        openingScreen.classList.remove('active');
-        adminPanelScreen.classList.add('active');
-        fetchAndRenderAdminData();
+        alert("ברוכה הבאה למערכת הניהול! הנתונים נשמרים ישירות בגוגל שיטס בלשונית projects.");
     } else if (password !== null) {
         alert("סיסמה שגויה!");
     }
 };
-
-document.getElementById('refreshAdminBtn').onclick = function() {
-    this.innerText = "מרענן...";
-    this.disabled = true;
-    fetchAndRenderAdminData();
-};
-
-document.getElementById('closeAdminPanelBtn').onclick = function() {
-    adminPanelScreen.classList.remove('active');
-    openingScreen.classList.add('active');
-};
-
-// פקודת ההדפסה ל-PDF
-document.getElementById('printPdfBtn').onclick = function() {
-    window.print();
-};
-
-function fetchAndRenderAdminData() {
-    fetch(APPS_SCRIPT_URL)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('stat-boys-count').innerText = data.stats.boysVoted;
-            document.getElementById('stat-girls-count').innerText = data.stats.girlsVoted;
-            document.getElementById('stat-total-count').innerText = data.stats.totalVoted;
-
-            const projects = data.projects;
-
-            // טאב 1 - כללי לפי ממוצע
-            const allSortedByScore = [...projects].sort((a, b) => b.averageScore - a.averageScore);
-            const allScoresTable = document.getElementById('table-all-scores-body').querySelector('tbody');
-            allScoresTable.innerHTML = '';
-            allSortedByScore.forEach((p, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td><strong>${index + 1}</strong></td><td>${p.number}</td><td style="text-align:right; font-weight:600;">${p.title}</td><td>${p.gender === 'male' ? '🔷 בן' : '💖 בת'}</td><td><span class="badge-avg">${p.averageScore.toFixed(2)}</span></td><td>${p.voteCount}</td>`;
-                allScoresTable.appendChild(tr);
-            });
-
-            // טאב 2 - מופרד לפי ממוצע
-            const boysSortedByScore = projects.filter(p => p.gender === 'male').sort((a, b) => b.averageScore - a.averageScore);
-            const girlsSortedByScore = projects.filter(p => p.gender === 'female').sort((a, b) => b.averageScore - a.averageScore);
-            
-            const boysScoresTable = document.getElementById('table-boys-scores-body').querySelector('tbody');
-            boysScoresTable.innerHTML = '';
-            boysSortedByScore.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-avg blue">${p.averageScore.toFixed(2)}</span></td>`;
-                boysScoresTable.appendChild(tr);
-            });
-
-            const girlsScoresTable = document.getElementById('table-girls-scores-body').querySelector('tbody');
-            girlsScoresTable.innerHTML = '';
-            girlsSortedByScore.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-avg pink">${p.averageScore.toFixed(2)}</span></td>`;
-                girlsScoresTable.appendChild(tr);
-            });
-
-            // טאב 3 - חביב הקהל (BAST)
-            const allSortedByBast = [...projects].sort((a, b) => b.bastCount - a.bastCount);
-            const allBastTable = document.getElementById('table-all-bast-body').querySelector('tbody');
-            allBastTable.innerHTML = '';
-            allSortedByBast.forEach((p, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td><strong>${index + 1}</strong></td><td>${p.number}</td><td style="text-align:right; font-weight:600;">${p.title}</td><td>${p.gender === 'male' ? 'בן' : 'בת'}</td><td><span class="badge-bast">${p.bastCount} קולות</span></td>`;
-                allBastTable.appendChild(tr);
-            });
-
-            const boysSortedByBast = projects.filter(p => p.gender === 'male').sort((a, b) => b.bastCount - a.bastCount);
-            const boysBastTable = document.getElementById('table-boys-bast-body').querySelector('tbody');
-            boysBastTable.innerHTML = '';
-            boysSortedByBast.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-bast blue">${p.bastCount}</span></td>`;
-                boysBastTable.appendChild(tr);
-            });
-
-            const girlsSortedByBast = projects.filter(p => p.gender === 'female').sort((a, b) => b.bastCount - a.bastCount);
-            const girlsBastTable = document.getElementById('table-girls-bast-body').querySelector('tbody');
-            girlsBastTable.innerHTML = '';
-            girlsSortedByBast.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-bast pink">${p.bastCount}</span></td>`;
-                girlsBastTable.appendChild(tr);
-            });
-
-            const refreshBtn = document.getElementById('refreshAdminBtn');
-            refreshBtn.innerText = "🔄 רענן נתונים";
-            refreshBtn.disabled = false;
-        })
-        .catch(err => {
-            console.error(err);
-            alert("שגיאה במשיכת הנתונים.");
-            const refreshBtn = document.getElementById('refreshAdminBtn');
-            refreshBtn.innerText = "🔄 רענן נתונים";
-            refreshBtn.disabled = false;
-        });
-}
