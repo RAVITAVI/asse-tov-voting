@@ -425,7 +425,7 @@ submitNameBtn.onclick = function() {
 
 backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
 
-// פאנל הניהול של האדמין 
+// פאנל הניהול של האדמין
 document.querySelectorAll('.tab-nav-btn').forEach(button => {
     button.onclick = function() {
         document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -458,9 +458,43 @@ document.getElementById('closeAdminPanelBtn').onclick = function() {
     openingScreen.classList.add('active');
 };
 
-// פקודת ההדפסה ל-PDF
+// 🔥 תיקון מנגנון ה-PDF החכם והרשמי למובייל ולמחשב 🔥
 document.getElementById('printPdfBtn').onclick = function() {
-    window.print();
+    const printButton = document.getElementById('printPdfBtn');
+    const refreshButton = document.getElementById('refreshAdminBtn');
+    const closeButton = document.getElementById('closeAdminPanelBtn');
+    
+    printButton.innerText = "מייצר PDF...";
+    printButton.disabled = true;
+
+    // הפיכת כל הלשוניות לגלויות לחלוטין זמנית רק עבור צילום ה-PDF
+    const allTabs = document.querySelectorAll('.admin-tab-content');
+    allTabs.forEach(tab => tab.classList.add('force-visible-print'));
+
+    // הגדרות עימוד מקצועיות לקובץ ה-PDF שיוורד
+    const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     'דוח_תוצאות_כנס_עשה_טוב.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, alpha: false },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    const element = document.getElementById('admin-printable-content');
+
+    // הרצת הספרייה להורדת הקובץ ישירות לתיקיית ההורדות במכשיר
+    html2pdf().set(opt).from(element).save().then(() => {
+        // החזרת המצב לקדמותו לאחר סיום ההורדה
+        allTabs.forEach(tab => tab.classList.remove('force-visible-print'));
+        printButton.innerText = "📥 הורדת דו"ח PDF";
+        printButton.disabled = false;
+    }).catch(err => {
+        console.error(err);
+        allTabs.forEach(tab => tab.classList.remove('force-visible-print'));
+        printButton.innerText = "📥 הורדת דו"ח PDF";
+        printButton.disabled = false;
+        alert("תקלה בייצוא ה-PDF. נסו שוב.");
+    });
 };
 
 function fetchAndRenderAdminData() {
@@ -473,7 +507,7 @@ function fetchAndRenderAdminData() {
 
             const projects = data.projects;
 
-            // טאב 1 - כללי לפי ממוצע
+            // טאב 1
             const allSortedByScore = [...projects].sort((a, b) => b.averageScore - a.averageScore);
             const allScoresTable = document.getElementById('table-all-scores-body').querySelector('tbody');
             allScoresTable.innerHTML = '';
@@ -483,7 +517,7 @@ function fetchAndRenderAdminData() {
                 allScoresTable.appendChild(tr);
             });
 
-            // טאב 2 - מופרד לפי ממוצע
+            // טאב 2
             const boysSortedByScore = projects.filter(p => p.gender === 'male').sort((a, b) => b.averageScore - a.averageScore);
             const girlsSortedByScore = projects.filter(p => p.gender === 'female').sort((a, b) => b.averageScore - a.averageScore);
             
@@ -503,7 +537,7 @@ function fetchAndRenderAdminData() {
                 girlsScoresTable.appendChild(tr);
             });
 
-            // טאב 3 - חביב הקהל (BAST)
+            // טאב 3
             const allSortedByBast = [...projects].sort((a, b) => b.bastCount - a.bastCount);
             const allBastTable = document.getElementById('table-all-bast-body').querySelector('tbody');
             allBastTable.innerHTML = '';
