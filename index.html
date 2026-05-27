@@ -80,23 +80,42 @@
             <img src="asse-tov-logo.PNG" class="logo-center">
             <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
         </div>
-        <div class="main-wrapper">
-            <div class="card" style="max-width: 650px;">
+        <div class="main-wrapper" style="align-items: flex-start; overflow-y: auto; padding-bottom: 40px;">
+            <div class="voting-container">
                 <h2>בחירת היוזמה לדירוג</h2>
-                <p style="margin-bottom: 20px; font-size: 1rem; color: #666;">לפניך רשימת המיזמים המוצגים בכנס:</p>
+                <p class="subtitle">עברו בין הדוכנים, הקשיבו ליזמים ודרגו את המיזמים שלהם:</p>
                 
-                <table id="projects-table" border="1" style="width: 100%; border-collapse: collapse; text-align: right; margin-top: 15px;">
-                    <thead>
-                        <tr style="background-color: #f0f4f8;">
-                            <th style="padding: 10px; width: 15%;">מספר</th>
-                            <th style="padding: 10px; width: 35%;">שם המיזם</th>
-                            <th style="padding: 10px; width: 25%;">קורס</th>
-                            <th style="padding: 10px; width: 25%;">יזמים</th>
-                        </tr>
-                    </thead>
-                    <tbody id="projects-list-body">
-                        </tbody>
-                </table>
+                <div id="projects-grid" class="projects-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rating-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span id="modal-project-no" class="modal-badge"></span>
+                <h3 id="modal-project-title"></h3>
+            </div>
+            
+            <div class="modal-body">
+                <p><strong>קורס:</strong> <span id="modal-project-course"></span></p>
+                <p><strong>יזמים:</strong> <span id="modal-project-creators"></span></p>
+                
+                <div class="rating-range-wrapper">
+                    <label for="rating-slider">דרגו את המיזם (1 עד 10):</label>
+                    <div class="slider-val-display" id="slider-value-preview">5</div>
+                    <input type="range" id="rating-slider" min="1" max="10" value="5" class="modern-slider">
+                    <div class="slider-labels">
+                        <span>1</span>
+                        <span>5</span>
+                        <span>10</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="modal-save-btn" class="modal-btn btn-save">שמור</button>
+                <button id="modal-cancel-btn" class="modal-btn btn-cancel">ביטול</button>
             </div>
         </div>
     </div>
