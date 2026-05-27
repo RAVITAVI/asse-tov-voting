@@ -1,64 +1,227 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: sans-serif; background-color: #f4f7f6; height: 100vh; overflow-x: hidden; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-.screen { display: none !important; width: 100%; height: 100%; flex-direction: column; }
-.screen.active { display: flex !important; }
+body {
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
 
-#opening-screen { justify-content: center; align-items: center; text-align: center; padding: 20px; }
-.logo { width: 180px; margin-bottom: 20px; }
-h1 { font-size: 1.6rem; color: #0056b3; margin-bottom: 10px; }
-p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
-.start-btn { padding: 15px 50px; font-size: 1.2rem; background-color: #007bff; color: white; border: none; border-radius: 50px; cursor: pointer; }
-.admin-gear { position: absolute; top: 15px; left: 15px; border: none; background: none; opacity: 0.3; cursor: pointer; font-size: 1.5rem; }
-
-.banner { width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: white; border-bottom: 2px solid #ddd; }
-.logo-right { height: 50px; }
-.logo-center { height: 60px; }
-.banner-text { font-size: 0.8rem; font-weight: bold; }
-
-.main-wrapper { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-.card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-.gender-buttons { display: flex; gap: 15px; margin-top: 20px; }
-.btn-gender { flex: 1; padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
-.btn-boy { background-color: #357abd; }
-.btn-girl { background-color: #9b59b6; }
-
-.school-select, .name-input {
+.screen {
+    display: none;
     width: 100%;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 1.1rem;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* מסך פתיחה */
+#opening-screen {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#opening-screen .logo {
+    width: 160px;
+    height: auto;
+    border-radius: 50%;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+#opening-screen h1 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+#opening-screen p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.start-btn {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 15px 45px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+    background-color: #e68a00;
+    transform: translateY(-2px);
+}
+
+/* באנר עליון */
+.banner {
+    background-color: #ffffff;
+    height: 70px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    z-index: 100;
+}
+
+.logo-right {
+    height: 50px;
+    width: auto;
+}
+
+.logo-center {
+    height: 55px;
+    width: auto;
+}
+
+.banner-text {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #1e3c72;
+}
+
+/* מעטפת תוכן מרכזית למסכים 2,3,4 */
+.main-wrapper {
+    padding-top: 90px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.card {
     background-color: white;
+    border-radius: 20px;
+    padding: 35px 25px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     text-align: center;
 }
 
-.name-input:focus {
+.card h2 {
+    color: #333;
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+}
+
+/* כפתורי מגדר */
+.gender-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-gender {
+    flex: 1;
+    border: none;
+    padding: 35px 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-boy {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+}
+
+.btn-girl {
+    background: linear-gradient(135deg, #ec407a 0%, #d81b60 100%);
+    box-shadow: 0 5px 15px rgba(236, 64, 122, 0.3);
+}
+
+.btn-gender:hover {
+    transform: scale(1.03);
+    filter: brightness(1.05);
+}
+
+/* אלמנט הבחירה */
+.school-select {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0,123,255,0.2);
+    background-color: #f8fafc;
+    color: #334155;
+    cursor: pointer;
+}
+
+.school-select:focus {
+    border-color: #2a5298;
 }
 
 .back-btn {
-    display: inline-block;
-    margin-top: 15px;
     background: none;
     border: none;
-    color: #666;
+    color: #64748b;
     font-size: 1rem;
+    margin-top: 20px;
     cursor: pointer;
-    text-decoration: none;
 }
+
 .back-btn:hover {
-    color: #007bff;
+    color: #1e3c72;
     text-decoration: underline;
 }
 
-/* עיצוב תיבת רשימת ההצעות החכמה */
+/* רכיב השלמה אוטומטית לשמות */
 .autocomplete-wrapper {
     position: relative;
     width: 100%;
+    text-align: right;
+}
+
+.name-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    outline: none;
+    background-color: #f8fafc;
+    color: #334155;
+    direction: rtl;
+}
+
+.name-input:focus {
+    border-color: #2a5298;
 }
 
 .suggestions-list {
@@ -67,30 +230,137 @@ p { font-size: 1.1rem; color: #555; margin-bottom: 30px; }
     left: 0;
     right: 0;
     background: white;
-    border: 1px solid #ccc;
+    border: 2px solid #cbd5e1;
     border-top: none;
-    border-radius: 0 0 10px 10px;
-    max-height: 180px;
+    border-radius: 0 0 12px 12px;
+    max-height: 200px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 999;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     display: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .suggestion-item {
-    padding: 12px;
+    padding: 12px 15px;
     cursor: pointer;
     text-align: right;
-    border-bottom: 1px solid #eee;
-    font-size: 1rem;
-    color: #333;
+    font-size: 1.05rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .suggestion-item:hover {
-    background-color: #f0f7ff;
-    color: #007bff;
+    background-color: #f0f4f8;
+    color: #1e3c72;
 }
 
-.suggestion-item:last-child {
-    border-bottom: none;
+.admin-gear {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: white;
+}
+
+/* ======================================================= */
+/* העיצוב החדש והייעודי של מסך כפתורי המיזמים (מסך 5)       */
+/* ======================================================= */
+.projects-page-wrapper {
+    padding-top: 95px; /* מרווח מהבאנר העליון */
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 30px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; /* מאפשר גלילה חופשית של הריבועים */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-title {
+    font-size: 1.6rem;
+    color: #1e3c72;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.page-subtitle {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* רשת הריבועים - סידור אוטומטי מותאם מוחלט למובייל */
+.projects-grid-container {
+    display: grid;
+    /* מחלק את המסך לטורים שווים. ככל שהמסך רחב יותר, ייכנסו יותר ריבועים בשורה. */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+    gap: 15px; /* מרווח שווה בין הריבועים מכל הצדדים */
+    width: 100%;
+    max-width: 600px; /* מונע התפרסות רחבה מדי במסכי מחשב */
+    padding: 5px;
+}
+
+/* עיצוב הריבועים/כפתורים עצמם */
+.project-grid-button {
+    border-radius: 16px;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    min-height: 130px; /* מאלץ אותם להיות גבוהים ומרובעים */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* אפקט לחיצה פיזי מגניב בטלפון */
+.project-grid-button:active {
+    transform: scale(0.95); 
+}
+
+.proj-number {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.proj-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* מגביל לעד 2 שורות טקסט שלא יברח מהריבוע */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.proj-status-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* צבע אדום - לדירוג */
+.color-red {
+    background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
+/* צבע ירוק - דורג בהצלחה */
+.color-green {
+    background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%);
+    color: #166534;
+    border: 1px solid #4ade80;
 }
