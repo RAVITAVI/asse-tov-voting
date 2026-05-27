@@ -58,22 +58,20 @@ let rawProjectsData = [];
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנית אמית שחר", gender: "Female" },
+    { schoolName: "אולפנת אמית שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
     { schoolName: "לוינסון בנות", gender: "Female" },
     { schoolName: "אולפנית אמונה אלישבע", gender: "Female" },
     { schoolName: "פלך זכרון יעקב", gender: "Female" },
-    { schoolName: "ישיבה תנ\"כית זכרון יעקב", gender: "Male" },
+    { schoolName: "ישיבה תנכית זכרון יעקב", gender: "Male" },
     { schoolName: "ישיבה תיכונית קרית אתא", gender: "Male" },
     { schoolName: "יבנה", gender: "Male" },
     { schoolName: "לוינסון בנים", gender: "Male" },
     { schoolName: "נתיבות דרור", gender: "Male" },
-    { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
+    { schoolName: "ישיבת בנע חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
-    { schoolName: "ניהול בנים", gender: "Male" }
-    { schoolName: "ניהול בנות", gender: "Female" }
 ];
 
 function cleanStringForComparison(str) {
