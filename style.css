@@ -1,12 +1,15 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-.screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
-.screen.active { display: block; }
+body { background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; width: 100vw; }
+
+/* תיקון באג הלבשת המסכים המרכזי */
+.screen { display: none !important; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background-color: #f0f4f8; }
+.screen.active { display: flex !important; flex-direction: column; }
 
 #opening-screen { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; text-align: center; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 #opening-screen .logo-square { width: 160px; height: auto; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); background-color: white; padding: 5px; }
 #opening-screen h1 { font-size: 2.2rem; margin-bottom: 15px; font-weight: 700; }
 #opening-screen p { font-size: 1.2rem; margin-bottom: 40px; opacity: 0.9; }
+
 .start-btn { background-color: #ff9800; color: white; border: none; padding: 15px 45px; font-size: 1.3rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4); transition: all 0.3s ease; }
 .start-btn:hover { background-color: #e68a00; transform: translateY(-2px); }
 
@@ -31,7 +34,7 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #cbd5e1; border-top: none; border-radius: 0 0 12px 12px; max-height: 200px; overflow-y: auto; z-index: 999; display: none; }
 .suggestion-item { padding: 12px 15px; cursor: pointer; text-align: right; color: #334155; border-bottom: 1px solid #f1f5f9; }
 .suggestion-item:hover { background-color: #f0f4f8; color: #1e3c72; }
-.admin-gear { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.8rem; color: white; cursor: pointer; }
+.admin-gear { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.8rem; color: white; cursor: pointer; z-index: 9999; }
 
 .projects-page-wrapper { background-color: #f0f4f8; padding-top: 40px; padding-left: 15px; padding-right: 15px; padding-bottom: 40px; width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
 .page-title { font-size: 1.7rem; color: #1e3c72; margin-bottom: 6px; font-weight: bold; }
@@ -63,6 +66,55 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .thank-you-card .sub-thank { color: #ff9800; font-weight: bold; font-size: 1.1rem; margin-bottom: 30px; }
 .thank-logo { width: 120px; height: auto; border-radius: 8px; opacity: 0.9; }
 
+/* 💎 פאנל הניהול החדש - רקע לבן קשיח ומרווח מונע שקיפות 💎 */
+#admin-panel-screen { background-color: #f8fafc !important; overflow-y: auto !important; }
+.admin-page-wrapper { background-color: #f8fafc; padding: 30px 20px; width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: center; direction: rtl; }
+.admin-header-card { background: white; width: 100%; max-width: 900px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(30, 60, 114, 0.05); text-align: center; margin-bottom: 25px; border: 1px solid #e2e8f0; }
+.admin-header-card h2 { color: #1e3c72; font-size: 1.8rem; margin-bottom: 20px; font-weight: bold; }
+
+.voters-stats-strip { display: flex; gap: 15px; justify-content: space-between; margin-bottom: 5px; }
+.stat-box { flex: 1; background-color: #f1f5f9; border-radius: 12px; padding: 15px 10px; font-size: 1rem; font-weight: bold; color: #475569; border: 1px solid #cbd5e1; text-align: center; }
+.stat-box span { display: block; font-size: 2rem; font-weight: 800; color: #1e3c72; margin-top: 5px; }
+.stat-box.total { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-color: #fed7aa; color: #c2410c; }
+.stat-box.total span { color: #ea580c; }
+
+.admin-actions-row { display: flex; gap: 15px; justify-content: center; margin-top: 15px; }
+.refresh-btn { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border: none; padding: 12px 30px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(30, 60, 114, 0.2); }
+.print-pdf-btn { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 12px 30px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+.refresh-btn:active, .print-pdf-btn:active { transform: scale(0.98); }
+
+.admin-tabs-nav { display: flex; width: 100%; max-width: 900px; background-color: #e2e8f0; padding: 6px; border-radius: 14px; margin-bottom: 25px; gap: 6px; }
+.tab-nav-btn { flex: 1; border: none; background: none; padding: 12px 10px; font-size: 1.1rem; font-weight: bold; color: #64748b; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+.tab-nav-btn.active { background-color: white; color: #1e3c72; box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+
+.tab-content-wrapper { width: 100%; max-width: 900px; margin-bottom: 20px; }
+.admin-tab-content { display: none !important; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+.admin-tab-content.active { display: block !important; }
+.admin-tab-content h3 { font-size: 1.3rem; color: #1e3c72; margin-bottom: 20px; border-bottom: 3px solid #f1f5f9; padding-bottom: 10px; text-align: right; font-weight: bold; }
+
+.table-container { width: 100%; overflow-x: auto; background: white; border-radius: 12px; }
+table { width: 100%; border-collapse: collapse; text-align: center; font-size: 1.05rem; margin-top: 5px; }
+th, td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; color: #334155; }
+th { background-color: #f8fafc; color: #475569; font-weight: 700; border-bottom: 2px solid #e2e8f0; font-size: 0.95rem; }
+tr:hover { background-color: #fafafa; }
+
+.badge-avg { background-color: #f0fdf4; color: #166534; font-weight: 800; padding: 6px 14px; border-radius: 20px; border: 1px solid #bbf7d0; font-size: 1.1rem; display: inline-block; }
+.badge-avg.blue { background-color: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.badge-avg.pink { background-color: #fdf2f8; color: #9d174d; border-color: #fbcfe8; }
+.badge-bast { background-color: #fff7ed; color: #c2410c; font-weight: 800; padding: 6px 14px; border-radius: 20px; border: 1px solid #ffedd5; display: inline-block; }
+.badge-bast.blue { background-color: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.badge-bast.pink { background-color: #fdf2f8; color: #9d174d; border-color: #fbcfe8; }
+
+.split-tables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+@media (max-width: 750px) { .split-tables-grid { grid-template-columns: 1fr; } }
+.gender-table-block { background: #ffffff; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
+.table-gender-title { display: block; font-size: 1.15rem; font-weight: bold; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; text-align: right; }
+.table-gender-title.boys { color: #1d4ed8; }
+.table-gender-title.girls { color: #be185d; }
+
+.back-btn-voting-admin { background: #e2e8f0; border: none; color: #334155; font-size: 1.1rem; font-weight: bold; padding: 14px 40px; border-radius: 30px; cursor: pointer; margin-top: 10px; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.back-btn-voting-admin:hover { background-color: #cbd5e1; }
+
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: flex-end; z-index: 99999; }
 .modal-card { background-color: white; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); text-align: right; position: relative; }
 .modal-close-x { position: absolute; top: 20px; left: 20px; background: #f1f5f9; border: none; font-size: 1.2rem; font-weight: bold; color: #64748b; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; }
@@ -87,3 +139,22 @@ body { background-color: #f0f4f8; display: flex; justify-content: center; align-
 .modal-btn { flex: 1; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 15px; cursor: pointer; border: none; }
 .btn-save { background-color: #166534; color: white; }
 .btn-cancel { background-color: #e2e8f0; color: #475569; }
+
+/* 🖨️ חוקי הדפסה נסתרים - יוצרים קובץ PDF מושלם ללא תלות בטאב פתוח 🖨️ */
+@media print {
+    body, html { background: white !important; color: black !important; height: auto !important; overflow: visible !important; width: auto !important; }
+    .screen { display: none !important; }
+    #admin-panel-screen { display: block !important; position: relative !important; height: auto !important; overflow: visible !important; }
+    .admin-page-wrapper { padding: 0 !important; background: white !important; }
+    .admin-header-card { box-shadow: none !important; border: 1px solid #ccc !important; max-width: 100% !important; }
+    .admin-actions-row, .admin-tabs-nav, .back-btn-voting-admin { display: none !important; } /* העלמת כפתורים בהדפסה */
+    .tab-content-wrapper { max-width: 100% !important; }
+    
+    /* פריסת כל הטבלאות אחת מתחת לשנייה ב-PDF באופן אוטומטי */
+    .admin-tab-content { display: block !important; opacity: 1 !important; visibility: visible !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin-bottom: 40px !important; page-break-inside: avoid !important; }
+    .split-tables-grid { grid-template-columns: 1fr !important; gap: 30px !important; }
+    .gender-table-block { box-shadow: none !important; border: 1px solid #eee !important; page-break-inside: avoid !important; }
+    table { font-size: 12pt !important; width: 100% !important; }
+    th { background-color: #f5f5f5 !important; color: black !important; }
+    .badge-avg, .badge-bast { border: none !important; background: none !important; padding: 0 !important; font-size: 12pt !important; }
+}
