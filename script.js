@@ -77,29 +77,6 @@ const SCHOOLS_DATA = [
     { schoolName: "ניהול בנות", gender: "Female" }
 ];
 
-// 🌟 פונקציית ניווט מסכים חסינה לחלוטין 🌟
-function showScreen(targetScreen) {
-    // הסתרת כל המסכים באופן ידני דרך הסטייל הישיר
-    openingScreen.style.display = 'none';
-    genderScreen.style.display = 'none';
-    schoolScreen.style.display = 'none';
-    nameScreen.style.display = 'none';
-    votingScreen.style.display = 'none';
-    summaryScreen.style.display = 'none';
-    thankYouScreen.style.display = 'none';
-    adminPanelScreen.style.display = 'none';
-    
-    // הצגת מסך היעד בצורה מותאמת
-    if (targetScreen === votingScreen || targetScreen === openingScreen || targetScreen === thankYouScreen) {
-        targetScreen.style.display = 'flex';
-    } else {
-        targetScreen.style.display = 'block';
-    }
-}
-
-// הפעלה ראשונית של מסך הפתיחה בלייב
-showScreen(openingScreen);
-
 function cleanStringForComparison(str) {
     if (!str) return "";
     return str.replace(/[\"\'\`\״\׳\俘\”\“]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -353,7 +330,8 @@ modalSaveBtn.onclick = function() {
 };
 
 finishVotingBtn.onclick = function() {
-    showScreen(summaryScreen);
+    votingScreen.classList.remove('active');
+    summaryScreen.classList.add('active');
 };
 
 submitBestBtn.onclick = function() {
@@ -377,7 +355,8 @@ submitBestBtn.onclick = function() {
         })
     })
     .then(() => {
-        showScreen(thankYouScreen);
+        summaryScreen.classList.remove('active');
+        thankYouScreen.classList.add('active');
     })
     .catch(err => {
         console.error(err);
@@ -387,7 +366,7 @@ submitBestBtn.onclick = function() {
     });
 };
 
-startBtn.onclick = function() { showScreen(genderScreen); };
+startBtn.onclick = function() { openingScreen.classList.remove('active'); genderScreen.classList.add('active'); };
 
 function loadSchools(genderParam) {
     schoolDropdown.innerHTML = '<option value="">בחר בית ספר...</option>';
@@ -400,9 +379,9 @@ function loadSchools(genderParam) {
     });
 }
 
-document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); showScreen(schoolScreen); };
-document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); showScreen(schoolScreen); };
-backToGenderBtn.onclick = function() { showScreen(genderScreen); };
+document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+backToGenderBtn.onclick = function() { schoolScreen.classList.remove('active'); genderScreen.classList.add('active'); };
 
 nextBtn.onclick = function() {
     if (schoolDropdown.value === "") { alert("אנא בחר בית ספר לפני ההמשך"); } 
@@ -410,8 +389,7 @@ nextBtn.onclick = function() {
         selectedSchool = schoolDropdown.value; 
         fetchStudentsForSchool(selectedSchool, selectedGender);
         studentNameInput.value = ""; suggestionsContainer.innerHTML = ""; suggestionsContainer.style.display = 'none'; isNameSelectedFromList = false;
-        showScreen(nameScreen);
-        studentNameInput.focus();
+        schoolScreen.classList.remove('active'); nameScreen.classList.add('active'); studentNameInput.focus();
     }
 };
 
@@ -431,7 +409,7 @@ studentNameInput.oninput = function(e) {
 };
 
 document.onclick = function(e) { if (e.target !== studentNameInput) { suggestionsContainer.style.display = 'none'; } };
-backToSchoolBtn.onclick = function() { showScreen(schoolScreen); };
+backToSchoolBtn.onclick = function() { nameScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
 
 submitNameBtn.onclick = function() {
     const currentInputValue = studentNameInput.value.trim();
@@ -442,12 +420,12 @@ submitNameBtn.onclick = function() {
     studentName = currentInputValue;
     currentStudentVotingRow = (currentStudentObj && currentStudentObj.scores) ? currentStudentObj.scores : {};
     fetchAndDisplayProjects(selectedGender);
-    showScreen(votingScreen);
+    nameScreen.classList.remove('active'); votingScreen.classList.add('active');
 };
 
-backToNameBtn.onclick = function() { showScreen(nameScreen); };
+backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
 
-// פאנל הניהול של האדמין
+// פאנל הניהול של האדמין 
 document.querySelectorAll('.tab-nav-btn').forEach(button => {
     button.onclick = function() {
         document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -461,7 +439,8 @@ document.querySelectorAll('.tab-nav-btn').forEach(button => {
 document.getElementById('adminBtn').onclick = function() {
     const password = prompt("הכנס סיסמת מנהל:");
     if (password === "02062026") {
-        showScreen(adminPanelScreen);
+        openingScreen.classList.remove('active');
+        adminPanelScreen.classList.add('active');
         fetchAndRenderAdminData();
     } else if (password !== null) {
         alert("סיסמה שגויה!");
@@ -475,38 +454,13 @@ document.getElementById('refreshAdminBtn').onclick = function() {
 };
 
 document.getElementById('closeAdminPanelBtn').onclick = function() {
-    showScreen(openingScreen);
+    adminPanelScreen.classList.remove('active');
+    openingScreen.classList.add('active');
 };
 
+// פקודת ההדפסה ל-PDF
 document.getElementById('printPdfBtn').onclick = function() {
-    const printButton = document.getElementById('printPdfBtn');
-    printButton.innerText = "מייצר PDF...";
-    printButton.disabled = true;
-
-    const allTabs = document.querySelectorAll('.admin-tab-content');
-    allTabs.forEach(tab => tab.classList.add('force-visible-print'));
-
-    const opt = {
-        margin:       [10, 10, 10, 10],
-        filename:     'דוח_תוצאות_כנס_עשה_טוב.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, alpha: false },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    const element = document.getElementById('admin-printable-content');
-
-    html2pdf().set(opt).from(element).save().then(() => {
-        allTabs.forEach(tab => tab.classList.remove('force-visible-print'));
-        printButton.innerText = "📥 הורדת דו"ח PDF";
-        printButton.disabled = false;
-    }).catch(err => {
-        console.error(err);
-        allTabs.forEach(tab => tab.classList.remove('force-visible-print'));
-        printButton.innerText = "📥 הורדת דו"ח PDF";
-        printButton.disabled = false;
-        alert("תקלה בייצוא ה-PDF. נסו שוב.");
-    });
+    window.print();
 };
 
 function fetchAndRenderAdminData() {
@@ -519,7 +473,7 @@ function fetchAndRenderAdminData() {
 
             const projects = data.projects;
 
-            // טאב 1
+            // טאב 1 - כללי לפי ממוצע
             const allSortedByScore = [...projects].sort((a, b) => b.averageScore - a.averageScore);
             const allScoresTable = document.getElementById('table-all-scores-body').querySelector('tbody');
             allScoresTable.innerHTML = '';
@@ -529,7 +483,7 @@ function fetchAndRenderAdminData() {
                 allScoresTable.appendChild(tr);
             });
 
-            // טאב 2
+            // טאב 2 - מופרד לפי ממוצע
             const boysSortedByScore = projects.filter(p => p.gender === 'male').sort((a, b) => b.averageScore - a.averageScore);
             const girlsSortedByScore = projects.filter(p => p.gender === 'female').sort((a, b) => b.averageScore - a.averageScore);
             
@@ -549,7 +503,7 @@ function fetchAndRenderAdminData() {
                 girlsScoresTable.appendChild(tr);
             });
 
-            // טאב 3
+            // טאב 3 - חביב הקהל (BAST)
             const allSortedByBast = [...projects].sort((a, b) => b.bastCount - a.bastCount);
             const allBastTable = document.getElementById('table-all-bast-body').querySelector('tbody');
             allBastTable.innerHTML = '';
