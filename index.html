@@ -56,7 +56,7 @@
         <div class="banner">
             <img src="campus-hemad-logo.jpg" class="logo-right">
             <img src="asse-tov-logo.PNG" class="logo-center">
-            <span class="banner-text">קmפוס חמ"ד - תשפ"ו</span>
+            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
         </div>
         <div class="main-wrapper">
             <div class="card">
@@ -125,9 +125,9 @@
             <div class="admin-header-card">
                 <h2>📊 פאנל מנהל - כנס קמפוס חמ"ד</h2>
                 <div class="voters-stats-strip">
-                    <div class="stat-box">בנים שהצביעו: <span id="stat-boys-count">0</span></div>
-                    <div class="stat-box">בנות שהצביעו: <span id="stat-girls-count">0</span></div>
-                    <div class="stat-box total">סה"כ מצביעים: <span id="stat-total-count">0</span></div>
+                    <div class="stat-box">בנים שהצביעו<span id="stat-boys-count">0</span></div>
+                    <div class="stat-box">בנות שהצביעו<span id="stat-girls-count">0</span></div>
+                    <div class="stat-box total">סה"כ מצביעים<span id="stat-total-count">0</span></div>
                 </div>
                 <button id="refreshAdminBtn" class="refresh-btn">🔄 רענן נתונים</button>
             </div>
@@ -135,7 +135,7 @@
             <div class="admin-tabs-nav">
                 <button class="tab-nav-btn active" data-tab="tab-all-scores">כל המיזמים (ניקוד)</button>
                 <button class="tab-nav-btn" data-tab="tab-gender-scores">ניקוד מופרד</button>
-                <button class="tab-nav-btn" data-tab="tab-bast-scores">דירוג BAST</button>
+                <button class="tab-nav-btn" data-tab="tab-bast-scores">דירוג חביב הקהל (BAST)</button>
             </div>
 
             <div class="tab-content-wrapper">
@@ -146,7 +146,7 @@
                             <thead>
                                 <tr>
                                     <th>מקום</th>
-                                    <th>#</th>
+                                    <th>מספר מיזם</th>
                                     <th>שם המיזם</th>
                                     <th>מגדר</th>
                                     <th>ממוצע</th>
@@ -162,48 +162,58 @@
                     <div class="split-tables-grid">
                         <div class="gender-table-block">
                             <span class="table-gender-title boys">🔷 מובילים בנים (ממוצע)</span>
-                            <table id="table-boys-scores-body">
-                                <thead><tr><th>#</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
+                            <div class="table-container">
+                                <table id="table-boys-scores-body">
+                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="gender-table-block">
                             <span class="table-gender-title girls">💖 מובילות בנות (ממוצע)</span>
-                            <table id="table-girls-scores-body">
-                                <thead><tr><th>#</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
+                            <div class="table-container">
+                                <table id="table-girls-scores-body">
+                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="tab-bast-scores" class="admin-tab-content">
                     <h3>🔥 דירוג BAST (חביב הקהל הכללי)</h3>
-                    <table id="table-all-bast-body" style="margin-bottom: 25px;">
-                        <thead><tr><th>מקום</th><th>#</th><th>שם המיזם</th><th>מגדר</th><th>קולות BAST</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="table-container" style="margin-bottom: 30px;">
+                        <table id="table-all-bast-body">
+                            <thead><tr><th>מקום</th><th>מספר מיזם</th><th>שם המיזם</th><th>מגדר</th><th>קולות BAST</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
 
                     <div class="split-tables-grid">
                         <div class="gender-table-block">
                             <span class="table-gender-title boys">🔷 חביב הקהל - בנים</span>
-                            <table id="table-boys-bast-body">
-                                <thead><tr><th>#</th><th>שם המיזם</th><th>קולות</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
+                            <div class="table-container">
+                                <table id="table-boys-bast-body">
+                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>קולות</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="gender-table-block">
                             <span class="table-gender-title girls">💖 חביב הקהל - בנות</span>
-                            <table id="table-girls-bast-body">
-                                <thead><tr><th>#</th><th>שם המיזם</th><th>קולות</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
+                            <div class="table-container">
+                                <table id="table-girls-bast-body">
+                                    <thead><tr><th>מספר מיזם</th><th>שם המיזם</th><th>קולות</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button id="closeAdminPanelBtn" class="back-btn-voting" style="margin-top: 20px;">🚪 יציאה מפאנל ניהול</button>
+            <button id="closeAdminPanelBtn" class="back-btn-voting-admin">🚪 יציאה מפאנל ניהול</button>
         </div>
     </div>
 
