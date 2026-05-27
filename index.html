@@ -79,7 +79,44 @@
             <button id="scan-qr-btn" class="scan-main-btn">📷 סרוק ברקוד שולחן</button>
             
             <div id="projects-grid" class="projects-grid-container"></div>
+            
+            <div class="finish-btn-wrapper">
+                <button id="finish-voting-btn" class="finish-btn" disabled>יש לדרג לפחות 6 מיזמים (0/6)</button>
+            </div>
+            
             <button id="backToNameBtn" class="back-btn-voting">↩️ חזור למסך הקודם</button>
+        </div>
+    </div>
+
+    <div id="summary-screen" class="screen">
+        <div class="banner">
+            <img src="campus-hemad-logo.jpg" class="logo-right">
+            <img src="asse-tov-logo.PNG" class="logo-center">
+            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
+        </div>
+        <div class="main-wrapper">
+            <div class="card summary-card">
+                <h2>שלב סיכום קצר וסיימנו! ✨</h2>
+                <p class="summary-prompt">נחשפתם למיזמים שונים בתערוכה - איזה מיזם הרשים אתכם ביותר?</p>
+                
+                <select id="best-project-dropdown" class="school-select" style="margin-top: 15px; text-align: right;">
+                    <option value="">בחר/י את המיזם המצטיין שלך...</option>
+                </select>
+                
+                <button id="submit-best-btn" class="start-btn" style="margin-top: 30px; width: 100%;">שלח דירוג סופי ותודה</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="thank-you-screen" class="screen">
+        <div class="thank-you-wrapper">
+            <div class="thank-you-card">
+                <div class="success-icon">✓</div>
+                <h1>תודה רבה!</h1>
+                <p>ההצבעה והציון הסופי שלך נקלטו בהצלחה במערכת.</p>
+                <p class="sub-thank">המשך כנס פורה ומהנה!</p>
+                <img src="campus-hemad-logo.jpg" class="thank-logo">
+            </div>
         </div>
     </div>
 
