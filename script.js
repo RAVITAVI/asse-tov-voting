@@ -5,6 +5,7 @@ const nameScreen = document.getElementById('name-screen');
 const votingScreen = document.getElementById('voting-screen'); 
 const summaryScreen = document.getElementById('summary-screen');
 const thankYouScreen = document.getElementById('thank-you-screen');
+const adminPanelScreen = document.getElementById('admin-panel-screen');
 
 const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
@@ -376,7 +377,7 @@ function loadSchools(genderParam) {
     });
 }
 
-document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לוממד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
 document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
 backToGenderBtn.onclick = function() { schoolScreen.classList.remove('active'); genderScreen.classList.add('active'); };
 
@@ -422,7 +423,7 @@ submitNameBtn.onclick = function() {
 
 backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
 
-// פאנל הניהול של האדמין
+// פאנל הניהול של האדמין - תיקון ניווט ומחזורי רנדור
 document.querySelectorAll('.tab-nav-btn').forEach(button => {
     button.onclick = function() {
         document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -437,7 +438,7 @@ document.getElementById('adminBtn').onclick = function() {
     const password = prompt("הכנס סיסמת מנהל:");
     if (password === "02062026") {
         openingScreen.classList.remove('active');
-        document.getElementById('admin-panel-screen').classList.add('active');
+        adminPanelScreen.classList.add('active');
         fetchAndRenderAdminData();
     } else if (password !== null) {
         alert("סיסמה שגויה!");
@@ -451,7 +452,7 @@ document.getElementById('refreshAdminBtn').onclick = function() {
 };
 
 document.getElementById('closeAdminPanelBtn').onclick = function() {
-    document.getElementById('admin-panel-screen').classList.remove('active');
+    adminPanelScreen.classList.remove('active');
     openingScreen.classList.add('active');
 };
 
@@ -465,17 +466,17 @@ function fetchAndRenderAdminData() {
 
             const projects = data.projects;
 
-            // טאב 1
+            // טאב 1 - כללי לפי ממוצע
             const allSortedByScore = [...projects].sort((a, b) => b.averageScore - a.averageScore);
             const allScoresTable = document.getElementById('table-all-scores-body').querySelector('tbody');
             allScoresTable.innerHTML = '';
             allSortedByScore.forEach((p, index) => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${index + 1}</td><td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.gender === 'male' ? 'בן' : 'בת'}</td><td>${p.averageScore.toFixed(2)}</td><td>${p.voteCount}</td>`;
+                tr.innerHTML = `<td><strong>${index + 1}</strong></td><td>${p.number}</td><td style="text-align:right; font-weight:600;">${p.title}</td><td>${p.gender === 'male' ? '🔷 בן' : '💖 בת'}</td><td><span class="badge-avg">${p.averageScore.toFixed(2)}</span></td><td>${p.voteCount}</td>`;
                 allScoresTable.appendChild(tr);
             });
 
-            // טאב 2
+            // טאב 2 - מופרד לפי ממוצע
             const boysSortedByScore = projects.filter(p => p.gender === 'male').sort((a, b) => b.averageScore - a.averageScore);
             const girlsSortedByScore = projects.filter(p => p.gender === 'female').sort((a, b) => b.averageScore - a.averageScore);
             
@@ -483,7 +484,7 @@ function fetchAndRenderAdminData() {
             boysScoresTable.innerHTML = '';
             boysSortedByScore.forEach(p => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.averageScore.toFixed(2)}</td>`;
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-avg blue">${p.averageScore.toFixed(2)}</span></td>`;
                 boysScoresTable.appendChild(tr);
             });
 
@@ -491,17 +492,17 @@ function fetchAndRenderAdminData() {
             girlsScoresTable.innerHTML = '';
             girlsSortedByScore.forEach(p => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.averageScore.toFixed(2)}</td>`;
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-avg pink">${p.averageScore.toFixed(2)}</span></td>`;
                 girlsScoresTable.appendChild(tr);
             });
 
-            // טאב 3
+            // טאב 3 - חביב הקהל (BAST)
             const allSortedByBast = [...projects].sort((a, b) => b.bastCount - a.bastCount);
             const allBastTable = document.getElementById('table-all-bast-body').querySelector('tbody');
             allBastTable.innerHTML = '';
             allSortedByBast.forEach((p, index) => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${index + 1}</td><td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.gender === 'male' ? 'בן' : 'בת'}</td><td><strong>${p.bastCount}</strong></td>`;
+                tr.innerHTML = `<td><strong>${index + 1}</strong></td><td>${p.number}</td><td style="text-align:right; font-weight:600;">${p.title}</td><td>${p.gender === 'male' ? 'בן' : 'בת'}</td><td><span class="badge-bast">${p.bastCount} קולות</span></td>`;
                 allBastTable.appendChild(tr);
             });
 
@@ -510,7 +511,7 @@ function fetchAndRenderAdminData() {
             boysBastTable.innerHTML = '';
             boysSortedByBast.forEach(p => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><strong>${p.bastCount}</strong></td>`;
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-bast blue">${p.bastCount}</span></td>`;
                 boysBastTable.appendChild(tr);
             });
 
@@ -519,7 +520,7 @@ function fetchAndRenderAdminData() {
             girlsBastTable.innerHTML = '';
             girlsSortedByBast.forEach(p => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><strong>${p.bastCount}</strong></td>`;
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><span class="badge-bast pink">${p.bastCount}</span></td>`;
                 girlsBastTable.appendChild(tr);
             });
 
