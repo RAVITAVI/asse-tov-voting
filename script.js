@@ -32,8 +32,8 @@ let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמי�
 // רשימת בתי הספר המעודכנת והמדויקת שהגדרת
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
-    { schoolName: "אולפנית אמิต שחר", gender: "Female" },
+    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
+    { schoolName: "אולפנית אמית שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
