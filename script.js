@@ -155,7 +155,6 @@ function openRatingPanelDirectly(projectNo, projectTitle, projectCreators, proje
     ratingModal.style.display = 'flex';
 }
 
-// פונקציה חכמה שבודקת ומעדכנת את כפתור הסיום
 function updateFinishButtonStatus() {
     let votedCount = 0;
     for (let key in currentStudentVotingRow) {
@@ -207,9 +206,7 @@ function fetchAndDisplayProjects(genderParam) {
                         no: projectNo, title: projectTitle, creators: projectCreators, course: projectCourse, element: projectButton
                     });
 
-                    // הוספה דינמית של המיזם לרשימת ה-Dropdown של הסיכום
                     const opt = document.createElement('option');
-                    // שמירה בפורמט מגדרי: G3 או B3
                     const prefix = selectedGender === 'Female' ? 'G' : 'B';
                     opt.value = prefix + projectNo;
                     opt.innerText = "מיזם " + projectNo + " - " + projectTitle;
@@ -230,7 +227,6 @@ function fetchAndDisplayProjects(genderParam) {
                     projectsGrid.appendChild(projectButton);
                 }
             }
-            // עדכון ראשוני של כפתור הסיום
             updateFinishButtonStatus();
         }).catch(error => console.error(error));
 }
@@ -320,8 +316,6 @@ modalSaveBtn.onclick = function() {
         modalSaveBtn.innerText = "שמור";
         modalSaveBtn.disabled = false;
         closeRatingModal();
-        
-        // עדכון מצב כפתור הסיום לאחר כל שמירה מוצלחת
         updateFinishButtonStatus();
     })
     .catch(err => {
@@ -332,13 +326,11 @@ modalSaveBtn.onclick = function() {
     });
 };
 
-// לחיצה על סיימתי מעבירה למסך הסיכום
 finishVotingBtn.onclick = function() {
     votingScreen.classList.remove('active');
     summaryScreen.classList.add('active');
 };
 
-// לחיצה על שליחת המיזם המצטיין הסופי
 submitBestBtn.onclick = function() {
     const selectedBest = bestProjectDropdown.value;
     if (selectedBest === "") {
@@ -356,12 +348,12 @@ submitBestBtn.onclick = function() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             studentName: studentName,
-            bestProj: selectedBest // שליחת המזהה (למשל G6) לשרת
+            bestProj: selectedBest
         })
     })
     .then(() => {
         summaryScreen.classList.remove('active');
-        thankYouScreen.classList.add('add', 'active');
+        thankYouScreen.classList.add('active');
     })
     .catch(err => {
         console.error(err);
@@ -384,7 +376,7 @@ function loadSchools(genderParam) {
     });
 }
 
-document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לוממד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
 document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
 backToGenderBtn.onclick = function() { schoolScreen.classList.remove('active'); genderScreen.classList.add('active'); };
 
@@ -429,4 +421,117 @@ submitNameBtn.onclick = function() {
 };
 
 backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
-document.getElementById('adminBtn').onclick = function() { const password = prompt("הכנס סיסמת מנהל:"); if (password === "02062026") { alert("ברוך הבא למערכת הניהול"); } };
+
+// פאנל הניהול של האדמין
+document.querySelectorAll('.tab-nav-btn').forEach(button => {
+    button.onclick = function() {
+        document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
+        
+        this.classList.add('active');
+        document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+    };
+});
+
+document.getElementById('adminBtn').onclick = function() {
+    const password = prompt("הכנס סיסמת מנהל:");
+    if (password === "02062026") {
+        openingScreen.classList.remove('active');
+        document.getElementById('admin-panel-screen').classList.add('active');
+        fetchAndRenderAdminData();
+    } else if (password !== null) {
+        alert("סיסמה שגויה!");
+    }
+};
+
+document.getElementById('refreshAdminBtn').onclick = function() {
+    this.innerText = "מרענן...";
+    this.disabled = true;
+    fetchAndRenderAdminData();
+};
+
+document.getElementById('closeAdminPanelBtn').onclick = function() {
+    document.getElementById('admin-panel-screen').classList.remove('active');
+    openingScreen.classList.add('active');
+};
+
+function fetchAndRenderAdminData() {
+    fetch(APPS_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('stat-boys-count').innerText = data.stats.boysVoted;
+            document.getElementById('stat-girls-count').innerText = data.stats.girlsVoted;
+            document.getElementById('stat-total-count').innerText = data.stats.totalVoted;
+
+            const projects = data.projects;
+
+            // טאב 1
+            const allSortedByScore = [...projects].sort((a, b) => b.averageScore - a.averageScore);
+            const allScoresTable = document.getElementById('table-all-scores-body').querySelector('tbody');
+            allScoresTable.innerHTML = '';
+            allSortedByScore.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${index + 1}</td><td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.gender === 'male' ? 'בן' : 'בת'}</td><td>${p.averageScore.toFixed(2)}</td><td>${p.voteCount}</td>`;
+                allScoresTable.appendChild(tr);
+            });
+
+            // טאב 2
+            const boysSortedByScore = projects.filter(p => p.gender === 'male').sort((a, b) => b.averageScore - a.averageScore);
+            const girlsSortedByScore = projects.filter(p => p.gender === 'female').sort((a, b) => b.averageScore - a.averageScore);
+            
+            const boysScoresTable = document.getElementById('table-boys-scores-body').querySelector('tbody');
+            boysScoresTable.innerHTML = '';
+            boysSortedByScore.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.averageScore.toFixed(2)}</td>`;
+                boysScoresTable.appendChild(tr);
+            });
+
+            const girlsScoresTable = document.getElementById('table-girls-scores-body').querySelector('tbody');
+            girlsScoresTable.innerHTML = '';
+            girlsSortedByScore.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.averageScore.toFixed(2)}</td>`;
+                girlsScoresTable.appendChild(tr);
+            });
+
+            // טאב 3
+            const allSortedByBast = [...projects].sort((a, b) => b.bastCount - a.bastCount);
+            const allBastTable = document.getElementById('table-all-bast-body').querySelector('tbody');
+            allBastTable.innerHTML = '';
+            allSortedByBast.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${index + 1}</td><td>${p.number}</td><td style="text-align:right;">${p.title}</td><td>${p.gender === 'male' ? 'בן' : 'בת'}</td><td><strong>${p.bastCount}</strong></td>`;
+                allBastTable.appendChild(tr);
+            });
+
+            const boysSortedByBast = projects.filter(p => p.gender === 'male').sort((a, b) => b.bastCount - a.bastCount);
+            const boysBastTable = document.getElementById('table-boys-bast-body').querySelector('tbody');
+            boysBastTable.innerHTML = '';
+            boysSortedByBast.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><strong>${p.bastCount}</strong></td>`;
+                boysBastTable.appendChild(tr);
+            });
+
+            const girlsSortedByBast = projects.filter(p => p.gender === 'female').sort((a, b) => b.bastCount - a.bastCount);
+            const girlsBastTable = document.getElementById('table-girls-bast-body').querySelector('tbody');
+            girlsBastTable.innerHTML = '';
+            girlsSortedByBast.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${p.number}</td><td style="text-align:right;">${p.title}</td><td><strong>${p.bastCount}</strong></td>`;
+                girlsBastTable.appendChild(tr);
+            });
+
+            const refreshBtn = document.getElementById('refreshAdminBtn');
+            refreshBtn.innerText = "🔄 רענן נתונים";
+            refreshBtn.disabled = false;
+        })
+        .catch(err => {
+            console.error(err);
+            alert("שגיאה במשיכת הנתונים.");
+            const refreshBtn = document.getElementById('refreshAdminBtn');
+            refreshBtn.innerText = "🔄 רענן נתונים";
+            refreshBtn.disabled = false;
+        });
+}
