@@ -42,11 +42,9 @@
         <div class="main-wrapper">
             <div class="card">
                 <h2 id="school-question"></h2>
-                
                 <select id="school-dropdown" class="school-select">
                     <option value="">בחר בית ספר...</option>
                 </select>
-
                 <button id="nextBtn" class="start-btn" style="margin-top: 25px; width: 100%;">המשך</button>
                 <button id="backToGenderBtn" class="back-btn">↩️ חזור למסך הקודם</button>
             </div>
@@ -62,12 +60,10 @@
         <div class="main-wrapper">
             <div class="card">
                 <h2 id="name-question">מה שמך המלא?</h2>
-                
                 <div class="autocomplete-wrapper">
                     <input type="text" id="student-name-input" class="name-input" placeholder="התחל/י להקליד את שמך..." autocomplete="off">
                     <div id="suggestions-container" class="suggestions-list"></div>
                 </div>
-
                 <button id="submitNameBtn" class="start-btn" style="margin-top: 25px; width: 100%;">המשך</button>
                 <button id="backToSchoolBtn" class="back-btn">↩️ חזור למסך הקודם</button>
             </div>
@@ -78,7 +74,6 @@
         <div class="projects-page-wrapper">
             <h2 class="page-title">בחירת היוזמה לדירוג</h2>
             <p class="page-subtitle">לחצו על המיזם כדי לדרג אותו:</p>
-            
             <div id="projects-grid" class="projects-grid-container"></div>
             <button id="backToNameBtn" class="back-btn-voting">↩️ חזור למסך הקודם</button>
         </div>
@@ -87,16 +82,13 @@
     <div id="rating-modal" class="modal-overlay">
         <div class="modal-card">
             <button id="modal-close-x" class="modal-close-x">✕</button>
-            
             <div class="modal-header">
                 <span id="modal-project-no" class="modal-badge"></span>
                 <h3 id="modal-project-title"></h3>
             </div>
-            
             <div class="modal-body">
                 <p><strong>יזמים:</strong> <span id="modal-project-creators"></span></p>
                 <p><strong>קורס:</strong> <span id="modal-project-course"></span></p>
-                
                 <div class="rating-range-wrapper">
                     <label>דרגו את המיזם:</label>
                     <div class="slider-val-display" id="slider-value-preview">5</div>
@@ -108,7 +100,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="modal-footer">
                 <button id="modal-save-btn" class="modal-btn btn-save">שמור</button>
                 <button id="modal-cancel-btn" class="modal-btn btn-cancel">ביטול</button>
