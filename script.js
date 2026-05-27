@@ -10,18 +10,7 @@ const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
 const studentNameInput = document.getElementById('student-name-input');
 const suggestionsContainer = document.getElementById('suggestions-container');
-const projectsGrid = document.getElementById('projects-grid'); // מיכל רשת הריבועים
-
-// אלמנטים של החלון הקופץ (Modal)
-const ratingModal = document.getElementById('rating-modal');
-const modalProjectNo = document.getElementById('modal-project-no');
-const modalProjectTitle = document.getElementById('modal-project-title');
-const modalProjectCourse = document.getElementById('modal-project-course');
-const modalProjectCreators = document.getElementById('modal-project-creators');
-const ratingSlider = document.getElementById('rating-slider');
-const sliderValuePreview = document.getElementById('slider-value-preview');
-const modalSaveBtn = document.getElementById('modal-save-btn');
-const modalCancelBtn = document.getElementById('modal-cancel-btn');
+const projectsGrid = document.getElementById('projects-grid'); // מכל הכפתורים המרובעים
 
 // כפתורים
 const nextBtn = document.getElementById('nextBtn');
@@ -32,20 +21,19 @@ const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 // קישור בסיס הנתונים המרכזי המעודכן שלך בגוגל שיטס
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
 
-// משתנים גלובליים לשמירת נתוני התלמיד וההצבעה
+// משתנים גלובליים לשמירת נתוני התלמיד
 let selectedGender = "";
 let selectedSchool = "";
 let studentName = "";
 let allStudentsData = []; 
 let allStudentsInSchool = []; 
 let isNameSelectedFromList = false; 
-let currentActiveProjectCard = null; // ישמור את כרטיסיית הריבוע שנלחצה כרגע
 
-// רשימת בתי הספר המעודכנת והמדויקת שהגדרת
+// רשימת בתי הספר המעודכנת, הנקייה והנעולה - מאומתת ותקינה לחלוטין!
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
-    { schoolName: "אולפנית אמิต שחר", gender: "Female" },
+    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
+    { schoolName: "אולפנית אמית שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
@@ -133,12 +121,12 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                     }
                 }
             }
-            console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים מבית הספר " + schoolName);
+            console.log("נטענו בהצלחה " + allStudentsInSchool.length + " תלמידים.");
         })
         .catch(error => console.error("שגיאה במשיכת רשימת התלמידים:", error));
 }
 
-// פונקציה: משיכת מיזמים מגיליון "projects" וציור ריבועים אדומים/ירוקים על המסך באופן אוטומטי
+// פונקציה: משיכת מיזמים מגיליון "projects" וציור כפתורים מרובעים על המסך באופן אוטומטי
 function fetchAndDisplayProjects(genderParam) {
     const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (!matches || !matches[1]) return;
@@ -149,7 +137,7 @@ function fetchAndDisplayProjects(genderParam) {
         .then(response => response.text())
         .then(text => {
             const lines = text.split(/\r?\n/);
-            projectsGrid.innerHTML = ""; // איפוס המכל הישן
+            projectsGrid.innerHTML = ""; 
             
             const targetGender = genderParam.trim().toLowerCase();
             let counter = 0;
@@ -159,84 +147,42 @@ function fetchAndDisplayProjects(genderParam) {
                 
                 const columns = parseCSVLine(lines[i]);
                 
-                const projectNo = columns[1];     // עמודה B - project_no
-                const projectTitle = columns[2];  // עמודה C - title
-                const projectCourse = columns[3]; // עמודה D - Course
-                const projectCreators = columns[4]; // עמודה E - name
-                const projectGender = columns[5]; // עמודה F - gender
+                const projectNo = columns[1];     
+                const projectTitle = columns[2];  
+                const projectGender = columns[5]; 
                 
                 if (projectGender && projectGender.toLowerCase() === targetGender) {
                     counter++;
                     
-                    // יצירת ריבוע המיזם (הקארד האדום/ירוק מהשרטוט שלך)
-                    const projectCard = document.createElement('div');
-                    projectCard.classList.add('project-card-btn', 'status-not-voted'); // כברירת מחדל לא דורג (אדום)
+                    const projectButton = document.createElement('div');
+                    projectButton.classList.add('project-grid-button', 'color-red'); 
                     
-                    // שמירת הנתונים בתוך האלמנט לשימוש בחלון הקופץ
-                    projectCard.dataset.no = projectNo || "";
-                    projectCard.dataset.title = projectTitle || "";
-                    projectCard.dataset.course = projectCourse || "";
-                    projectCard.dataset.creators = projectCreators || "";
-                    
-                    // תוכן פנימי של הריבוע
-                    projectCard.innerHTML = `
-                        <div class="card-num">${projectNo}</div>
-                        <div class="card-title">${projectTitle}</div>
-                        <div class="status-indicator"></div>
+                    projectButton.innerHTML = `
+                        <div class="proj-number">${projectNo}</div>
+                        <div class="proj-title">${projectTitle}</div>
+                        <div class="proj-status-label">לדירוג</div>
                     `;
                     
-                    // הוספת אירוע לחיצה: פותח חלון קופץ
-                    projectCard.addEventListener('click', () => {
-                        openRatingModal(projectCard);
+                    // לוגיקת לחיצה זמנית לבדיקת העיצוב (מחליף בין אדום לירוק)
+                    projectButton.addEventListener('click', () => {
+                        if (projectButton.classList.contains('color-red')) {
+                            projectButton.classList.remove('color-red');
+                            projectButton.classList.add('color-green');
+                            projectButton.querySelector('.proj-status-label').innerText = "✓ דורג";
+                        } else {
+                            projectButton.classList.remove('color-green');
+                            projectButton.classList.add('color-red');
+                            projectButton.querySelector('.proj-status-label').innerText = "לדירוג";
+                        }
                     });
                     
-                    projectsGrid.appendChild(projectCard);
+                    projectsGrid.appendChild(projectButton);
                 }
             }
             console.log(`נוצרו אוטומטית ${counter} כפתורי מיזמים.`);
         })
         .catch(error => console.error("שגיאה במשיכת רשימת המיזמים:", error));
 }
-
-// פונקציה לפתיחת החלון הקופץ והזרקת נתוני המיזם הספציפי אליו
-function openRatingModal(cardElement) {
-    currentActiveProjectCard = cardElement; // שמירת הריבוע שנלחץ כרגע
-    
-    // הזרקת המידע מנתוני הריבוע אל תוך החלון הקופץ
-    modalProjectNo.innerText = "מיזם מספר " + cardElement.dataset.no;
-    modalProjectTitle.innerText = cardElement.dataset.title;
-    modalProjectCourse.innerText = cardElement.dataset.course;
-    modalProjectCreators.innerText = cardElement.dataset.creators;
-    
-    // איפוס הסליידר לברירת מחדל (ציון 5)
-    ratingSlider.value = 5;
-    sliderValuePreview.innerText = 5;
-    
-    // הצגת החלון הקופץ
-    ratingModal.classList.add('active');
-}
-
-// עדכון המספר המוצג מעל הסליידר בזמן הגרירה שלו
-ratingSlider.addEventListener('input', (e) => {
-    sliderValuePreview.innerText = e.target.value;
-});
-
-// כפתור ביטול בחלון הקופץ
-modalCancelBtn.addEventListener('click', () => {
-    ratingModal.classList.remove('active'); // פשוט סוגר את החלון
-    currentActiveProjectCard = null;
-});
-
-// כפתור שמור בחלון הקופץ (כרגע רק משנה את העיצוב הויזואלי!)
-modalSaveBtn.addEventListener('click', () => {
-    if (currentActiveProjectCard) {
-        // שינוי הסטטוס של הריבוע הראשי מאדום לירוק עם סימן וי!
-        currentActiveProjectCard.classList.remove('status-not-voted');
-        currentActiveProjectCard.classList.add('status-voted');
-    }
-    ratingModal.classList.remove('active'); // סגירת החלון
-    currentActiveProjectCard = null;
-});
 
 document.getElementById('startBtn').addEventListener('click', () => {
     openingScreen.classList.remove('active');
