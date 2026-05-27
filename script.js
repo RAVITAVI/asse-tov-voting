@@ -77,6 +77,29 @@ const SCHOOLS_DATA = [
     { schoolName: "ניהול בנות", gender: "Female" }
 ];
 
+// 🌟 פונקציית ניווט מסכים חסינה לחלוטין 🌟
+function showScreen(targetScreen) {
+    // הסתרת כל המסכים באופן ידני דרך הסטייל הישיר
+    openingScreen.style.display = 'none';
+    genderScreen.style.display = 'none';
+    schoolScreen.style.display = 'none';
+    nameScreen.style.display = 'none';
+    votingScreen.style.display = 'none';
+    summaryScreen.style.display = 'none';
+    thankYouScreen.style.display = 'none';
+    adminPanelScreen.style.display = 'none';
+    
+    // הצגת מסך היעד בצורה מותאמת
+    if (targetScreen === votingScreen || targetScreen === openingScreen || targetScreen === thankYouScreen) {
+        targetScreen.style.display = 'flex';
+    } else {
+        targetScreen.style.display = 'block';
+    }
+}
+
+// הפעלה ראשונית של מסך הפתיחה בלייב
+showScreen(openingScreen);
+
 function cleanStringForComparison(str) {
     if (!str) return "";
     return str.replace(/[\"\'\`\״\׳\俘\”\“]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -330,8 +353,7 @@ modalSaveBtn.onclick = function() {
 };
 
 finishVotingBtn.onclick = function() {
-    votingScreen.classList.remove('active');
-    summaryScreen.classList.add('active');
+    showScreen(summaryScreen);
 };
 
 submitBestBtn.onclick = function() {
@@ -355,8 +377,7 @@ submitBestBtn.onclick = function() {
         })
     })
     .then(() => {
-        summaryScreen.classList.remove('active');
-        thankYouScreen.classList.add('active');
+        showScreen(thankYouScreen);
     })
     .catch(err => {
         console.error(err);
@@ -366,7 +387,7 @@ submitBestBtn.onclick = function() {
     });
 };
 
-startBtn.onclick = function() { openingScreen.classList.remove('active'); genderScreen.classList.add('active'); };
+startBtn.onclick = function() { showScreen(genderScreen); };
 
 function loadSchools(genderParam) {
     schoolDropdown.innerHTML = '<option value="">בחר בית ספר...</option>';
@@ -379,9 +400,9 @@ function loadSchools(genderParam) {
     });
 }
 
-document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
-document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
-backToGenderBtn.onclick = function() { schoolScreen.classList.remove('active'); genderScreen.classList.add('active'); };
+document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); showScreen(schoolScreen); };
+document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); showScreen(schoolScreen); };
+backToGenderBtn.onclick = function() { showScreen(genderScreen); };
 
 nextBtn.onclick = function() {
     if (schoolDropdown.value === "") { alert("אנא בחר בית ספר לפני ההמשך"); } 
@@ -389,7 +410,8 @@ nextBtn.onclick = function() {
         selectedSchool = schoolDropdown.value; 
         fetchStudentsForSchool(selectedSchool, selectedGender);
         studentNameInput.value = ""; suggestionsContainer.innerHTML = ""; suggestionsContainer.style.display = 'none'; isNameSelectedFromList = false;
-        schoolScreen.classList.remove('active'); nameScreen.classList.add('active'); studentNameInput.focus();
+        showScreen(nameScreen);
+        studentNameInput.focus();
     }
 };
 
@@ -409,7 +431,7 @@ studentNameInput.oninput = function(e) {
 };
 
 document.onclick = function(e) { if (e.target !== studentNameInput) { suggestionsContainer.style.display = 'none'; } };
-backToSchoolBtn.onclick = function() { nameScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+backToSchoolBtn.onclick = function() { showScreen(schoolScreen); };
 
 submitNameBtn.onclick = function() {
     const currentInputValue = studentNameInput.value.trim();
@@ -420,10 +442,10 @@ submitNameBtn.onclick = function() {
     studentName = currentInputValue;
     currentStudentVotingRow = (currentStudentObj && currentStudentObj.scores) ? currentStudentObj.scores : {};
     fetchAndDisplayProjects(selectedGender);
-    nameScreen.classList.remove('active'); votingScreen.classList.add('active');
+    showScreen(votingScreen);
 };
 
-backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
+backToNameBtn.onclick = function() { showScreen(nameScreen); };
 
 // פאנל הניהול של האדמין
 document.querySelectorAll('.tab-nav-btn').forEach(button => {
@@ -439,8 +461,7 @@ document.querySelectorAll('.tab-nav-btn').forEach(button => {
 document.getElementById('adminBtn').onclick = function() {
     const password = prompt("הכנס סיסמת מנהל:");
     if (password === "02062026") {
-        openingScreen.classList.remove('active');
-        adminPanelScreen.style.display = 'block'; // פתיחה מבודדת לחלוטין
+        showScreen(adminPanelScreen);
         fetchAndRenderAdminData();
     } else if (password !== null) {
         alert("סיסמה שגויה!");
@@ -454,8 +475,7 @@ document.getElementById('refreshAdminBtn').onclick = function() {
 };
 
 document.getElementById('closeAdminPanelBtn').onclick = function() {
-    adminPanelScreen.style.display = 'none'; // סגירה מבודדת
-    openingScreen.classList.add('active');
+    showScreen(openingScreen);
 };
 
 document.getElementById('printPdfBtn').onclick = function() {
