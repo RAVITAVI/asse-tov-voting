@@ -1,4 +1,126 @@
-<div id="admin-panel-screen" class="screen">
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <title>כנס קמפוס חמ"ד</title>
+</head>
+<body>
+
+    <div id="opening-screen" class="screen active">
+        <button id="adminBtn" class="admin-gear">⚙️</button>
+        <img src="campus-hemad-logo.jpg" alt="לוגו קמפוס חמד" class="logo-square">
+        <h1>ברוכים הבאים לכנס "עשה טוב"</h1>
+        <p>כנס להצגת יוזמות של תלמידי קמפוס חמ"ד תשפ"ו</p>
+        <button id="startBtn" class="start-btn">מתחילים</button>
+    </div>
+
+    <div id="gender-screen" class="screen">
+        <div class="banner">
+            <img src="campus-hemad-logo.jpg" class="logo-right">
+            <img src="asse-tov-logo.PNG" class="logo-center">
+            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
+        </div>
+        <div class="main-wrapper">
+            <div class="card">
+                <h2>האם את/ה:</h2>
+                <div class="gender-buttons">
+                    <button class="btn-gender btn-boy" id="boyBtn">בן</button>
+                    <button class="btn-gender btn-girl" id="girlBtn">בת</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="school-screen" class="screen">
+        <div class="banner">
+            <img src="campus-hemad-logo.jpg" class="logo-right">
+            <img src="asse-tov-logo.PNG" class="logo-center">
+            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
+        </div>
+        <div class="main-wrapper">
+            <div class="card">
+                <h2 id="school-question"></h2>
+                <select id="school-dropdown" class="school-select">
+                    <option value="">בחר בית ספר...</option>
+                </select>
+                <button id="nextBtn" class="start-btn" style="margin-top: 25px; width: 100%;">המשך</button>
+                <button id="backToGenderBtn" class="back-btn">↩️ חזור למסך הקודם</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="name-screen" class="screen">
+        <div class="banner">
+            <img src="campus-hemad-logo.jpg" class="logo-right">
+            <img src="asse-tov-logo.PNG" class="logo-center">
+            <span class="banner-text">קmפוס חמ"ד - תשפ"ו</span>
+        </div>
+        <div class="main-wrapper">
+            <div class="card">
+                <h2 id="name-question">מה שמך המלא?</h2>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="student-name-input" class="name-input" placeholder="התחל/י להקליד את שמך..." autocomplete="off">
+                    <div id="suggestions-container" class="suggestions-list"></div>
+                </div>
+                <button id="submitNameBtn" class="start-btn" style="margin-top: 25px; width: 100%;">המשך</button>
+                <button id="backToSchoolBtn" class="back-btn">↩️ חזור למסך הקודם</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="voting-screen" class="screen">
+        <div class="projects-page-wrapper">
+            <h2 class="page-title">בחירת היוזמה לדירוג</h2>
+            <p class="page-subtitle">לחצו על מיזם או סרקו את הברקוד שעל השולחן:</p>
+            
+            <button id="scan-qr-btn" class="scan-main-btn">📷 סרוק ברקוד שולחן</button>
+            
+            <div id="projects-grid" class="projects-grid-container"></div>
+            
+            <div class="finish-btn-wrapper">
+                <button id="finish-voting-btn" class="finish-btn" disabled>יש לדרג לפחות 6 מיזמים (0/6)</button>
+            </div>
+            
+            <button id="backToNameBtn" class="back-btn-voting">↩️ חזור למסך הקודם</button>
+        </div>
+    </div>
+
+    <div id="summary-screen" class="screen">
+        <div class="banner">
+            <img src="campus-hemad-logo.jpg" class="logo-right">
+            <img src="asse-tov-logo.PNG" class="logo-center">
+            <span class="banner-text">קמפוס חמ"ד - תשפ"ו</span>
+        </div>
+        <div class="main-wrapper">
+            <div class="card summary-card">
+                <h2>שלב סיכום קצר וסיימנו! ✨</h2>
+                <p class="summary-prompt">נחשפתם למיזמים שונים בתערוכה - איזה מיזם הרשים אתכם ביותר?</p>
+                
+                <select id="best-project-dropdown" class="school-select" style="margin-top: 15px; text-align: right;">
+                    <option value="">בחר/י את המיזם המצטיין שלך...</option>
+                </select>
+                
+                <button id="submit-best-btn" class="start-btn" style="margin-top: 30px; width: 100%;">שלח דירוג סופי ותודה</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="thank-you-screen" class="screen">
+        <div class="thank-you-wrapper">
+            <div class="thank-you-card">
+                <div class="success-icon">✓</div>
+                <h1>תודה רבה!</h1>
+                <p>ההצבעה והציון הסופי שלך נקלטו בהצלחה במערכת.</p>
+                <p class="sub-thank">המשך כנס פורה ומהנה!</p>
+                <img src="campus-hemad-logo.jpg" class="thank-logo">
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel-screen" class="screen">
         <div class="admin-page-wrapper">
             <div class="admin-header-card">
                 <h2>📊 פאנל מנהל - כנס קמפוס חמ"ד</h2>
@@ -39,14 +161,14 @@
                 <div id="tab-gender-scores" class="admin-tab-content">
                     <div class="split-tables-grid">
                         <div class="gender-table-block">
-                            <text class="table-gender-title boys">🔷 מובילים בנים (ממוצע)</text>
+                            <span class="table-gender-title boys">🔷 מובילים בנים (ממוצע)</span>
                             <table id="table-boys-scores-body">
                                 <thead><tr><th>#</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
                         <div class="gender-table-block">
-                            <text class="table-gender-title girls">💖 מובילות בנות (ממוצע)</text>
+                            <span class="table-gender-title girls">💖 מובילות בנות (ממוצע)</span>
                             <table id="table-girls-scores-body">
                                 <thead><tr><th>#</th><th>שם המיזם</th><th>ממוצע</th></tr></thead>
                                 <tbody></tbody>
@@ -64,14 +186,14 @@
 
                     <div class="split-tables-grid">
                         <div class="gender-table-block">
-                            <text class="table-gender-title boys">🔷 חביב הקהל - בנים</text>
+                            <span class="table-gender-title boys">🔷 חביב הקהל - בנים</span>
                             <table id="table-boys-bast-body">
                                 <thead><tr><th>#</th><th>שם המיזם</th><th>קולות</th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
                         <div class="gender-table-block">
-                            <text class="table-gender-title girls">💖 חביב הקהל - בנות</text>
+                            <span class="table-gender-title girls">💖 חביב הקהל - בנות</span>
                             <table id="table-girls-bast-body">
                                 <thead><tr><th>#</th><th>שם המיזם</th><th>קולות</th></tr></thead>
                                 <tbody></tbody>
@@ -84,3 +206,48 @@
             <button id="closeAdminPanelBtn" class="back-btn-voting" style="margin-top: 20px;">🚪 יציאה מפאנל ניהול</button>
         </div>
     </div>
+
+    <div id="scanner-modal" class="modal-overlay">
+        <div class="modal-card scanner-card">
+            <button id="scanner-close-x" class="modal-close-x">✕</button>
+            <div class="modal-header">
+                <h3>סריקת ברקוד המיזם</h3>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; text-align: center;">כוונו את המצלמה לברקוד שעל השולחן</p>
+                <div id="qr-reader" style="width: 100%; max-width: 350px; margin: 0 auto; border-radius: 12px; overflow: hidden;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rating-modal" class="modal-overlay">
+        <div class="modal-card">
+            <button id="modal-close-x" class="modal-close-x">✕</button>
+            <div class="modal-header">
+                <span id="modal-project-no" class="modal-badge"></span>
+                <h3 id="modal-project-title"></h3>
+            </div>
+            <div class="modal-body">
+                <p><strong>יזמים:</strong> <span id="modal-project-creators"></span></p>
+                <p><strong>קורס:</strong> <span id="modal-project-course"></span></p>
+                <div class="rating-range-wrapper">
+                    <label>דרגו את המיזם:</label>
+                    <div class="slider-val-display" id="slider-value-preview">לא דורג</div>
+                    <input type="range" id="rating-slider" min="0" max="10" value="0" class="modern-slider">
+                    <div class="slider-labels">
+                        <span>לא דורג</span>
+                        <span>5</span>
+                        <span>10</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-save-btn" class="modal-btn btn-save">שמור</button>
+                <button id="modal-cancel-btn" class="modal-btn btn-cancel">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
