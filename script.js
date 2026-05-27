@@ -29,8 +29,6 @@ const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 const backToNameBtn = document.getElementById('backToNameBtn'); 
 
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
-
-// הכתובת החדשה והמעודכנת של ה-Apps Script שלך
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyTj6OuSvDvgfru8VN-9SCwxmciiBZ59Y-aCZeWZLzXV1AgZvTwMdKM2jVgnIG3OSI/exec";
 
 let selectedGender = "";
@@ -46,19 +44,19 @@ let currentSelectedCardElement = null;
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
     { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנית אמית שחר", gender: "Female" },
+    { schoolName: "אולפנת אמית שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
     { schoolName: "לוינסון בנות", gender: "Female" },
     { schoolName: "אולפנית אמונה אלישבע", gender: "Female" },
     { schoolName: "פלך זכרון יעקב", gender: "Female" },
-    { schoolName: "ישיבה תנ\"כית זכרון יעקב", gender: "Male" },
+    { schoolName: "ישיבה תנכית זכרון יעקב", gender: "Male" },
     { schoolName: "ישיבה תיכונית קרית אתא", gender: "Male" },
     { schoolName: "יבנה", gender: "Male" },
     { schoolName: "לוינסון בנים", gender: "Male" },
     { schoolName: "נתיבות דרור", gender: "Male" },
-    { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
+    { schoolName: "ישיבת בנע חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
 ];
 
@@ -106,8 +104,9 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                         if (currentName) {
                             allStudentsInSchool.push(currentName);
                             const projScores = {};
+                            // תיקון קריאת ציונים: עמודה G (אינדקס 6 ב-CSV המפורסר) היא PROJ1
                             for (let p = 1; p <= 15; p++) {
-                                const columnIndex = 5 + p;
+                                const columnIndex = 5 + p; 
                                 projScores[p] = columns[columnIndex] ? parseInt(columns[columnIndex]) || 0 : 0;
                             }
                             allStudentsData.push({
@@ -165,9 +164,11 @@ function fetchAndDisplayProjects(genderParam) {
                         modalProjectCreators.innerText = projectCreators || "לא צוין";
                         modalProjectCourse.innerText = projectCourse || "לא צוין";
                         
-                        if (currentScore > 0) {
-                            ratingSlider.value = currentScore;
-                            sliderValuePreview.innerText = currentScore;
+                        // שליפת הציון העדכני ביותר מתוך הזיכרון המקומי
+                        const liveScore = currentStudentVotingRow[projectNo] || 0;
+                        if (liveScore > 0) {
+                            ratingSlider.value = liveScore;
+                            sliderValuePreview.innerText = liveScore;
                         } else {
                             ratingSlider.value = 0;
                             sliderValuePreview.innerText = "לא דורג";
