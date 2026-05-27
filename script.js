@@ -57,6 +57,7 @@ const SCHOOLS_DATA = [
     { schoolName: "ישיבת בנ\"ע - חריש", gender: "Male" },
     { schoolName: "ישיבה תיכונית פרדס חנה כרכור", gender: "Male" }
 ];
+
 function cleanStringForComparison(str) {
     if (!str) return "";
     return str.replace(/[\"\'\`\״\׳\俘\”\“]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -151,8 +152,8 @@ function fetchAndDisplayProjects(genderParam) {
                         projectButton.innerHTML = `<div class="proj-number">${projectNo}</div><div class="proj-title">${projectTitle}</div><div class="proj-status-label">לדירוג</div>`;
                     }
                     
-                    // פונקציית לחיצה ישירה ויזואלית בלבד לבדיקת פתיחת ה-Modal
-                    projectButton.onclick = function() {
+                    // שינוי לפקודת האזנה תקנית וחזקה ביותר - יעבוד בכל דפדפן ומכשיר
+                    projectButton.addEventListener('click', function() {
                         currentSelectedProjectNo = projectNo;
                         currentSelectedCardElement = projectButton;
                         
@@ -164,9 +165,8 @@ function fetchAndDisplayProjects(genderParam) {
                         ratingSlider.value = currentScore > 0 ? currentScore : 5;
                         sliderValuePreview.innerText = ratingSlider.value;
                         
-                        // פקודה ישירה לשינוי תצוגה
                         ratingModal.style.display = 'flex';
-                    };
+                    });
                     
                     projectsGrid.appendChild(projectButton);
                 }
@@ -174,31 +174,27 @@ function fetchAndDisplayProjects(genderParam) {
         }).catch(error => console.error(error));
 }
 
-ratingSlider.oninput = function(e) {
+ratingSlider.addEventListener('input', function(e) {
     sliderValuePreview.innerText = e.target.value;
-};
+});
 
 function closeRatingModal() {
-    ratingModal.style.display = 'none';
+    ratingModal.style.style.display = 'none';
     currentSelectedProjectNo = null;
     currentSelectedCardElement = null;
 }
-modalCancelBtn.onclick = closeRatingModal;
-modalCloseX.onclick = closeRatingModal;
+modalCancelBtn.addEventListener('click', closeRatingModal);
+modalCloseX.addEventListener('click', closeRatingModal);
 
-// כפתור שמור - ויזואלי ומקומי בלבד (ללא שליחה לשרת כרגע)
-modalSaveBtn.onclick = function() {
+modalSaveBtn.addEventListener('click', function() {
     const selectedScore = parseInt(ratingSlider.value);
-    
-    // עדכון גרפי מקומי מיידי על המסך כדי לראות שזה עובד
     currentStudentVotingRow[currentSelectedProjectNo] = selectedScore;
     currentSelectedCardElement.className = 'project-grid-button color-green';
     currentSelectedCardElement.querySelector('.proj-status-label').innerText = `✓ דורג (${selectedScore})`;
-    
-    closeRatingModal();
-};
+    ratingModal.style.display = 'none';
+});
 
-document.getElementById('startBtn').onclick = function() { openingScreen.classList.remove('active'); genderScreen.classList.add('active'); };
+document.getElementById('startBtn').addEventListener('click', function() { openingScreen.classList.remove('active'); genderScreen.classList.add('active'); });
 
 function loadSchools(genderParam) {
     schoolDropdown.innerHTML = '<option value="">בחר בית ספר...</option>';
@@ -211,11 +207,11 @@ function loadSchools(genderParam) {
     });
 }
 
-document.getElementById('boyBtn').onclick = function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לוממד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
-document.getElementById('girlBtn').onclick = function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
-backToGenderBtn.onclick = function() { schoolScreen.classList.remove('active'); genderScreen.classList.add('active'); };
+document.getElementById('boyBtn').addEventListener('click', function() { selectedGender = "Male"; schoolQuestion.innerText = "באיזה בית ספר אתה לומד?"; loadSchools("Male"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); });
+document.getElementById('girlBtn').addEventListener('click', function() { selectedGender = "Female"; schoolQuestion.innerText = "באיזה בית ספר את לומדת?"; loadSchools("Female"); genderScreen.classList.remove('active'); schoolScreen.classList.add('active'); });
+backToGenderBtn.addEventListener('click', function() { schoolScreen.classList.remove('active'); genderScreen.classList.add('active'); });
 
-nextBtn.onclick = function() {
+nextBtn.addEventListener('click', function() {
     if (schoolDropdown.value === "") { alert("אנא בחר בית ספר לפני ההמשך"); } 
     else {
         selectedSchool = schoolDropdown.value; 
@@ -223,9 +219,9 @@ nextBtn.onclick = function() {
         studentNameInput.value = ""; suggestionsContainer.innerHTML = ""; suggestionsContainer.style.display = 'none'; isNameSelectedFromList = false;
         schoolScreen.classList.remove('active'); nameScreen.classList.add('active'); studentNameInput.focus();
     }
-};
+});
 
-studentNameInput.oninput = function(e) {
+studentNameInput.addEventListener('input', function(e) {
     const userInput = e.target.value.trim();
     suggestionsContainer.innerHTML = ''; isNameSelectedFromList = false; 
     if (userInput.length < 2) { suggestionsContainer.style.display = 'none'; return; }
@@ -234,16 +230,16 @@ studentNameInput.oninput = function(e) {
         suggestionsContainer.style.display = 'block';
         filteredNames.forEach(name => {
             const div = document.createElement('div'); div.className = 'suggestion-item'; div.innerText = name;
-            div.onclick = function() { studentNameInput.value = name; suggestionsContainer.style.display = 'none'; isNameSelectedFromList = true; };
+            div.addEventListener('click', function() { studentNameInput.value = name; suggestionsContainer.style.display = 'none'; isNameSelectedFromList = true; });
             suggestionsContainer.appendChild(div);
         });
     } else { suggestionsContainer.style.display = 'none'; }
-};
+});
 
-document.onclick = function(e) { if (e.target !== studentNameInput) { suggestionsContainer.style.display = 'none'; } };
-backToSchoolBtn.onclick = function() { nameScreen.classList.remove('active'); schoolScreen.classList.add('active'); };
+document.addEventListener('click', function(e) { if (e.target !== studentNameInput) { suggestionsContainer.style.display = 'none'; } });
+backToSchoolBtn.addEventListener('click', function() { nameScreen.classList.remove('active'); schoolScreen.classList.add('active'); });
 
-submitNameBtn.onclick = function() {
+submitNameBtn.addEventListener('click', function() {
     const currentInputValue = studentNameInput.value.trim();
     if (currentInputValue === "") { alert("אנא הקלד/י ובחר/י את שמך מתוך הרשימה"); return; }
     if (!isNameSelectedFromList || !allStudentsInSchool.includes(currentInputValue)) { alert("חובה לבחור את השם המלא שלך מתוך רשימת השמות המוקפצת!"); return; }
@@ -253,7 +249,7 @@ submitNameBtn.onclick = function() {
     currentStudentVotingRow = (currentStudentObj && currentStudentObj.scores) ? currentStudentObj.scores : {};
     fetchAndDisplayProjects(selectedGender);
     nameScreen.classList.remove('active'); votingScreen.classList.add('active');
-};
+});
 
-backToNameBtn.onclick = function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); };
-document.getElementById('adminBtn').onclick = function() { const password = prompt("הכנס סיסמת מנהל:"); if (password === "02062026") { alert("ברוך הבא למערכת הניהול"); } };
+backToNameBtn.addEventListener('click', function() { votingScreen.classList.remove('active'); nameScreen.classList.add('active'); });
+document.getElementById('adminBtn').addEventListener('click', function() { const password = prompt("הכנס סיסמת מנהל:"); if (password === "02062026") { alert("ברוך הבא למערכת הניהול"); } });
