@@ -3,14 +3,25 @@ const openingScreen = document.getElementById('opening-screen');
 const genderScreen = document.getElementById('gender-screen');
 const schoolScreen = document.getElementById('school-screen');
 const nameScreen = document.getElementById('name-screen');
-const votingScreen = document.getElementById('voting-screen'); // מסך ההצבעה החדש
+const votingScreen = document.getElementById('voting-screen'); 
 
 // אלמנטים
 const schoolQuestion = document.getElementById('school-question');
 const schoolDropdown = document.getElementById('school-dropdown');
 const studentNameInput = document.getElementById('student-name-input');
 const suggestionsContainer = document.getElementById('suggestions-container');
-const projectsListBody = document.getElementById('projects-list-body'); // גוף טבלת המיזמים
+const projectsGrid = document.getElementById('projects-grid'); // מיכל רשת הריבועים
+
+// אלמנטים של החלון הקופץ (Modal)
+const ratingModal = document.getElementById('rating-modal');
+const modalProjectNo = document.getElementById('modal-project-no');
+const modalProjectTitle = document.getElementById('modal-project-title');
+const modalProjectCourse = document.getElementById('modal-project-course');
+const modalProjectCreators = document.getElementById('modal-project-creators');
+const ratingSlider = document.getElementById('rating-slider');
+const sliderValuePreview = document.getElementById('slider-value-preview');
+const modalSaveBtn = document.getElementById('modal-save-btn');
+const modalCancelBtn = document.getElementById('modal-cancel-btn');
 
 // כפתורים
 const nextBtn = document.getElementById('nextBtn');
@@ -21,19 +32,20 @@ const backToSchoolBtn = document.getElementById('backToSchoolBtn');
 // קישור בסיס הנתונים המרכזי המעודכן שלך בגוגל שיטס
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1-FSsI60tnB40x1p-9S1qAJLdFW8cdAYoc_NjYdGgANs/edit?gid=0#gid=0";
 
-// משתנים גלובליים לשמירת נתוני התלמיד
+// משתנים גלובליים לשמירת נתוני התלמיד וההצבעה
 let selectedGender = "";
 let selectedSchool = "";
 let studentName = "";
-let allStudentsData = []; // נשמור כאן אובייקטים מלאים של התלמידים כולל מצב הצבעה
-let allStudentsInSchool = []; // רשימת השמות בלבד לצורך ההשלמה האוטומטית
-let isNameSelectedFromList = false; // משתנה בדיקה: האם התלמיד באמת בחר מהרשימה?
+let allStudentsData = []; 
+let allStudentsInSchool = []; 
+let isNameSelectedFromList = false; 
+let currentActiveProjectCard = null; // ישמור את כרטיסיית הריבוע שנלחצה כרגע
 
 // רשימת בתי הספר המעודכנת והמדויקת שהגדרת
 const SCHOOLS_DATA = [
     { schoolName: "סגולה", gender: "Female" },
-    { schoolName: "אולפנת אמית חיפה", gender: "Female" },
-    { schoolName: "אולפנית אמית שחר", gender: "Female" },
+    { schoolName: "אולפנת אמิต חיפה", gender: "Female" },
+    { schoolName: "אולפנית אמิต שחר", gender: "Female" },
     { schoolName: "אולפנית שחם", gender: "Female" },
     { schoolName: "צביה", gender: "Female" },
     { schoolName: "אולפנת חריש", gender: "Female" },
@@ -53,9 +65,9 @@ const SCHOOLS_DATA = [
 function cleanStringForComparison(str) {
     if (!str) return "";
     return str
-        .replace(/[\"\'\`\״\׳\俘\”\“]/g, '') // מוחק את כל סוגי הגרשיים, המירכאות והגרשים למיניהם
-        .replace(/\s+/g, ' ')             // הופך רווחים כפולים לרווח יחיד
-        .trim()                           // מוחק רווחים מהקצוות
+        .replace(/[\"\'\`\״\׳\俘\”\“]/g, '') 
+        .replace(/\s+/g, ' ')             
+        .trim()                           
         .toLowerCase();
 }
 
@@ -68,7 +80,7 @@ function parseCSVLine(line) {
     for (let i = 0; i < line.length; i++) {
         const char = line[i];
         if (char === '"') {
-            inQuotes = !inQuotes; // מחליף מצב מירכאות
+            inQuotes = !inQuotes; 
         } else if (char === ',' && !inQuotes) {
             result.push(current.trim());
             current = '';
@@ -102,10 +114,10 @@ function fetchStudentsForSchool(schoolName, genderParam) {
                 
                 const columns = parseCSVLine(lines[i]);
                 
-                const currentName = columns[1];   // עמודה B - FullName
-                const currentSchool = columns[2]; // עמודה C - School
-                const currentGender = columns[4]; // עמודה E - Gender
-                const hasVotedStr = columns[5];   // עמודה F - has_voted
+                const currentName = columns[1];   
+                const currentSchool = columns[2]; 
+                const currentGender = columns[4]; 
+                const hasVotedStr = columns[5];   
                 
                 if (currentSchool && currentGender) {
                     const cleanCurrentSchool = cleanStringForComparison(currentSchool);
@@ -126,7 +138,7 @@ function fetchStudentsForSchool(schoolName, genderParam) {
         .catch(error => console.error("שגיאה במשיכת רשימת התלמידים:", error));
 }
 
-// פונקציה: משיכת מיזמים מגיליון "projects" וסינון לפי המגדר שנבחר
+// פונקציה: משיכת מיזמים מגיליון "projects" וציור ריבועים אדומים/ירוקים על המסך באופן אוטומטי
 function fetchAndDisplayProjects(genderParam) {
     const matches = GOOGLE_SHEET_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (!matches || !matches[1]) return;
@@ -137,7 +149,7 @@ function fetchAndDisplayProjects(genderParam) {
         .then(response => response.text())
         .then(text => {
             const lines = text.split(/\r?\n/);
-            projectsListBody.innerHTML = ""; // איפוס הטבלה
+            projectsGrid.innerHTML = ""; // איפוס המכל הישן
             
             const targetGender = genderParam.trim().toLowerCase();
             let counter = 0;
@@ -145,7 +157,6 @@ function fetchAndDisplayProjects(genderParam) {
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                // שימוש במפרק הבטוח החדש שמציל פסיקים פנימיים בשמות או בקורסים
                 const columns = parseCSVLine(lines[i]);
                 
                 const projectNo = columns[1];     // עמודה B - project_no
@@ -157,35 +168,75 @@ function fetchAndDisplayProjects(genderParam) {
                 if (projectGender && projectGender.toLowerCase() === targetGender) {
                     counter++;
                     
-                    const tr = document.createElement('tr');
+                    // יצירת ריבוע המיזם (הקארד האדום/ירוק מהשרטוט שלך)
+                    const projectCard = document.createElement('div');
+                    projectCard.classList.add('project-card-btn', 'status-not-voted'); // כברירת מחדל לא דורג (אדום)
                     
-                    const tdNo = document.createElement('td');
-                    tdNo.style.padding = "10px";
-                    tdNo.innerText = projectNo || "";
+                    // שמירת הנתונים בתוך האלמנט לשימוש בחלון הקופץ
+                    projectCard.dataset.no = projectNo || "";
+                    projectCard.dataset.title = projectTitle || "";
+                    projectCard.dataset.course = projectCourse || "";
+                    projectCard.dataset.creators = projectCreators || "";
                     
-                    const tdTitle = document.createElement('td');
-                    tdTitle.style.padding = "10px";
-                    tdTitle.innerText = projectTitle || "";
+                    // תוכן פנימי של הריבוע
+                    projectCard.innerHTML = `
+                        <div class="card-num">${projectNo}</div>
+                        <div class="card-title">${projectTitle}</div>
+                        <div class="status-indicator"></div>
+                    `;
                     
-                    const tdCourse = document.createElement('td');
-                    tdCourse.style.padding = "10px";
-                    tdCourse.innerText = projectCourse || "";
-
-                    const tdCreators = document.createElement('td');
-                    tdCreators.style.padding = "10px";
-                    tdCreators.innerText = projectCreators || "";
+                    // הוספת אירוע לחיצה: פותח חלון קופץ
+                    projectCard.addEventListener('click', () => {
+                        openRatingModal(projectCard);
+                    });
                     
-                    tr.appendChild(tdNo);
-                    tr.appendChild(tdTitle);
-                    tr.appendChild(tdCourse);
-                    tr.appendChild(tdCreators);
-                    projectsListBody.appendChild(tr);
+                    projectsGrid.appendChild(projectCard);
                 }
             }
-            console.log(`נטענו בהצלחה ${counter} מיזמים המתאימים למגדר: ${genderParam}`);
+            console.log(`נוצרו אוטומטית ${counter} כפתורי מיזמים.`);
         })
         .catch(error => console.error("שגיאה במשיכת רשימת המיזמים:", error));
 }
+
+// פונקציה לפתיחת החלון הקופץ והזרקת נתוני המיזם הספציפי אליו
+function openRatingModal(cardElement) {
+    currentActiveProjectCard = cardElement; // שמירת הריבוע שנלחץ כרגע
+    
+    // הזרקת המידע מנתוני הריבוע אל תוך החלון הקופץ
+    modalProjectNo.innerText = "מיזם מספר " + cardElement.dataset.no;
+    modalProjectTitle.innerText = cardElement.dataset.title;
+    modalProjectCourse.innerText = cardElement.dataset.course;
+    modalProjectCreators.innerText = cardElement.dataset.creators;
+    
+    // איפוס הסליידר לברירת מחדל (ציון 5)
+    ratingSlider.value = 5;
+    sliderValuePreview.innerText = 5;
+    
+    // הצגת החלון הקופץ
+    ratingModal.classList.add('active');
+}
+
+// עדכון המספר המוצג מעל הסליידר בזמן הגרירה שלו
+ratingSlider.addEventListener('input', (e) => {
+    sliderValuePreview.innerText = e.target.value;
+});
+
+// כפתור ביטול בחלון הקופץ
+modalCancelBtn.addEventListener('click', () => {
+    ratingModal.classList.remove('active'); // פשוט סוגר את החלון
+    currentActiveProjectCard = null;
+});
+
+// כפתור שמור בחלון הקופץ (כרגע רק משנה את העיצוב הויזואלי!)
+modalSaveBtn.addEventListener('click', () => {
+    if (currentActiveProjectCard) {
+        // שינוי הסטטוס של הריבוע הראשי מאדום לירוק עם סימן וי!
+        currentActiveProjectCard.classList.remove('status-not-voted');
+        currentActiveProjectCard.classList.add('status-voted');
+    }
+    ratingModal.classList.remove('active'); // סגירת החלון
+    currentActiveProjectCard = null;
+});
 
 document.getElementById('startBtn').addEventListener('click', () => {
     openingScreen.classList.remove('active');
@@ -285,7 +336,6 @@ backToSchoolBtn.addEventListener('click', () => {
     schoolScreen.classList.add('active');
 });
 
-// כפתור המשך ממסך הקלדת שם
 submitNameBtn.addEventListener('click', () => {
     const currentInputValue = studentNameInput.value.trim();
     
@@ -306,15 +356,12 @@ submitNameBtn.addEventListener('click', () => {
         return; 
     }
 
-    // הוסר הפופ-אפ של "לא הצביע"!
     studentName = currentInputValue;
     
     fetchAndDisplayProjects(selectedGender);
     
     nameScreen.classList.remove('active');
     votingScreen.classList.add('active');
-    
-    console.log("התלמיד עבר בהצלחה לדף ההצבעה: " + studentName);
 });
 
 document.getElementById('adminBtn').addEventListener('click', () => {
